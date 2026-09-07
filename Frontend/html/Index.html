@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IcaTurismo · Destinos de Ica</title>
+    <link rel="stylesheet" href="../css/style.cs">
+    <link rel="icon" href="../UTP.webp" type="image/webp">
+
+</head>
+<body>
+
+<!-- ========== ENCABEZADO ========== -->
+<header>
+    <div class="wrap header-inner">
+        <div class="logo">
+            <h1>🌞 IcaTurismo</h1>
+            <span>Promoción de destinos</span>
+        </div>
+        <nav>
+            <button class="hamburger" id="hamburger" aria-label="Menú">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#playas">Playas</a></li>
+                <li><a href="#montanas">Montañas</a></li>
+                <li><a href="#cultura">Cultura</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- ========== CARRUSEL DE IMÁGENES ========== -->
+<section class="carrusel" id="inicio">
+    <div class="carrusel-contenedor">
+        <div class="carrusel-slides" id="carruselSlides">
+            <div class="slide">
+                <img src="https://blog.redbus.pe/wp-content/uploads/2026/01/Playa-Roja.jpg" alt="Playas de Ica">
+                <div class="slide-texto">
+                    <span class="kicker">Ica · Perú</span>
+                    <h2>Playas de ensueño</h2>
+                    <p>Paracas, Islas Ballestas y más.</p>
+                    <a href="#destinos" class="btn-hero">Explora más</a>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="https://www.civitatis.com/f/peru/paracas/islas-ballestas-reserva-nacional-paracas-589x392.jpg" alt="Montañas de Ica">
+                <div class="slide-texto">
+                    <span class="kicker">Ica · Perú</span>
+                    <h2>Montañas y aventura</h2>
+                    <p>Trekking y paisajes andinos.</p>
+                    <a href="#destinos" class="btn-hero">Explora más</a>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="https://www.peru.travel/Contenido/Destino/Imagen/es/5/1.2/Principal/oasis-huacachina-ica-peru-desktop.jpg" alt="Cultura de Ica">
+                <div class="slide-texto">
+                    <span class="kicker">Ica · Perú</span>
+                    <h2>Cultura e historia</h2>
+                    <p>Líneas de Nazca, bodegas y museos.</p>
+                    <a href="#destinos" class="btn-hero">Explora más</a>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/ea/a0/d8/caption.jpg?w=300&h=-1&s=1" alt="Ica en general">
+                <div class="slide-texto">
+                    <span class="kicker">Ica · Perú</span>
+                    <h2>Descubre Ica</h2>
+                    <p>Un destino lleno de vida y tradición.</p>
+                    <a href="#destinos" class="btn-hero">Explora más</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controles -->
+        <button class="carrusel-btn prev" id="prevBtn">&#10094;</button>
+        <button class="carrusel-btn next" id="nextBtn">&#10095;</button>
+
+        <!-- Indicadores (puntos) -->
+        <div class="carrusel-indicadores" id="indicadores"></div>
+    </div>
+</section>
+
+<!-- ========== POR QUÉ ELEGIRNOS (beneficios con iconos) ========== -->
+<section class="beneficios">
+    <div class="wrap">
+        <h2 class="section-title">¿Por qué elegir Ica?</h2>
+        <div class="section-underline"></div>
+        <div class="beneficios-grid">
+            <div class="beneficio">
+                <div class="icono-circulo">🏖️</div>
+                <h3>Playas únicas</h3>
+                <p>Litoral desértico y reservas naturales como Paracas.</p>
+            </div>
+            <div class="beneficio">
+                <div class="icono-circulo">⛰️</div>
+                <h3>Paisajes de altura</h3>
+                <p>Rutas de trekking entre dunas, valles y cañones.</p>
+            </div>
+            <div class="beneficio">
+                <div class="icono-circulo">🏺</div>
+                <h3>Historia viva</h3>
+                <p>Líneas de Nazca, museos y bodegas centenarias.</p>
+            </div>
+            <div class="beneficio">
+                <div class="icono-circulo">🌵</div>
+                <h3>Aventura real</h3>
+                <p>Sandboard, kitesurf y experiencias en el desierto.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== HERO (Mensaje principal) ========== -->
+<section class="hero">
+    <div class="wrap hero-content">
+        <h2>Descubre los tesoros de Ica</h2>
+        <p>Playas doradas, montañas imponentes y cultura milenaria te esperan.</p>
+        <a href="#destinos" class="btn-hero">Explora más</a>
+    </div>
+</section>
+
+<!-- ========== DESTINOS (TARJETAS) ========== -->
+<section class="destinos" id="destinos">
+    <div class="wrap">
+        <h2 class="section-title">Nuestros Destinos</h2>
+        <div class="section-underline"></div>
+        <div class="grid-destinos">
+
+            <!-- TARJETA PLAYAS -->
+            <div class="card" id="playas">
+                <div class="card-media">
+                    <span class="badge">Playas</span>
+                    <img src="https://blog.redbus.pe/wp-content/uploads/2026/01/Playa-Roja.jpg" alt="Playas de Ica">
+                </div>
+                <div class="card-body">
+                    <h3>Playas de ensueño</h3>
+                    <p>Disfruta del mar y el desierto en Paracas, Islas Ballestas y más.</p>
+                    <div class="card-content">
+                        <h4>Actividades</h4>
+                        <ul>
+                            <li>Paseos en bote</li>
+                            <li>Avistamiento de aves</li>
+                            <li>Kitesurf</li>
+                        </ul>
+                        <h4>Recomendaciones</h4>
+                        <ol>
+                            <li>Visitar en verano</li>
+                            <li>Usar bloqueador</li>
+                        </ol>
+                        <h4>Precios referenciales</h4>
+                        <table class="tabla-simple">
+                            <thead>
+                                <tr><th>Actividad</th><th>Precio (S/.)</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Paseo a Ballestas</td><td>80</td></tr>
+                                <tr><td>Kitesurf (1h)</td><td>150</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TARJETA MONTAÑAS -->
+            <div class="card" id="montanas">
+                <div class="card-media">
+                    <span class="badge badge--teal">Montañas</span>
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTe9b4TW7E6gGyoe5n-7Hz_MGTWLZBStprNze0nCUKmHW0wKf8AFCCBuiv&s=10" alt="Montañas de Ica">
+                </div>
+                <div class="card-body">
+                    <h3>Montañas y aventura</h3>
+                    <p>Trekking, valles y paisajes andinos para los amantes de la naturaleza.</p>
+                    <div class="card-content">
+                        <h4>Rutas</h4>
+                        <ul>
+                            <li>Cerro Tupac</li>
+                            <li>Valle de los Viñedos</li>
+                            <li>Cañón de los Perdidos</li>
+                        </ul>
+                        <h4>Consejos</h4>
+                        <ol>
+                            <li>Ropa de abrigo</li>
+                            <li>Hidratación</li>
+                        </ol>
+                        <h4>Dificultad</h4>
+                        <table class="tabla-simple">
+                            <thead>
+                                <tr><th>Ruta</th><th>Dificultad</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Cerro Tupac</td><td>Media</td></tr>
+                                <tr><td>Cañón</td><td>Alta</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TARJETA CULTURA -->
+            <div class="card" id="cultura">
+                <div class="card-media">
+                    <span class="badge badge--ink">Cultura</span>
+                    <img src="https://museos.cultura.pe/sites/default/files/styles/carrusel_museo_full/public/museos/galeria/rnm_436983113_0.jpg?itok=YrapR-hI" alt="Cultura de Ica">
+                </div>
+                <div class="card-body">
+                    <h3>Cultura e historia</h3>
+                    <p>Museos, líneas de Nazca, bodegas y tradiciones vivas.</p>
+                    <div class="card-content">
+                        <h4>Lugares</h4>
+                        <ul>
+                            <li>Museo de Paracas</li>
+                            <li>Líneas de Nazca</li>
+                            <li>Bodega Tacama</li>
+                        </ul>
+                        <h4>Recomendaciones</h4>
+                        <ol>
+                            <li>Visita guiada</li>
+                            <li>Degustación de vinos</li>
+                        </ol>
+                        <h4>Entradas</h4>
+                        <table class="tabla-simple">
+                            <thead>
+                                <tr><th>Sitio</th><th>Entrada (S/.)</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Museo Paracas</td><td>15</td></tr>
+                                <tr><td>Bodega Tacama</td><td>25</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ========== CONTACTO ========== -->
+<section id="contacto" class="contacto">
+    <div class="wrap contacto-caja">
+        <h2>Contacto</h2>
+        <p>¿Listo para planificar tu viaje? Escríbenos.</p>
+        <address>
+            <strong>IcaTurismo Dev</strong><br>
+            Calle Los Turistas 123, Ica<br>
+            Tel: (056) 123-456<br>
+            Email: <a href="mailto:info@icaturismo.dev">info@icaturismo.dev</a>
+        </address>
+    </div>
+</section>
+
+<!-- ========== PIE DE PÁGINA ========== -->
+<footer>
+    <div class="wrap footer-content">
+        <p>&copy; 2026 IcaTurismo Dev · Empresa de desarrollo con sede en Ica</p>
+        <p>Síguenos en redes: <a href="https://www.facebook.com/samantha.sp.946?locale=es_LA">Facebook</a> · <a href="https://www.instagram.com/sammn_uu/">Instagram</a> · <a href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9SzT5HH0WKqK3ZwVqgU5Z5aeii5cxcVt8i18oZJV1MtQLQQyWLRME2HZu&s=10">YouTube</a></p>
+    </div>
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>
