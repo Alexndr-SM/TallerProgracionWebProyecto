@@ -1,4 +1,3 @@
-<style>
 /* =========================================================
    IcaTurismo — hoja de estilos
    Paleta: noche de dunas (navy), ocre de duna, teal de Paracas
@@ -532,5 +531,3 @@ footer {
 .footer-content p { margin: 0 auto 0.6rem; max-width: none; }
 .footer-content a { color: #eee6d3; }
 .footer-content a:hover { color: var(--ochre-light); }
-
-</style>
