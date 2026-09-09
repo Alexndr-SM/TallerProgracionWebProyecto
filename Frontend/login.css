@@ -1,7 +1,3 @@
-/* =========================================================
-   IcaTurismo — login.css
-   Estilos exclusivos de login.html
-   ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap');
 
@@ -301,7 +297,7 @@ body.auth-page {
   font-size: 1.1rem;
 }
 
-/* Pie del formulario: texto "¿No tienes cuenta?" centrado */
+/* Pie del formulario: texto centrado */
 .auth-footer {
   text-align: center;
   font-size: 0.9rem;
