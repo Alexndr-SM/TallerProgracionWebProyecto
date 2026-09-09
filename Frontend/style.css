@@ -1,7 +1,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap');
 
-/* Variables globales: colores, fuentes y medidas de toda la página */
+/* Variables colores, fuentes y medidas de toda la página */
 :root {
   --ink: #1b2a45;
   --ink-soft: #24365a;
@@ -26,10 +26,10 @@
   --shadow-lg: 0 20px 48px rgba(27, 42, 69, 0.22);
 }
 
-/* Reset: incluye padding y border dentro del tamaño del elemento */
+/* padding y border dentro del tamaño del elemento */
 * { box-sizing: border-box; }
 
-/* Scroll suave al navegar a secciones internas (#inicio, #contacto, etc.) */
+/* Scroll al navegar a secciones internas */
 html { scroll-behavior: smooth; }
 
 /* Cuerpo de la página: fuente, color de texto y fondo tipo papel */
