@@ -4,35 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IcaTurismo · Destinos de Ica</title>
+    <!-- Estilos de la página principal -->
     <link rel="stylesheet" href="style.css">
-
+    <!-- Favicon -->
     <link rel="icon" href="UTP.webp" type="image/webp">
-
-    <link rel="icon" href="../UTP.webp" type="image/webp">
-
-    <link rel="icon" href="UTP.webp" type="image/webp">
-    <link rel="icon" href="../UTP.webp" type="image/webp">
->>>>>>> fc07c98119964da752d7c6325241070b13a86963
 </head>
 <body>
 
-<!--  ENCABEZADO  -->
+<!-- ENCABEZADO  -->
 <header>
     <div class="wrap header-inner">
+        <!-- Logo -->
         <div class="logo">
             <h1>🌞 IcaTurismo</h1>
             <span>Promoción de destinos</span>
         </div>
         <nav>
+            <!-- Botón hamburguesa en móvil -->
             <button class="hamburger" id="hamburger" aria-label="Menú">
                 <span></span><span></span><span></span>
             </button>
+            <!-- Enlaces de navegación  -->
             <ul class="nav-links" id="navLinks">
                 <li><a href="#inicio">Inicio</a></li>
                 <li><a href="#playas">Playas</a></li>
                 <li><a href="#montanas">Montañas</a></li>
                 <li><a href="#cultura">Cultura</a></li>
                 <li><a href="#contacto">Contacto</a></li>
+                <!-- Botón Cuenta-->
                 <li class="nav-user" id="navUser">
                     <button class="user-btn" id="userBtn" aria-label="Menú de usuario" aria-expanded="false">
                         <img src="Person.png" alt="Usuario">
@@ -53,6 +52,7 @@
 <section class="carrusel" id="inicio">
     <div class="carrusel-contenedor">
         <div class="carrusel-slides" id="carruselSlides">
+            <!-- Slide 1: Playas -->
             <div class="slide">
                 <img src="https://blog.redbus.pe/wp-content/uploads/2026/01/Playa-Roja.jpg" alt="Playas de Ica">
                 <div class="slide-texto">
@@ -62,6 +62,7 @@
                     <a href="#destinos" class="btn-hero">Explora más</a>
                 </div>
             </div>
+            <!-- Slide 2: Montañas -->
             <div class="slide">
                 <img src="https://www.civitatis.com/f/peru/paracas/islas-ballestas-reserva-nacional-paracas-589x392.jpg" alt="Montañas de Ica">
                 <div class="slide-texto">
@@ -71,6 +72,7 @@
                     <a href="#destinos" class="btn-hero">Explora más</a>
                 </div>
             </div>
+            <!-- Slide 3: Cultura -->
             <div class="slide">
                 <img src="https://www.peru.travel/Contenido/Destino/Imagen/es/5/1.2/Principal/oasis-huacachina-ica-peru-desktop.jpg" alt="Cultura de Ica">
                 <div class="slide-texto">
@@ -80,6 +82,7 @@
                     <a href="#destinos" class="btn-hero">Explora más</a>
                 </div>
             </div>
+            <!-- Slide 4: General -->
             <div class="slide">
                 <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/ea/a0/d8/caption.jpg?w=300&h=-1&s=1" alt="Ica en general">
                 <div class="slide-texto">
@@ -91,16 +94,16 @@
             </div>
         </div>
 
-        <!-- Controles -->
+        <!-- Botones anterior / siguiente -->
         <button class="carrusel-btn prev" id="prevBtn">&#10094;</button>
         <button class="carrusel-btn next" id="nextBtn">&#10095;</button>
 
-        <!-- Indicadores (puntos) -->
+        <!-- Puntos indicadores (se generan con JS) -->
         <div class="carrusel-indicadores" id="indicadores"></div>
     </div>
 </section>
 
-<!--  POR QUÉ ELEGIRNOS (beneficios con iconos)  -->
+<!--  BENEFICIOS  -->
 <section class="beneficios">
     <div class="wrap">
         <h2 class="section-title">¿Por qué elegir Ica?</h2>
@@ -130,7 +133,7 @@
     </div>
 </section>
 
-<!--  HERO (Mensaje principal)  -->
+<!--  HERO CTA  -->
 <section class="hero">
     <div class="wrap hero-content">
         <h2>Descubre los tesoros de Ica</h2>
@@ -146,7 +149,7 @@
         <div class="section-underline"></div>
         <div class="grid-destinos">
 
-            <!-- TARJETA PLAYAS -->
+            <!-- Tarjeta Playas -->
             <div class="card" id="playas">
                 <div class="card-media">
                     <span class="badge">Playas</span>
@@ -181,7 +184,7 @@
                 </div>
             </div>
 
-            <!-- TARJETA MONTAÑAS -->
+            <!-- Tarjeta Montañas -->
             <div class="card" id="montanas">
                 <div class="card-media">
                     <span class="badge badge--teal">Montañas</span>
@@ -216,7 +219,7 @@
                 </div>
             </div>
 
-            <!-- TARJETA CULTURA -->
+            <!-- Tarjeta Cultura -->
             <div class="card" id="cultura">
                 <div class="card-media">
                     <span class="badge badge--ink">Cultura</span>
@@ -272,19 +275,16 @@
 <!--  PIE DE PÁGINA  -->
 <footer>
     <div class="wrap footer-content">
-
         <p>&copy; 2026 IcaTurismo Dev · Empresa de desarrollo con sede en Ica</p>
-        <p>Síguenos en redes: <a href="https://www.facebook.com/samantha.sp.946?locale=es_LA">Facebook</a> · <a href="https://www.instagram.com/sammn_uu/">Instagram</a> · <a href="#">YouTube</a></p>
-
-        <p>&copy; 2026 IcaTurismo · Empresa de Turismo con sede en Ica</p>
-        <p>Síguenos en redes: <a href="">Facebook</a> · <a href="">Instagram</a> · <a href="https://www.youtube.com/@Styx117-S">YouTube</a></p>
-
-        <p>&copy; 2026 IcaTurismo · Empresa de Turismo con sede en Ica</p>
-        <p>Síguenos en redes: <a href="">Facebook</a> · <a href="">Instagram</a> · <a href="https://www.youtube.com/@Styx117-S">YouTube</a></p>
-
+        <p>Síguenos en redes:
+            <a href="https://www.facebook.com/samantha.sp.946?locale=es_LA">Facebook</a> ·
+            <a href="https://www.instagram.com/sammn_uu/">Instagram</a> ·
+            <a href="https://www.youtube.com/@Styx117-S">YouTube</a>
+        </p>
     </div>
 </footer>
 
+<!-- Script de interacciones (hamburguesa, dropdown Cuenta, carrusel) -->
 <script src="Script.js"></script>
 </body>
 </html>
