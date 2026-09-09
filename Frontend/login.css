@@ -1,9 +1,11 @@
 /* =========================================================
-   IcaTurismo — estilos de Login
+   IcaTurismo — login.css
+   Estilos exclusivos de login.html
    ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap');
 
+/* Variables de color, fuentes y medidas del login */
 :root {
   --ink: #1b2a45;
   --ink-soft: #24365a;
@@ -16,8 +18,12 @@
   --font-body: 'Work Sans', 'Segoe UI', sans-serif;
 }
 
-* { box-sizing: border-box; }
+/* Reset: incluye padding y border dentro del tamaño del elemento */
+* {
+  box-sizing: border-box;
+}
 
+/* Página de login: fondo degradado oscuro y centra la tarjeta en la pantalla */
 body.auth-page {
   margin: 0;
   min-height: 100vh;
@@ -30,6 +36,7 @@ body.auth-page {
   line-height: 1.55;
 }
 
+/* Tarjeta del formulario de login: caja centrada con fondo azul oscuro */
 .auth-card {
   width: 100%;
   max-width: 420px;
@@ -40,15 +47,20 @@ body.auth-page {
   border: 1px solid rgba(255,255,255,0.06);
 }
 
+/* Logo (sol + nombre + subtítulo): bloque centrado en la parte superior de la tarjeta */
 .auth-logo {
   text-align: center;
   margin-bottom: 1.6rem;
 }
+
+/* Emoji del sol dentro del logo */
 .auth-logo .sun {
   font-size: 2.2rem;
   display: block;
   margin-bottom: 0.4rem;
 }
+
+/* Título "IcaTurismo" del logo: texto blanco con tipografía de títulos */
 .auth-logo h1 {
   color: #fff;
   font-family: var(--font-display);
@@ -56,12 +68,15 @@ body.auth-page {
   margin: 0 0 0.2rem;
   line-height: 1.15;
 }
+
+/* Subtítulo "Promoción de destinos" debajo del nombre */
 .auth-logo p {
   color: var(--ochre-light);
   font-size: 0.85rem;
   margin: 0;
 }
 
+/* Título "Bienvenido de nuevo": saludo centrado en blanco */
 .auth-card h2 {
   color: #fff;
   font-family: var(--font-display);
@@ -70,6 +85,8 @@ body.auth-page {
   margin: 0 0 0.35rem;
   line-height: 1.15;
 }
+
+/* Subtítulo del formulario: frase secundaria centrada en gris */
 .auth-card .subtitle {
   text-align: center;
   color: #a8b0c0;
@@ -77,9 +94,12 @@ body.auth-page {
   margin: 0 0 1.8rem;
 }
 
+/* Grupo de campo: separa cada label + input del formulario */
 .form-group {
   margin-bottom: 1.15rem;
 }
+
+/* Etiqueta del campo (ej. "Correo electrónico"): texto gris encima del input */
 .form-group label {
   display: block;
   color: #c5cdd8;
@@ -87,11 +107,15 @@ body.auth-page {
   font-weight: 500;
   margin-bottom: 0.4rem;
 }
+
+/* Contenedor del input: permite colocar el icono a la izquierda y el ojo a la derecha */
 .input-wrap {
   position: relative;
   display: flex;
   align-items: center;
 }
+
+/* Icono a la izquierda del input (✉, 🔒) */
 .input-wrap .icon-left {
   position: absolute;
   left: 14px;
@@ -99,6 +123,8 @@ body.auth-page {
   font-size: 1rem;
   pointer-events: none;
 }
+
+/* Campo de texto / correo / contraseña: fondo oscuro y borde sutil */
 .input-wrap input {
   width: 100%;
   padding: 0.85rem 1rem 0.85rem 2.6rem;
@@ -111,13 +137,19 @@ body.auth-page {
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
+/* Texto de ayuda dentro del input vacío (placeholder) */
 .input-wrap input::placeholder {
   color: #5a6578;
 }
+
+/* Estado al enfocar el input: borde y halo ocre */
 .input-wrap input:focus {
   border-color: var(--ochre);
   box-shadow: 0 0 0 3px rgba(201, 134, 46, 0.18);
 }
+
+/* Botón del ojo: muestra u oculta la contraseña (lado derecho del input) */
 .input-wrap .toggle-pass {
   position: absolute;
   right: 12px;
@@ -129,10 +161,13 @@ body.auth-page {
   padding: 4px;
   line-height: 1;
 }
+
+/* Hover del botón ojo: color ocre claro */
 .input-wrap .toggle-pass:hover {
   color: var(--ochre-light);
 }
 
+/* Fila de opciones: "Recordarme" a la izquierda y "Olvidé contraseña" a la derecha */
 .form-options {
   display: flex;
   align-items: center;
@@ -140,6 +175,8 @@ body.auth-page {
   margin-bottom: 1.5rem;
   font-size: 0.88rem;
 }
+
+/* Label del checkbox "Recordarme" */
 .form-options label {
   display: flex;
   align-items: center;
@@ -148,21 +185,28 @@ body.auth-page {
   cursor: pointer;
   margin: 0;
 }
+
+/* Checkbox "Recordarme": color ocre al marcar */
 .form-options input[type="checkbox"] {
   width: 16px;
   height: 16px;
   accent-color: var(--ochre);
   cursor: pointer;
 }
+
+/* Enlace "¿Olvidaste tu contraseña?" en ocre */
 .form-options a {
   color: var(--ochre);
   font-weight: 500;
   text-decoration: none;
 }
+
+/* Hover del enlace "¿Olvidaste tu contraseña?" */
 .form-options a:hover {
   color: var(--ochre-light);
 }
 
+/* Botón principal "Iniciar sesión": ancho completo con degradado ocre */
 .btn-auth {
   width: 100%;
   padding: 0.95rem 1.5rem;
@@ -177,15 +221,20 @@ body.auth-page {
   transition: transform 0.18s ease, box-shadow 0.2s ease, filter 0.2s ease;
   box-shadow: 0 4px 14px rgba(201, 134, 46, 0.35);
 }
+
+/* Hover del botón principal: sube y aumenta la sombra */
 .btn-auth:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 22px rgba(201, 134, 46, 0.45);
   filter: brightness(1.05);
 }
+
+/* Clic del botón principal: vuelve a su posición */
 .btn-auth:active {
   transform: translateY(0);
 }
 
+/* Separador "o continúa con": texto con líneas a ambos lados */
 .auth-divider {
   display: flex;
   align-items: center;
@@ -194,6 +243,8 @@ body.auth-page {
   color: #5a6578;
   font-size: 0.85rem;
 }
+
+/* Líneas izquierda y derecha del separador */
 .auth-divider::before,
 .auth-divider::after {
   content: '';
@@ -202,12 +253,15 @@ body.auth-page {
   background: rgba(255,255,255,0.1);
 }
 
+/* Contenedor de botones sociales: dos columnas (Google y Facebook) */
 .social-btns {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
   margin-bottom: 1.5rem;
 }
+
+/* Botón social individual: fondo oscuro con icono y texto centrados */
 .btn-social {
   display: flex;
   align-items: center;
@@ -225,37 +279,49 @@ body.auth-page {
   transition: background 0.2s ease, border-color 0.2s ease;
   text-decoration: none;
 }
+
+/* Hover del botón social: fondo y borde más claros */
 .btn-social:hover {
   background: #1a2740;
   border-color: rgba(255,255,255,0.2);
   color: #fff;
 }
+
+/* Icono "G" de Google en rojo */
 .btn-social .g-icon {
   color: #ea4335;
   font-weight: 700;
   font-size: 1.1rem;
 }
+
+/* Icono "f" de Facebook en azul */
 .btn-social .fb-icon {
   color: #1877f2;
   font-weight: 700;
   font-size: 1.1rem;
 }
 
+/* Pie del formulario: texto "¿No tienes cuenta?" centrado */
 .auth-footer {
   text-align: center;
   font-size: 0.9rem;
   color: #a8b0c0;
   margin: 0;
 }
+
+/* Enlace "Regístrate aquí" en ocre */
 .auth-footer a {
   color: var(--ochre);
   font-weight: 600;
   text-decoration: none;
 }
+
+/* Hover del enlace "Regístrate aquí" */
 .auth-footer a:hover {
   color: var(--ochre-light);
 }
 
+/* Enlace "Volver al inicio": centrado debajo de la tarjeta */
 .back-home {
   display: block;
   text-align: center;
@@ -264,6 +330,8 @@ body.auth-page {
   font-size: 0.88rem;
   text-decoration: none;
 }
+
+/* Hover de "Volver al inicio": color ocre claro */
 .back-home:hover {
   color: var(--ochre-light);
 }

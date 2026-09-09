@@ -1,10 +1,11 @@
 /* =========================================================
-   IcaTurismo — hoja de estilos
-   Paleta: noche de dunas (navy), ocre de duna, teal de Paracas
+   IcaTurismo — style.css
+   Estilos de la página principal (index.html)
    ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap');
 
+/* Variables globales: colores, fuentes y medidas de toda la página */
 :root {
   --ink: #1b2a45;
   --ink-soft: #24365a;
@@ -19,23 +20,23 @@
   --umber: #3a2a1e;
   --umber-soft: #6b5946;
   --line: #e3d5b3;
-
   --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
   --font-body: 'Work Sans', 'Segoe UI', sans-serif;
-
   --max-width: 1120px;
   --radius: 6px;
   --radius-lg: 14px;
-
   --shadow-sm: 0 2px 8px rgba(27, 42, 69, 0.08);
   --shadow-md: 0 10px 28px rgba(27, 42, 69, 0.14);
   --shadow-lg: 0 20px 48px rgba(27, 42, 69, 0.22);
 }
 
+/* Reset: incluye padding y border dentro del tamaño del elemento */
 * { box-sizing: border-box; }
 
+/* Scroll suave al navegar a secciones internas (#inicio, #contacto, etc.) */
 html { scroll-behavior: smooth; }
 
+/* Cuerpo de la página: fuente, color de texto y fondo tipo papel */
 body {
   margin: 0;
   font-family: var(--font-body);
@@ -44,6 +45,7 @@ body {
   line-height: 1.55;
 }
 
+/* Títulos generales de la página */
 h1, h2, h3, h4 {
   font-family: var(--font-display);
   color: var(--ink);
@@ -51,21 +53,29 @@ h1, h2, h3, h4 {
   margin: 0 0 0.5em;
 }
 
+/* Párrafos con ancho de lectura cómodo */
 p { max-width: 68ch; }
 
+/* Enlaces de la página */
 a { color: var(--teal-dark); text-decoration: none; }
+
+/* Hover de los enlaces: subrayado */
 a:hover { text-decoration: underline; }
 
+/* Imágenes responsivas que no se salen del contenedor */
 img { max-width: 100%; display: block; }
 
+/* Contenedor centrado con ancho máximo para el contenido */
 .wrap {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
-/* Encabezados de sección con acento */
+/* Título de sección centrado (ej. "Nuestros Destinos") */
 .section-title { text-align: center; margin: 0 auto 0.6rem; }
+
+/* Línea ocre decorativa debajo del título de sección */
 .section-underline {
   width: 64px;
   height: 4px;
@@ -73,11 +83,15 @@ img { max-width: 100%; display: block; }
   background: var(--ochre);
   margin: 0 auto 2.5rem;
 }
+
+/* Línea de título más clara solo en la sección de beneficios */
 .beneficios .section-underline { background: var(--ochre-light); }
 
 /* =========================================================
-   ENCABEZADO / NAV
+   ENCABEZADO / BARRA DE NAVEGACIÓN
    ========================================================= */
+
+/* Barra superior fija al hacer scroll */
 header {
   background: var(--ink);
   position: sticky;
@@ -86,30 +100,43 @@ header {
   box-shadow: 0 2px 14px rgba(0,0,0,0.18);
   overflow: visible;
 }
+
+/* Fila interna del header: logo a la izquierda y menú a la derecha */
 .header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 78px;
 }
+
+/* Bloque del logo (nombre + subtítulo) */
 .logo { display: flex; align-items: baseline; gap: 0.7rem; }
+
+/* Nombre "IcaTurismo" del logo en blanco */
 .logo h1 {
   color: #fff;
   font-size: 1.3rem;
   margin: 0;
   letter-spacing: 0.01em;
 }
+
+/* Subtítulo "Promoción de destinos" del logo (oculto en móvil estrecho) */
 .logo span {
   color: var(--ochre-light);
   font-size: 0.8rem;
   font-family: var(--font-body);
   display: none;
 }
+
+/* Muestra el subtítulo del logo a partir de 560px */
 @media (min-width: 560px) {
   .logo span { display: inline; }
 }
 
+/* Contenedor del menú de navegación */
 nav { display: flex; align-items: center; position: relative; }
+
+/* Lista de enlaces del menú en fila (escritorio) */
 .nav-links {
   display: flex;
   align-items: center;
@@ -119,6 +146,8 @@ nav { display: flex; align-items: center; position: relative; }
   padding: 0;
   overflow: visible;
 }
+
+/* Cada enlace del menú (Inicio, Playas, Montañas, etc.) */
 .nav-links a {
   position: relative;
   color: #eee6d3;
@@ -127,6 +156,8 @@ nav { display: flex; align-items: center; position: relative; }
   font-size: 0.95rem;
   padding: 0.3rem 0;
 }
+
+/* Rayita animada debajo de cada enlace del menú */
 .nav-links a::after {
   content: '';
   position: absolute;
@@ -137,14 +168,24 @@ nav { display: flex; align-items: center; position: relative; }
   background: var(--ochre);
   transition: width 0.2s ease;
 }
+
+/* Hover del enlace del menú: color ocre */
 .nav-links a:hover { color: var(--ochre); text-decoration: none; }
+
+/* Hover: la rayita se estira a todo el ancho del enlace */
 .nav-links a:hover::after { width: 100%; }
 
-/* Menú de usuario (dropdown) */
+/* =========================================================
+   MENÚ DE USUARIO (botón Cuenta + dropdown)
+   ========================================================= */
+
+/* Contenedor del botón Cuenta y su menú desplegable */
 .nav-user {
   position: relative;
   list-style: none;
 }
+
+/* Botón redondeado "Cuenta" con icono y flecha */
 .user-btn {
   display: flex;
   align-items: center;
@@ -159,11 +200,15 @@ nav { display: flex; align-items: center; position: relative; }
   font-size: 0.9rem;
   transition: background 0.2s ease, border-color 0.2s ease;
 }
+
+/* Hover del botón Cuenta */
 .user-btn:hover {
   background: rgba(255,255,255,0.08);
   border-color: var(--ochre);
   color: var(--ochre-light);
 }
+
+/* Icono de persona dentro del botón Cuenta */
 .user-btn img {
   width: 28px;
   height: 28px;
@@ -171,14 +216,19 @@ nav { display: flex; align-items: center; position: relative; }
   object-fit: cover;
   background: rgba(255,255,255,0.15);
 }
+
+/* Flechita del botón Cuenta */
 .user-btn .chevron {
   font-size: 0.7rem;
   transition: transform 0.2s ease;
 }
+
+/* Flecha hacia arriba cuando el menú Cuenta está abierto */
 .nav-user.open .user-btn .chevron {
   transform: rotate(180deg);
 }
 
+/* Caja desplegable con Login y Registrarse (oculta por defecto) */
 .user-dropdown {
   position: absolute;
   top: calc(100% + 10px);
@@ -196,6 +246,8 @@ nav { display: flex; align-items: center; position: relative; }
   transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
   z-index: 200;
 }
+
+/* Muestra el dropdown cuando Cuenta está abierto o enfocado */
 .nav-user.open .user-dropdown,
 .nav-user:focus-within .user-dropdown {
   opacity: 1;
@@ -203,6 +255,8 @@ nav { display: flex; align-items: center; position: relative; }
   pointer-events: auto;
   transform: translateY(0);
 }
+
+/* Enlaces dentro del dropdown (Iniciar sesión / Registrarse) */
 .user-dropdown a {
   display: block;
   padding: 0.75rem 1.2rem;
@@ -212,13 +266,22 @@ nav { display: flex; align-items: center; position: relative; }
   text-decoration: none;
   transition: background 0.15s ease, color 0.15s ease;
 }
+
+/* Hover de los enlaces del dropdown */
 .user-dropdown a:hover {
   background: rgba(201, 134, 46, 0.2);
   color: var(--ochre-light);
   text-decoration: none;
 }
+
+/* Quita la rayita animada en los enlaces del dropdown */
 .user-dropdown a::after { display: none !important; }
 
+/* =========================================================
+   BOTÓN HAMBURGUESA (móvil)
+   ========================================================= */
+
+/* Botón de 3 rayas: oculto en escritorio */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -228,13 +291,29 @@ nav { display: flex; align-items: center; position: relative; }
   cursor: pointer;
   padding: 8px;
 }
-.hamburger span { width: 26px; height: 2px; background: #fff; transition: transform 0.25s ease, opacity 0.25s ease; }
+
+/* Cada raya del icono hamburguesa */
+.hamburger span {
+  width: 26px;
+  height: 2px;
+  background: #fff;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* Animación de las rayas a forma de X cuando el menú está abierto */
 .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .hamburger.active span:nth-child(2) { opacity: 0; }
 .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
+/* =========================================================
+   MENÚ ADAPTABLE (pantallas <= 780px)
+   ========================================================= */
 @media (max-width: 780px) {
+
+  /* Muestra el botón hamburguesa en móvil */
   .hamburger { display: flex; }
+
+  /* Menú vertical desplegable debajo del header */
   .nav-links {
     position: absolute;
     top: 78px;
@@ -249,13 +328,23 @@ nav { display: flex; align-items: center; position: relative; }
     transition: max-height 0.3s ease;
     box-shadow: var(--shadow-md);
   }
+
+  /* Menú abierto en móvil */
   .nav-links.active { max-height: 380px; }
+
+  /* Línea divisoria entre items del menú móvil */
   .nav-links li { border-top: 1px solid rgba(255,255,255,0.08); }
+
+  /* Enlaces a ancho completo en el menú móvil */
   .nav-links a { display: block; padding: 1rem 1.5rem; }
+
+  /* Sin rayita animada en móvil */
   .nav-links a::after { display: none; }
-  .nav-user {
-    border-top: 1px solid rgba(255,255,255,0.08);
-  }
+
+  /* Separador visual del bloque Cuenta en el menú móvil */
+  .nav-user { border-top: 1px solid rgba(255,255,255,0.08); }
+
+  /* Botón Cuenta a ancho completo dentro del menú móvil */
   .user-btn {
     width: 100%;
     border: none;
@@ -263,6 +352,8 @@ nav { display: flex; align-items: center; position: relative; }
     padding: 1rem 1.5rem;
     justify-content: flex-start;
   }
+
+  /* Dropdown de Cuenta expandido dentro del menú móvil */
   .user-dropdown {
     position: static;
     opacity: 1;
@@ -277,6 +368,8 @@ nav { display: flex; align-items: center; position: relative; }
     padding: 0;
     transition: max-height 0.25s ease;
   }
+
+  /* Dropdown de Cuenta abierto en móvil */
   .nav-user.open .user-dropdown,
   .nav-user:focus-within .user-dropdown {
     max-height: 120px;
@@ -288,22 +381,28 @@ nav { display: flex; align-items: center; position: relative; }
 }
 
 /* =========================================================
-   CARRUSEL
+   CARRUSEL DE IMÁGENES
    ========================================================= */
+
+/* Sección del carrusel */
 .carrusel { position: relative; background: var(--ink); }
+
+/* Contenedor del carrusel con altura fija */
 .carrusel-contenedor {
   position: relative;
   overflow: hidden;
   height: 60vh;
   min-height: 420px;
 }
+
+/* Capa que contiene todos los slides */
 .carrusel-slides {
   position: relative;
   width: 100%;
   height: 100%;
 }
 
-/* Cada slide se superpone y aparece/desaparece con fundido (crossfade) */
+/* Cada diapositiva: apilada y oculta por defecto */
 .slide {
   position: absolute;
   inset: 0;
@@ -314,10 +413,14 @@ nav { display: flex; align-items: center; position: relative; }
   padding: 0 4vw;
   transition: opacity 0.7s ease;
 }
+
+/* Diapositiva visible (activa) */
 .slide.active {
   opacity: 1;
   visibility: visible;
 }
+
+/* Imagen de fondo de cada slide */
 .slide img {
   position: absolute;
   inset: 0;
@@ -326,6 +429,8 @@ nav { display: flex; align-items: center; position: relative; }
   object-fit: cover;
   z-index: 0;
 }
+
+/* Degradado oscuro sobre la imagen para legibilidad del texto */
 .slide::after {
   content: '';
   position: absolute;
@@ -334,6 +439,7 @@ nav { display: flex; align-items: center; position: relative; }
   z-index: 1;
 }
 
+/* Bloque de texto del slide (kicker, título, descripción, botón) */
 .slide-texto {
   position: relative;
   z-index: 2;
@@ -342,6 +448,8 @@ nav { display: flex; align-items: center; position: relative; }
   max-width: 560px;
   padding: 0 1rem;
 }
+
+/* Etiqueta pequeña "Ica · Perú" del slide */
 .slide-texto .kicker {
   display: inline-block;
   font-family: var(--font-display);
@@ -356,6 +464,8 @@ nav { display: flex; align-items: center; position: relative; }
   border-radius: 999px;
   margin-bottom: 1.1rem;
 }
+
+/* Título grande del slide */
 .slide-texto h2 {
   color: #fff;
   font-size: clamp(1.9rem, 4vw, 2.9rem);
@@ -363,8 +473,11 @@ nav { display: flex; align-items: center; position: relative; }
   margin-bottom: 0.9rem;
   text-shadow: 0 4px 24px rgba(0,0,0,0.35);
 }
+
+/* Descripción del slide */
 .slide-texto p { margin: 0 0 1.7rem; color: #eee6d3; max-width: 46ch; }
 
+/* Botones anterior / siguiente del carrusel */
 .carrusel-btn {
   position: absolute;
   top: 50%;
@@ -383,10 +496,17 @@ nav { display: flex; align-items: center; position: relative; }
   justify-content: center;
   transition: background 0.2s ease, transform 0.2s ease;
 }
+
+/* Hover de los botones del carrusel */
 .carrusel-btn:hover { background: #fff; transform: translateY(-50%) scale(1.08); }
+
+/* Botón anterior (izquierda) */
 .carrusel-btn.prev { left: 1.2rem; }
+
+/* Botón siguiente (derecha) */
 .carrusel-btn.next { right: 1.2rem; }
 
+/* Contenedor de los puntos indicadores del carrusel */
 .carrusel-indicadores {
   position: absolute;
   bottom: 1.3rem;
@@ -397,6 +517,8 @@ nav { display: flex; align-items: center; position: relative; }
   justify-content: center;
   gap: 0.5rem;
 }
+
+/* Cada punto indicador */
 .carrusel-indicadores span {
   width: 9px;
   height: 9px;
@@ -406,22 +528,31 @@ nav { display: flex; align-items: center; position: relative; }
   display: inline-block;
   transition: background 0.2s ease, transform 0.2s ease;
 }
+
+/* Punto activo (slide actual) */
 .carrusel-indicadores span.active { background: var(--ochre); transform: scale(1.2); }
 
+/* Carrusel más bajo en pantallas pequeñas */
 @media (max-width: 700px) {
   .carrusel-contenedor { height: 50vh; min-height: 380px; }
   .slide { padding: 0 6vw; }
 }
 
 /* =========================================================
-   BENEFICIOS (círculos de icono, fondo oscuro)
+   BENEFICIOS
    ========================================================= */
+
+/* Sección de beneficios con fondo azul noche */
 .beneficios {
   background: linear-gradient(180deg, var(--ink) 0%, var(--ink-soft) 100%);
   color: #eee6d3;
   padding: 4.5rem 0;
 }
+
+/* Título de beneficios en blanco */
 .beneficios .section-title { color: #fff; }
+
+/* Cuadrícula de 4 columnas de beneficios */
 .beneficios-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -429,9 +560,14 @@ nav { display: flex; align-items: center; position: relative; }
   text-align: center;
   margin-top: 1rem;
 }
+
+/* Beneficios en 2 columnas (tablet) */
 @media (max-width: 900px) { .beneficios-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* Beneficios en 1 columna (móvil) */
 @media (max-width: 520px) { .beneficios-grid { grid-template-columns: 1fr; } }
 
+/* Círculo del icono emoji de cada beneficio */
 .icono-circulo {
   width: 78px;
   height: 78px;
@@ -445,11 +581,15 @@ nav { display: flex; align-items: center; position: relative; }
   font-size: 1.9rem;
   transition: background 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
 }
+
+/* Hover del círculo: fondo ocre y sube un poco */
 .beneficio:hover .icono-circulo {
   background: var(--ochre);
   border-color: var(--ochre);
   transform: translateY(-4px);
 }
+
+/* Título de cada beneficio */
 .beneficio h3 {
   color: #fff;
   font-size: 1.08rem;
@@ -458,6 +598,8 @@ nav { display: flex; align-items: center; position: relative; }
   display: inline-block;
   padding-bottom: 0.6rem;
 }
+
+/* Rayita teal debajo del título del beneficio */
 .beneficio h3::after {
   content: '';
   position: absolute;
@@ -468,19 +610,28 @@ nav { display: flex; align-items: center; position: relative; }
   background: var(--teal-light);
   transform: translateX(-50%);
 }
+
+/* Descripción de cada beneficio */
 .beneficio p { margin: 0 auto; font-size: 0.92rem; color: #cfc4a8; }
 
 /* =========================================================
    HERO (franja CTA)
    ========================================================= */
+
+/* Franja de llamado a la acción con fondo teal */
 .hero {
   background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%);
   padding: 4rem 0;
   text-align: center;
 }
+
+/* Título del hero en blanco */
 .hero-content h2 { color: #fff; margin-bottom: 0.6rem; }
+
+/* Texto del hero */
 .hero-content p { margin: 0 auto 1.6rem; color: rgba(255,255,255,0.9); }
 
+/* Botón principal ocre (usado en carrusel y hero) */
 .btn-hero {
   display: inline-block;
   font-family: var(--font-display);
@@ -493,6 +644,8 @@ nav { display: flex; align-items: center; position: relative; }
   box-shadow: var(--shadow-sm);
   transition: transform 0.18s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
+
+/* Hover del botón principal: sube y oscurece */
 .btn-hero:hover {
   text-decoration: none;
   transform: translateY(-3px);
@@ -501,18 +654,24 @@ nav { display: flex; align-items: center; position: relative; }
 }
 
 /* =========================================================
-   DESTINOS (TARJETAS)
+   DESTINOS (tarjetas)
    ========================================================= */
+
+/* Sección de destinos */
 .destinos { padding: 4.5rem 0; background: var(--paper); }
 
+/* Cuadrícula de 3 tarjetas de destinos */
 .grid-destinos {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.75rem;
   margin-top: 2rem;
 }
+
+/* Una sola columna en tablet/móvil */
 @media (max-width: 900px) { .grid-destinos { grid-template-columns: 1fr; } }
 
+/* Tarjeta individual de destino */
 .card {
   background: #fff;
   border-radius: var(--radius-lg);
@@ -522,21 +681,29 @@ nav { display: flex; align-items: center; position: relative; }
   display: flex;
   flex-direction: column;
 }
+
+/* Hover de la tarjeta: sube y aumenta la sombra */
 .card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
 
+/* Zona de la imagen de la tarjeta */
 .card-media {
   position: relative;
   height: 190px;
   overflow: hidden;
 }
+
+/* Imagen dentro de la tarjeta */
 .card-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s ease;
 }
+
+/* Zoom de la imagen al hacer hover sobre la tarjeta */
 .card:hover .card-media img { transform: scale(1.06); }
 
+/* Etiqueta (badge) sobre la imagen: Playas / Montañas / Cultura */
 .badge {
   position: absolute;
   top: 0.8rem;
@@ -553,18 +720,30 @@ nav { display: flex; align-items: center; position: relative; }
   box-shadow: var(--shadow-sm);
   z-index: 2;
 }
+
+/* Badge en color teal (Montañas) */
 .badge--teal { background: var(--teal); }
+
+/* Badge en color azul noche (Cultura) */
 .badge--ink { background: var(--ink); }
 
+/* Cuerpo de texto de la tarjeta */
 .card-body { padding: 1.4rem 1.5rem 1.7rem; }
+
+/* Título de la tarjeta */
 .card-body h3 { margin-bottom: 0.5rem; font-size: 1.2rem; }
+
+/* Descripción corta de la tarjeta */
 .card-body > p { color: var(--umber-soft); font-size: 0.96rem; margin-bottom: 1.2rem; }
 
+/* Bloque de listas y tablas dentro de la tarjeta */
 .card-content {
   border-top: 1px dashed var(--line);
   padding-top: 1.1rem;
   margin-top: 0.4rem;
 }
+
+/* Subtítulos dentro del contenido de la tarjeta (Actividades, Precios, etc.) */
 .card-content h4 {
   font-size: 0.85rem;
   text-transform: uppercase;
@@ -572,7 +751,11 @@ nav { display: flex; align-items: center; position: relative; }
   color: var(--teal-dark);
   margin: 1rem 0 0.5rem;
 }
+
+/* Primer subtítulo sin margen superior extra */
 .card-content h4:first-child { margin-top: 0; }
+
+/* Listas dentro de la tarjeta */
 .card-content ul,
 .card-content ol {
   margin: 0 0 0.5rem;
@@ -580,8 +763,11 @@ nav { display: flex; align-items: center; position: relative; }
   font-size: 0.93rem;
   color: var(--umber);
 }
+
+/* Cada ítem de lista */
 .card-content li { margin-bottom: 0.3rem; }
 
+/* Tabla de precios / dificultad */
 table.tabla-simple {
   width: 100%;
   border-collapse: collapse;
@@ -590,12 +776,16 @@ table.tabla-simple {
   border-radius: var(--radius);
   overflow: hidden;
 }
+
+/* Celdas de la tabla */
 table.tabla-simple th,
 table.tabla-simple td {
   border: 1px solid var(--line);
   padding: 0.55rem 0.7rem;
   text-align: left;
 }
+
+/* Encabezados de la tabla */
 table.tabla-simple th {
   background: var(--ink);
   color: #fff;
@@ -603,15 +793,21 @@ table.tabla-simple th {
   font-weight: 500;
   font-size: 0.85rem;
 }
+
+/* Filas pares de la tabla con fondo arena */
 table.tabla-simple tr:nth-child(even) td { background: var(--sand); }
 
 /* =========================================================
    CONTACTO
    ========================================================= */
+
+/* Sección de contacto con fondo arena */
 .contacto {
   background: var(--sand);
   padding: 4rem 0;
 }
+
+/* Caja centrada con los datos de contacto */
 .contacto-caja {
   max-width: 560px;
   text-align: center;
@@ -621,27 +817,43 @@ table.tabla-simple tr:nth-child(even) td { background: var(--sand); }
   padding: 2.5rem 2rem;
   box-shadow: var(--shadow-sm);
 }
+
+/* Título de la caja de contacto */
 .contacto-caja h2 { margin-bottom: 0.5rem; }
+
+/* Texto introductorio de contacto */
 .contacto-caja p { margin: 0 auto 1.4rem; color: var(--umber-soft); }
+
+/* Bloque de dirección y datos */
 .contacto-caja address {
   font-style: normal;
   line-height: 1.9;
   color: var(--umber);
 }
+
+/* Enlace de email dentro de la dirección */
 .contacto-caja address a { color: var(--teal-dark); font-weight: 600; }
 
 /* =========================================================
    PIE DE PÁGINA
    ========================================================= */
+
+/* Pie de página con fondo azul noche y línea ocre superior */
 footer {
   background: var(--ink);
   color: #cfc4a8;
   padding: 2.4rem 0;
   border-top: 4px solid var(--ochre);
 }
-.footer-content {
-  text-align: center;
-}
+
+/* Contenido del pie centrado */
+.footer-content { text-align: center; }
+
+/* Párrafos del pie */
 .footer-content p { margin: 0 auto 0.6rem; max-width: none; }
+
+/* Enlaces del pie (redes sociales) */
 .footer-content a { color: #eee6d3; }
+
+/* Hover de los enlaces del pie */
 .footer-content a:hover { color: var(--ochre-light); }
