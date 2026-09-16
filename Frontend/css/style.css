@@ -800,58 +800,58 @@ table.tabla-simple tr:nth-child(even) td { background: var(--sand); }
 
 /* =========================================================
    VIDEO Y MAPA (después de destinos)
-   Video a la izquierda · Mapa a la derecha · misma altura
+   Video izquierda · Mapa derecha · misma altura
    ========================================================= */
 
-/* Sección de video + mapa */
 .media-section {
   padding: 4.5rem 0;
   background: var(--paper);
 }
 
-/* Cuadrícula de 2 columnas: video | mapa */
-.media-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.75rem;
+/* Fila horizontal: video | mapa */
+.media-section .media-grid {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap;
   align-items: stretch;
+  gap: 1.75rem;
   margin-top: 0.5rem;
   width: 100%;
 }
 
-/* Cada columna ocupa su mitad y estira el contenido */
-.media-video,
-.media-map {
+/* Cada mitad de la fila */
+.media-section .media-video,
+.media-section .media-map {
+  flex: 1 1 50%;
+  width: 50%;
+  max-width: 50%;
   min-width: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+  box-sizing: border-box;
 }
 
-/* Marcos del video y del mapa: misma proporción y altura */
-.video-frame,
-.map-frame {
+/* Marcos con la misma altura */
+.media-section .video-frame,
+.media-section .map-frame {
   position: relative;
   width: 100%;
-  flex: 1;
-  min-height: 320px;
-  aspect-ratio: 16 / 9;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 — misma altura en ambos */
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-md);
 }
 
-.video-frame {
+.media-section .video-frame {
   background: var(--ink);
 }
 
-.map-frame {
+.media-section .map-frame {
   background: var(--sand);
 }
 
-/* Los iframes llenan todo el marco */
-.video-frame iframe,
-.map-frame iframe {
+/* Iframes ocupan todo el marco */
+.media-section .video-frame iframe,
+.media-section .map-frame iframe {
   position: absolute;
   top: 0;
   left: 0;
@@ -861,15 +861,18 @@ table.tabla-simple tr:nth-child(even) td { background: var(--sand); }
   display: block;
 }
 
-/* En pantallas pequeñas: uno debajo del otro */
+/* Móvil: uno debajo del otro */
 @media (max-width: 900px) {
-  .media-grid {
-    grid-template-columns: 1fr;
+  .media-section .media-grid {
+    flex-direction: column !important;
+    flex-wrap: wrap;
   }
 
-  .video-frame,
-  .map-frame {
-    min-height: 260px;
+  .media-section .media-video,
+  .media-section .media-map {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: 100%;
   }
 }
 
