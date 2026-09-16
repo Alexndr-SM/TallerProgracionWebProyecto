@@ -851,6 +851,7 @@ footer {
 
 /* =========================================================
    VIDEO Y MAPA (después de destinos)
+   Video a la izquierda · Mapa a la derecha · misma altura
    ========================================================= */
 
 /* Sección de video + mapa */
@@ -859,65 +860,66 @@ footer {
   background: var(--paper);
 }
 
-/* Cuadrícula: video izquierda, mapa derecha */
+/* Cuadrícula de 2 columnas: video | mapa */
 .media-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.75rem;
+  align-items: stretch;
   margin-top: 0.5rem;
+  width: 100%;
 }
 
-/* Contenedor del video */
-.media-video {
-  min-width: 0;
-}
-
-/* Contenedor del mapa */
+/* Cada columna ocupa su mitad y estira el contenido */
+.media-video,
 .media-map {
   min-width: 0;
-}
-
-/* Marco del video: ratio 16:9 sin controles visibles */
-.video-frame {
-  position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-  background: var(--ink);
+  display: flex;
+  flex-direction: column;
 }
 
-.video-frame iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-/* Marco del mapa: misma altura visual que el video */
+/* Marcos del video y del mapa: misma proporción y altura */
+.video-frame,
 .map-frame {
   position: relative;
   width: 100%;
+  flex: 1;
+  min-height: 320px;
   aspect-ratio: 16 / 9;
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-md);
+}
+
+.video-frame {
+  background: var(--ink);
+}
+
+.map-frame {
   background: var(--sand);
 }
 
+/* Los iframes llenan todo el marco */
+.video-frame iframe,
 .map-frame iframe {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   border: 0;
+  display: block;
 }
 
-/* En pantallas medianas/pequeñas: uno debajo del otro */
+/* En pantallas pequeñas: uno debajo del otro */
 @media (max-width: 900px) {
   .media-grid {
     grid-template-columns: 1fr;
+  }
+
+  .video-frame,
+  .map-frame {
+    min-height: 260px;
   }
 }
