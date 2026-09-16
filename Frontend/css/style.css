@@ -1,7 +1,11 @@
+/* =========================================================
+   IcaTurismo — style.css
+   Estilos de la página principal (index.html)
+   ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap');
 
-/* Variables colores, fuentes y medidas de toda la página */
+/* Variables globales: colores, fuentes y medidas de toda la página */
 :root {
   --ink: #1b2a45;
   --ink-soft: #24365a;
@@ -26,10 +30,10 @@
   --shadow-lg: 0 20px 48px rgba(27, 42, 69, 0.22);
 }
 
-/* padding y border dentro del tamaño del elemento */
+/* Reset: incluye padding y border dentro del tamaño del elemento */
 * { box-sizing: border-box; }
 
-/* Scroll al navegar a secciones internas */
+/* Scroll suave al navegar a secciones internas (#inicio, #contacto, etc.) */
 html { scroll-behavior: smooth; }
 
 /* Cuerpo de la página: fuente, color de texto y fondo tipo papel */
@@ -83,11 +87,9 @@ img { max-width: 100%; display: block; }
 /* Línea de título más clara solo en la sección de beneficios */
 .beneficios .section-underline { background: var(--ochre-light); }
 
-
-
-/* BARRA DE NAVEGACIÓN */
-
-
+/* =========================================================
+   ENCABEZADO / BARRA DE NAVEGACIÓN
+   ========================================================= */
 
 /* Barra superior fija al hacer scroll */
 header {
@@ -173,9 +175,9 @@ nav { display: flex; align-items: center; position: relative; }
 /* Hover: la rayita se estira a todo el ancho del enlace */
 .nav-links a:hover::after { width: 100%; }
 
-
-
-/* MENÚ DE USUARIO */
+/* =========================================================
+   MENÚ DE USUARIO (botón Cuenta + dropdown)
+   ========================================================= */
 
 /* Contenedor del botón Cuenta y su menú desplegable */
 .nav-user {
@@ -275,7 +277,9 @@ nav { display: flex; align-items: center; position: relative; }
 /* Quita la rayita animada en los enlaces del dropdown */
 .user-dropdown a::after { display: none !important; }
 
-/* BOTÓN HAMBURGUESA móvil*/
+/* =========================================================
+   BOTÓN HAMBURGUESA (móvil)
+   ========================================================= */
 
 /* Botón de 3 rayas: oculto en escritorio */
 .hamburger {
@@ -301,11 +305,9 @@ nav { display: flex; align-items: center; position: relative; }
 .hamburger.active span:nth-child(2) { opacity: 0; }
 .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-
-
-/* MENÚ ADAPTABLE  */
-
-
+/* =========================================================
+   MENÚ ADAPTABLE (pantallas <= 780px)
+   ========================================================= */
 @media (max-width: 780px) {
 
   /* Muestra el botón hamburguesa en móvil */
@@ -378,10 +380,9 @@ nav { display: flex; align-items: center; position: relative; }
   }
 }
 
-
-
-/* CARRUSEL DE IMÁGENES */
-
+/* =========================================================
+   CARRUSEL DE IMÁGENES
+   ========================================================= */
 
 /* Sección del carrusel */
 .carrusel { position: relative; background: var(--ink); }
@@ -537,7 +538,9 @@ nav { display: flex; align-items: center; position: relative; }
   .slide { padding: 0 6vw; }
 }
 
-/* BENEFICIOS */
+/* =========================================================
+   BENEFICIOS
+   ========================================================= */
 
 /* Sección de beneficios con fondo azul noche */
 .beneficios {
@@ -611,7 +614,9 @@ nav { display: flex; align-items: center; position: relative; }
 /* Descripción de cada beneficio */
 .beneficio p { margin: 0 auto; font-size: 0.92rem; color: #cfc4a8; }
 
-/* HERO (franja CTA) */
+/* =========================================================
+   HERO (franja CTA)
+   ========================================================= */
 
 /* Franja de llamado a la acción con fondo teal */
 .hero {
@@ -648,8 +653,9 @@ nav { display: flex; align-items: center; position: relative; }
   background: var(--ochre-dark);
 }
 
-
-/* DESTINOS  */
+/* =========================================================
+   DESTINOS (tarjetas)
+   ========================================================= */
 
 /* Sección de destinos */
 .destinos { padding: 4.5rem 0; background: var(--paper); }
@@ -792,63 +798,6 @@ table.tabla-simple th {
 table.tabla-simple tr:nth-child(even) td { background: var(--sand); }
 
 
-/* CONTACTO*/
-
-/* Sección de contacto con fondo arena */
-.contacto {
-  background: var(--sand);
-  padding: 4rem 0;
-}
-
-/* Caja centrada con los datos de contacto */
-.contacto-caja {
-  max-width: 560px;
-  text-align: center;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  padding: 2.5rem 2rem;
-  box-shadow: var(--shadow-sm);
-}
-
-/* Título de la caja de contacto */
-.contacto-caja h2 { margin-bottom: 0.5rem; }
-
-/* Texto introductorio de contacto */
-.contacto-caja p { margin: 0 auto 1.4rem; color: var(--umber-soft); }
-
-/* Bloque de dirección y datos */
-.contacto-caja address {
-  font-style: normal;
-  line-height: 1.9;
-  color: var(--umber);
-}
-
-/* Enlace de email dentro de la dirección */
-.contacto-caja address a { color: var(--teal-dark); font-weight: 600; }
-
-/* PIE DE PÁGINA */
-
-/* Pie de página con fondo azul noche y línea ocre superior */
-footer {
-  background: var(--ink);
-  color: #cfc4a8;
-  padding: 2.4rem 0;
-  border-top: 4px solid var(--ochre);
-}
-
-/* Contenido del pie centrado */
-.footer-content { text-align: center; }
-
-/* Párrafos del pie */
-.footer-content p { margin: 0 auto 0.6rem; max-width: none; }
-
-/* Enlaces del pie (redes sociales) */
-.footer-content a { color: #eee6d3; }
-
-/* Hover de los enlaces del pie */
-.footer-content a:hover { color: var(--ochre-light); }
-
 /* =========================================================
    VIDEO Y MAPA (después de destinos)
    Video a la izquierda · Mapa a la derecha · misma altura
@@ -923,3 +872,64 @@ footer {
     min-height: 260px;
   }
 }
+
+/* =========================================================
+   CONTACTO
+   ========================================================= */
+
+/* Sección de contacto con fondo arena */
+.contacto {
+  background: var(--sand);
+  padding: 4rem 0;
+}
+
+/* Caja centrada con los datos de contacto */
+.contacto-caja {
+  max-width: 560px;
+  text-align: center;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Título de la caja de contacto */
+.contacto-caja h2 { margin-bottom: 0.5rem; }
+
+/* Texto introductorio de contacto */
+.contacto-caja p { margin: 0 auto 1.4rem; color: var(--umber-soft); }
+
+/* Bloque de dirección y datos */
+.contacto-caja address {
+  font-style: normal;
+  line-height: 1.9;
+  color: var(--umber);
+}
+
+/* Enlace de email dentro de la dirección */
+.contacto-caja address a { color: var(--teal-dark); font-weight: 600; }
+
+/* =========================================================
+   PIE DE PÁGINA
+   ========================================================= */
+
+/* Pie de página con fondo azul noche y línea ocre superior */
+footer {
+  background: var(--ink);
+  color: #cfc4a8;
+  padding: 2.4rem 0;
+  border-top: 4px solid var(--ochre);
+}
+
+/* Contenido del pie centrado */
+.footer-content { text-align: center; }
+
+/* Párrafos del pie */
+.footer-content p { margin: 0 auto 0.6rem; max-width: none; }
+
+/* Enlaces del pie (redes sociales) */
+.footer-content a { color: #eee6d3; }
+
+/* Hover de los enlaces del pie */
+.footer-content a:hover { color: var(--ochre-light); }
