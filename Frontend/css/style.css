@@ -936,3 +936,25 @@ footer {
 
 /* Hover de los enlaces del pie */
 .footer-content a:hover { color: var(--ochre-light); }
+
+
+/* Botón Cerrar sesión (usuario logueado) */
+.logout-btn img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  border-radius: 0;
+  background: transparent;
+}
+.logout-btn:hover {
+  border-color: var(--ochre);
+  color: var(--ochre-light);
+}
+
+/* Ocultar elementos de sesión (debe ganar sobre display:flex del .user-btn) */
+#guestArea[hidden],
+#logoutBtn[hidden],
+.user-btn[hidden],
+.is-hidden {
+  display: none !important;
+}

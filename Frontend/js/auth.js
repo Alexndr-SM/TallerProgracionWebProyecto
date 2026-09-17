@@ -34,12 +34,17 @@
   }
 
   async function login(email, password) {
-    const res = await fetch(apiUrl('/api/auth/login'), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
+    let res;
+    try {
+      res = await fetch(apiUrl('/api/auth/login'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+    } catch {
+      throw new Error('No se pudo conectar con el servidor. Revisa que la API esté en marcha y la URL en config.js');
+    }
+    const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.ok) {
       throw new Error(data.message || 'No se pudo iniciar sesión');
     }
@@ -48,12 +53,17 @@
   }
 
   async function register(nombre, email, password) {
-    const res = await fetch(apiUrl('/api/auth/register'), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, email, password }),
-    });
-    const data = await res.json();
+    let res;
+    try {
+      res = await fetch(apiUrl('/api/auth/register'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, email, password }),
+      });
+    } catch {
+      throw new Error('No se pudo conectar con el servidor. Revisa que la API esté en marcha y la URL en config.js');
+    }
+    const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.ok) {
       throw new Error(data.message || 'No se pudo registrar');
     }

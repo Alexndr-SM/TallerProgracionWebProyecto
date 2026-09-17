@@ -73,6 +73,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+
+  /* =========================================================
+     SESIÓN: mostrar Cuenta O Cerrar sesión (nunca los dos)
+     ========================================================= */
+  const guestArea = document.getElementById('guestArea');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  function aplicarSesionUI() {
+    const logged = !!(window.Auth && Auth.isLoggedIn());
+    if (guestArea) {
+      guestArea.hidden = logged;
+      guestArea.classList.toggle('is-hidden', logged);
+    }
+    if (logoutBtn) {
+      logoutBtn.hidden = !logged;
+      logoutBtn.classList.toggle('is-hidden', !logged);
+    }
+    // Si hay sesión, cerrar dropdown de cuenta por si quedó abierto
+    if (logged && navUser) {
+      navUser.classList.remove('open');
+    }
+  }
+
+  aplicarSesionUI();
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (window.Auth) Auth.logout();
+    });
+  }
+
   /* =========================================================
      CARRUSEL PRINCIPAL
      Cambia de imagen con botones, puntos y autoplay
