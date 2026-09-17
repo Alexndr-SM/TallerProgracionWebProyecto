@@ -10,7 +10,7 @@
 </head>
 <body class="auth-page">
 
-    <!-- Tarjeta centrada  de login -->
+    <!-- Tarjeta centrada del formulario de login -->
     <div class="auth-card">
         <!-- Logo -->
         <div class="auth-logo">
@@ -23,7 +23,7 @@
         <p class="subtitle">Inicia sesión para continuar explorando Ica</p>
 
         <!-- Formulario solo visual (no envía datos) -->
-        <form action="#" method="post" onsubmit="return false;">
+        <form action="#" method="post" >
             <!-- Campo correo -->
             <div class="form-group">
                 <label for="email">Correo electrónico</label>
@@ -73,8 +73,10 @@
         <a href="index.html" class="back-home">← Volver al inicio</a>
     </div>
 
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
     <script>
-        // Muestra u oculta la contraseña al hacer clic en el ojo (solo visual)
+        // Mostrar / ocultar contraseña
         const togglePass = document.getElementById('togglePass');
         const passwordInput = document.getElementById('password');
         if (togglePass && passwordInput) {
@@ -84,6 +86,31 @@
                 togglePass.textContent = isPass ? '🙈' : '👁';
             });
         }
+
+        // Si ya hay sesión, ir al inicio
+        if (window.Auth && Auth.isLoggedIn()) {
+            window.location.href = 'index.html';
+        }
+
+        // Enviar login al backend
+        const form = document.querySelector('form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const btn = form.querySelector('.btn-auth');
+            const prev = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Entrando...';
+            try {
+                await Auth.login(email, password);
+                window.location.href = 'index.html';
+            } catch (err) {
+                alert(err.message || 'Error al iniciar sesión');
+                btn.disabled = false;
+                btn.textContent = prev;
+            }
+        });
     </script>
 </body>
 </html>

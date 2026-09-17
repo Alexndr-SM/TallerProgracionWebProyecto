@@ -23,7 +23,7 @@
         <p class="subtitle">Regístrate y descubre los mejores destinos de Ica</p>
 
         <!-- Formulario solo visual (no envía datos) -->
-        <form action="#" method="post" onsubmit="return false;">
+        <form action="#" method="post" >
             <!-- Nombre -->
             <div class="form-group">
                 <label for="nombre">Nombre completo</label>
@@ -90,8 +90,9 @@
         <a href="index.html" class="back-home">← Volver al inicio</a>
     </div>
 
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
     <script>
-        // Muestra u oculta la contraseña al hacer clic en el ojo (solo visual)
         const togglePass = document.getElementById('togglePass');
         const passwordInput = document.getElementById('password');
         if (togglePass && passwordInput) {
@@ -101,6 +102,35 @@
                 togglePass.textContent = isPass ? '🙈' : '👁';
             });
         }
+
+        if (window.Auth && Auth.isLoggedIn()) {
+            window.location.href = 'index.html';
+        }
+
+        const form = document.querySelector('form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const password2 = document.getElementById('password2').value;
+            if (password !== password2) {
+                alert('Las contraseñas no coinciden');
+                return;
+            }
+            const btn = form.querySelector('.btn-auth');
+            const prev = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Creando cuenta...';
+            try {
+                await Auth.register(nombre, email, password);
+                window.location.href = 'index.html';
+            } catch (err) {
+                alert(err.message || 'Error al registrarse');
+                btn.disabled = false;
+                btn.textContent = prev;
+            }
+        });
     </script>
 </body>
 </html>

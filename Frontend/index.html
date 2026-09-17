@@ -31,17 +31,25 @@
                 <li><a href="#montanas">Montañas</a></li>
                 <li><a href="#cultura">Cultura</a></li>
                 <li><a href="#contacto">Contacto</a></li>
-                <!-- Botón Cuenta: al hacer clic despliega Login y Registrarse -->
+                <!-- Cuenta: invitados ven Login/Registro; con sesión ven Cerrar sesión -->
                 <li class="nav-user" id="navUser">
-                    <button class="user-btn" id="userBtn" aria-label="Menú de usuario" aria-expanded="false">
-                        <img src="Person.png" alt="Usuario">
-                        <span>Cuenta</span>
-                        <span class="chevron">▾</span>
-                    </button>
-                    <div class="user-dropdown" id="userDropdown">
-                        <a href="login.html">Iniciar sesión</a>
-                        <a href="registro.html">Registrarse</a>
+                    <!-- Menú para invitados (sin sesión) -->
+                    <div id="guestArea">
+                        <button class="user-btn" id="userBtn" aria-label="Menú de usuario" aria-expanded="false">
+                            <img src="Person.png" alt="Usuario">
+                            <span>Cuenta</span>
+                            <span class="chevron">▾</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <a href="login.html">Iniciar sesión</a>
+                            <a href="registro.html">Registrarse</a>
+                        </div>
                     </div>
+                    <!-- Botón para usuarios logueados (oculto por defecto) -->
+                    <button class="user-btn logout-btn" id="logoutBtn" type="button" hidden>
+                        <img src="puerta.png" alt="Cerrar sesión">
+                        <span>Cerrar sesión</span>
+                    </button>
                 </li>
             </ul>
         </nav>
@@ -321,6 +329,8 @@
 </footer>
 
 <!-- Script de interacciones (hamburguesa, dropdown Cuenta, carrusel) -->
+<script src="config.js"></script>
+<script src="auth.js"></script>
 <script src="Script.js"></script>
 </body>
 </html>
