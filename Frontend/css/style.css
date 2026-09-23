@@ -807,7 +807,6 @@ table.tabla-simple tr:nth-child(even) td { background: var(--sand); }
   padding: 4.5rem 0;
   background: var(--paper);
 }
-
 /* Fila horizontal: video | mapa */
 .media-section .media-grid {
   display: flex;
