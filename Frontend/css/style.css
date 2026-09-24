@@ -398,7 +398,7 @@ nav { display: flex; align-items: center;}
 .carrusel-contenedor {
   position: relative;
   overflow: hidden;
-  height: 60vh;
+  height: 90vh;
   min-height: 420px;
 }
 
