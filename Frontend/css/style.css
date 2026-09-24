@@ -109,7 +109,7 @@ header {
   height: 78px;
 }
 
-/* Bloque del logo (nombre + subtítulo) */
+/* Bloque del logo (imagen + nombre + subtítulo) */
 .logo { display: flex; align-items: center; gap: 0.7rem; }
 
 /* Nueva imagen del logo en el header */
@@ -830,7 +830,9 @@ table.tabla-simple tr:nth-child(even) td { background: var(--sand); }
   margin-top: 0.5rem;
   width: 100%;
 }
-
+.media-section .section-title{
+  font-size: 50px;
+}
 /* Cada mitad de la fila */
 .media-section .media-video,
 .media-section .media-map {
@@ -907,6 +909,12 @@ table.tabla-simple tr:nth-child(even) td { background: var(--sand); }
   border-radius: var(--radius-lg);
   padding: 2.5rem 2rem;
   box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contacto-caja:hover {
+  transform: scale(1.05) rotate(3deg);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Título de la caja de contacto */

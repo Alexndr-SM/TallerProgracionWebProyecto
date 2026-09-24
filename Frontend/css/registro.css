@@ -51,7 +51,7 @@ body.auth-page {
 
 /* Imagen del logo en las tarjetas de login/registro */
 .auth-logo .logo-img {
-  height: 110px; /* Un poco más grande para que resalte en el formulario */
+  height: 120px; /* Un poco más grande para que resalte en el formulario */
   width: auto;
   margin: 0 auto 0.8rem;
   display: block;
