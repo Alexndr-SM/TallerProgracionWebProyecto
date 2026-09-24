@@ -134,7 +134,7 @@ header {
 }
 
 /* Contenedor del menú de navegación */
-nav { display: flex; align-items: center; position: relative; }
+nav { display: flex; align-items: center;}
 
 /* Lista de enlaces del menú en fila (escritorio) */
 .nav-links {
@@ -247,9 +247,8 @@ nav { display: flex; align-items: center; position: relative; }
   z-index: 200;
 }
 
-/* Muestra el dropdown cuando Cuenta está abierto o enfocado */
-.nav-user.open .user-dropdown,
-.nav-user:focus-within .user-dropdown {
+/* Muestra el dropdown cuando JS asigna la clase open */
+.nav-user.open .user-dropdown {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -317,9 +316,13 @@ nav { display: flex; align-items: center; position: relative; }
   .nav-links {
     position: absolute;
     top: 78px;
-    left: 0;
     right: 0;
+    width: 25%; 
+    margin: 0;
+    padding: 0; 
+    z-index: 1000;
     background: var(--ink-soft);
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 0;
@@ -330,13 +333,18 @@ nav { display: flex; align-items: center; position: relative; }
   }
 
   /* Menú abierto en móvil */
-  .nav-links.active { max-height: 380px; }
+  .nav-links.active { max-height: 480px; }
 
   /* Línea divisoria entre items del menú móvil */
   .nav-links li { border-top: 1px solid rgba(255,255,255,0.08); }
 
   /* Enlaces a ancho completo en el menú móvil */
-  .nav-links a { display: block; padding: 1rem 1.5rem; }
+  .nav-links a { 
+    display: block;
+    width:100%;
+    box-sizing: border-box;
+    padding: 1rem 1.5rem; 
+  }
 
   /* Sin rayita animada en móvil */
   .nav-links a::after { display: none; }
@@ -370,8 +378,7 @@ nav { display: flex; align-items: center; position: relative; }
   }
 
   /* Dropdown de Cuenta abierto en móvil */
-  .nav-user.open .user-dropdown,
-  .nav-user:focus-within .user-dropdown {
+  .nav-user.open .user-dropdown {
     max-height: 120px;
     padding: 0.3rem 0;
     opacity: 1;
