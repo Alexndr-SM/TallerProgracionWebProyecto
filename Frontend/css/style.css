@@ -694,9 +694,8 @@ nav { display: flex; align-items: center;}
   display: flex;
   flex-direction: column;
 }
-
 /* Hover de la tarjeta: sube y aumenta la sombra */
-.card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
+.card:hover { transform: translateY(-6px); box-shadow: rgb(0, 0, 65); }
 
 /* Zona de la imagen de la tarjeta */
 .card-media {
@@ -704,7 +703,6 @@ nav { display: flex; align-items: center;}
   height: 190px;
   overflow: hidden;
 }
-
 /* Imagen dentro de la tarjeta */
 .card-media img {
   width: 100%;
