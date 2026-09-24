@@ -49,11 +49,12 @@ body.auth-page {
   margin-bottom: 1.6rem;
 }
 
-/* Emoji del sol dentro del logo */
-.auth-logo .sun {
-  font-size: 2.2rem;
+/* Imagen del logo en las tarjetas de login/registro */
+.auth-logo .logo-img {
+  height: 75px; /* Un poco más grande para que resalte en el formulario */
+  width: auto;
+  margin: 0 auto 0.8rem;
   display: block;
-  margin-bottom: 0.4rem;
 }
 
 /* Título "IcaTurismo" del logo: texto blanco con tipografía de títulos */
