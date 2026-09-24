@@ -51,19 +51,10 @@ body.auth-page {
 
 /* Imagen del logo en las tarjetas de login/registro */
 .auth-logo .logo-img {
-  height: 75px; /* Un poco más grande para que resalte en el formulario */
+  height: 110px; /* Un poco más grande para que resalte en el formulario */
   width: auto;
   margin: 0 auto 0.8rem;
   display: block;
-}
-
-/* Título "IcaTurismo" del logo: texto blanco con tipografía de títulos */
-.auth-logo h1 {
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: 1.55rem;
-  margin: 0 0 0.2rem;
-  line-height: 1.15;
 }
 
 /* Subtítulo "Promoción de destinos" debajo del nombre */
