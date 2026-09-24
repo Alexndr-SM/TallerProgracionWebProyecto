@@ -104,7 +104,7 @@
             btn.textContent = 'Entrando...';
             try {
                 await Auth.login(email, password);
-                window.location.href = 'index.html';
+                window.location.href = '../index.html';
             } catch (err) {
                 alert(err.message || 'Error al iniciar sesión');
                 btn.disabled = false;
