@@ -30,26 +30,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* =========================================================
-     DROPDOWN DE USUARIO (botón Cuenta)
-     Muestra/oculta las opciones: Iniciar sesión y Registrarse
+     DROPDOWN DE USUARIO (botón Cuenta / Perfil)
+     Muestra/oculta las opciones: Iniciar sesión, Registrarse o Cerrar sesión
      ========================================================= */
-  const navUser = document.getElementById('navUser'); // Contenedor <li>
-  const userBtn = document.getElementById('userBtn'); // Botón "Cuenta"
+  const navUser = document.getElementById('navUser');
 
-  if (navUser && userBtn) {
+  function initDropdown(btnId, dropdownId) {
+    const btn = document.getElementById(btnId);
+    const dropdown = document.getElementById(dropdownId);
+    if (!btn || !dropdown || !navUser) return;
+
     // Clic en el botón: abre o cierra el menú desplegable
-    userBtn.addEventListener('click', (e) => {
+    btn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation(); // Evita que el clic llegue al document y lo cierre al instante
       const isOpen = navUser.classList.toggle('open'); // Alterna la clase .open
-      userBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false'); // Accesibilidad
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false'); // Accesibilidad
     });
 
     // Clic fuera del menú: lo cierra
     document.addEventListener('click', (e) => {
       if (!navUser.contains(e.target)) {
         navUser.classList.remove('open');
-        userBtn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-expanded', 'false');
       }
     });
 
@@ -57,51 +60,68 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         navUser.classList.remove('open');
-        userBtn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-expanded', 'false');
       }
     });
 
     // Al hacer clic en un enlace del dropdown, se cierra antes de navegar
-    const dropdown = document.getElementById('userDropdown');
-    if (dropdown) {
-      dropdown.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          navUser.classList.remove('open');
-          userBtn.setAttribute('aria-expanded', 'false');
-        });
+    dropdown.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navUser.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
       });
-    }
+    });
   }
+
+  // Inicializar dropdown de invitado (Cuenta)
+  initDropdown('userBtn', 'userDropdown');
+  // Inicializar dropdown de usuario logueado (Perfil)
+  initDropdown('userProfileBtn', 'userProfileDropdown');
 
 
   /* =========================================================
-     SESIÓN: mostrar Cuenta O Cerrar sesión (nunca los dos)
+     SESIÓN: mostrar Cuenta O Perfil de Usuario (nunca los dos)
      ========================================================= */
   const guestArea = document.getElementById('guestArea');
-  const logoutBtn = document.getElementById('logoutBtn');
+  const userArea = document.getElementById('userArea');
+  const userNameDisplay = document.getElementById('userNameDisplay');
+  const logoutAction = document.getElementById('logoutAction');
 
   function aplicarSesionUI() {
     const logged = !!(window.Auth && Auth.isLoggedIn());
+    
+    // Ocultar/Mostrar área de invitado
     if (guestArea) {
       guestArea.hidden = logged;
       guestArea.classList.toggle('is-hidden', logged);
     }
-    if (logoutBtn) {
-      logoutBtn.hidden = !logged;
-      logoutBtn.classList.toggle('is-hidden', !logged);
+    
+    // Ocultar/Mostrar área de usuario logueado
+    if (userArea) {
+      userArea.hidden = !logged;
+      userArea.classList.toggle('is-hidden', !logged);
     }
-    // Si hay sesión, cerrar dropdown de cuenta por si quedó abierto
-    if (logged && navUser) {
-      navUser.classList.remove('open');
+
+    // Si está logueado, actualizar el nombre en el botón
+    if (logged) {
+      const user = Auth.getUser();
+      if (user && userNameDisplay) {
+        userNameDisplay.textContent = user.nombre || 'Mi cuenta';
+      }
+      // Si hay sesión, cerrar dropdown por si quedó abierto
+      if (navUser) navUser.classList.remove('open');
+    } else {
+      if (navUser) navUser.classList.remove('open');
     }
   }
 
+  // Ejecutar al cargar la página
   aplicarSesionUI();
 
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', (e) => {
+  // Evento para cerrar sesión desde el nuevo menú
+  if (logoutAction) {
+    logoutAction.addEventListener('click', (e) => {
       e.preventDefault();
-      e.stopPropagation();
       if (window.Auth) Auth.logout();
     });
   }

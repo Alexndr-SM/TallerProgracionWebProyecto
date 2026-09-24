@@ -255,7 +255,7 @@ nav { display: flex; align-items: center;}
   transform: translateY(0);
 }
 
-/* Enlaces dentro del dropdown (Iniciar sesión / Registrarse) */
+/* Enlaces dentro del dropdown (Iniciar sesión / Registrarse / Cerrar sesión) */
 .user-dropdown a {
   display: block;
   padding: 0.75rem 1.2rem;
@@ -957,9 +957,12 @@ footer {
   color: var(--ochre-light);
 }
 
+/* =========================================================
+   VISIBILIDAD SEGÚN SESIÓN
+   ========================================================= */
 /* Ocultar elementos de sesión (debe ganar sobre display:flex del .user-btn) */
 #guestArea[hidden],
-#logoutBtn[hidden],
+#userArea[hidden],
 .user-btn[hidden],
 .is-hidden {
   display: none !important;

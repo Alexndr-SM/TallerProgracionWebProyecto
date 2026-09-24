@@ -31,7 +31,7 @@
                 <li><a href="#montanas">Montañas</a></li>
                 <li><a href="#cultura">Cultura</a></li>
                 <li><a href="#contacto">Contacto</a></li>
-                <!-- Cuenta: invitados ven Login/Registro; con sesión ven Cerrar sesión -->
+                <!-- Cuenta: invitados ven Login/Registro; con sesión ven su Nombre y Cerrar sesión -->
                 <li class="nav-user" id="navUser">
                     <!-- Menú para invitados (sin sesión) -->
                     <div id="guestArea">
@@ -45,11 +45,18 @@
                             <a href="html/registro.html">Registrarse</a>
                         </div>
                     </div>
-                    <!-- Botón para usuarios logueados (oculto por defecto) -->
-                    <button class="user-btn logout-btn is-hidden" id="logoutBtn" type="button" hidden>
-                        <img src="puerta.png" alt="Cerrar sesión">
-                        <span>Cerrar sesión</span>
-                    </button>
+                    
+                    <!-- Menú para usuarios logueados (oculto por defecto) -->
+                    <div id="userArea" class="is-hidden" hidden>
+                        <button class="user-btn" id="userProfileBtn" aria-label="Menú de usuario" aria-expanded="false">
+                            <img src="Person.png" alt="Usuario">
+                            <span id="userNameDisplay">Usuario</span>
+                            <span class="chevron">▾</span>
+                        </button>
+                        <div class="user-dropdown" id="userProfileDropdown">
+                            <a href="#" id="logoutAction">Cerrar sesión</a>
+                        </div>
+                    </div>
                 </li>
             </ul>
         </nav>
