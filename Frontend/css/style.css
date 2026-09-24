@@ -110,8 +110,14 @@ header {
 }
 
 /* Bloque del logo (nombre + subtítulo) */
-.logo { display: flex; align-items: baseline; gap: 0.7rem; }
+.logo { display: flex; align-items: center; gap: 0.7rem; }
 
+/* Nueva imagen del logo en el header */
+.logo-img {
+  height: 42px; /* Ajusta esta altura según qué tan grande quieras el logo */
+  width: auto;
+  object-fit: contain;
+}
 /* Nombre "IcaTurismo" del logo en blanco */
 .logo h1 {
   color: #fff;
