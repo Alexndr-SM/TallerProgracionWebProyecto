@@ -911,9 +911,8 @@ table.tabla-simple tr:nth-child(even) td { background: var(--sand); }
   box-shadow: var(--shadow-sm);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .contacto-caja:hover {
-  transform: scale(1.05) rotate(3deg);
+  transform: scale(1.05) rotate(-3deg);
   box-shadow: var(--shadow-lg);
 }
 
