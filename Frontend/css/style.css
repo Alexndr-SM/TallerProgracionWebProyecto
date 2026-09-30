@@ -5,7 +5,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap');
 
-/* Variables globales: colores, fuentes y medidas de toda la página */
+/* Variables globales: colores, fuentes y medidas de toda la página (Modo Claro - Paleta 1) */
 :root {
   --ink: #1b2a45;
   --ink-soft: #24365a;
@@ -112,12 +112,13 @@ header {
 /* Bloque del logo (imagen + nombre + subtítulo) */
 .logo { display: flex; align-items: center; gap: 0.7rem; }
 
-/* Nueva imagen del logo en el header */
+/* Imagen del logo en el header */
 .logo-img {
-  height: 42px; /* Ajusta esta altura según qué tan grande quieras el logo */
+  height: 42px;
   width: auto;
   object-fit: contain;
 }
+
 /* Nombre "IcaTurismo" del logo en blanco */
 .logo h1 {
   color: #fff;
@@ -404,7 +405,7 @@ nav { display: flex; align-items: center;}
 .carrusel-contenedor {
   position: relative;
   overflow: hidden;
-  height: 90vh;
+  height: 60vh;
   min-height: 420px;
 }
 
@@ -694,10 +695,9 @@ nav { display: flex; align-items: center;}
   display: flex;
   flex-direction: column;
 }
+
 /* Hover de la tarjeta: sube y aumenta la sombra */
-.card:hover { transform: translateY(-6px); box-shadow: 0 4px 6px rgb(0, 0, 65); }
-
-
+.card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
 
 /* Zona de la imagen de la tarjeta */
 .card-media {
@@ -705,6 +705,7 @@ nav { display: flex; align-items: center;}
   height: 190px;
   overflow: hidden;
 }
+
 /* Imagen dentro de la tarjeta */
 .card-media img {
   width: 100%;
@@ -830,9 +831,7 @@ table.tabla-simple tr:nth-child(even) td { background: var(--sand); }
   margin-top: 0.5rem;
   width: 100%;
 }
-.media-section .section-title{
-  font-size: 50px;
-}
+
 /* Cada mitad de la fila */
 .media-section .media-video,
 .media-section .media-map {
@@ -909,11 +908,6 @@ table.tabla-simple tr:nth-child(even) td { background: var(--sand); }
   border-radius: var(--radius-lg);
   padding: 2.5rem 2rem;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.contacto-caja:hover {
-  transform: scale(1.05) rotate(-3deg);
-  box-shadow: var(--shadow-lg);
 }
 
 /* Título de la caja de contacto */
@@ -973,10 +967,110 @@ footer {
 /* =========================================================
    VISIBILIDAD SEGÚN SESIÓN
    ========================================================= */
-/* Ocultar elementos de sesión (debe ganar sobre display:flex del .user-btn) */
 #guestArea[hidden],
 #userArea[hidden],
 .user-btn[hidden],
 .is-hidden {
   display: none !important;
+}
+
+/* =========================================================
+   MODO OSCURO Y BOTÓN DE TEMA
+   ========================================================= */
+
+/* Variables para el Modo Oscuro (Paleta 2) */
+body.dark-mode {
+  --ink: #2A2336;          /* Fondo del header y botones oscuros */
+  --ink-soft: #3A3050;     /* Fondo de tarjetas/dropdowns */
+  --paper: #1A1625;        /* Fondo principal oscuro */
+  --sand: #2A2336;         /* Fondo de secciones */
+  --umber: #E5E0EB;        /* Texto general claro */
+  --umber-soft: #B8B0C8;   /* Texto secundario */
+  --line: #4A3B69;         /* Bordes */
+  --ochre: #D68C9B;        /* Acento rosa (Paleta 2) */
+  --ochre-dark: #B06A78;   /* Acento rosa oscuro */
+  --ochre-light: #E8A8B5;  /* Acento rosa claro */
+  --teal: #6B5B95;         /* Acento morado */
+  --teal-dark: #4A3B69;    /* Acento morado oscuro */
+  --teal-light: #8B7BB5;   /* Acento morado claro */
+}
+
+/* Ajustes específicos para el modo oscuro */
+body.dark-mode .card { background: var(--ink-soft); }
+body.dark-mode .card-body > p { color: var(--umber-soft); }
+body.dark-mode .contacto-caja { background: var(--ink-soft); }
+
+/* Transición suave para el cambio de tema */
+body, header, .card, .auth-card, .beneficios, .hero, .contacto, footer, .user-dropdown, input, .btn-auth, .btn-hero {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Estilos del Botón de Tema */
+.nav-theme {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+.theme-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  width: 56px;
+  height: 28px;
+}
+
+/* Fondo del switch (la píldora azul oscuro) */
+.toggle-track {
+  width: 100%;
+  height: 100%;
+  background: #1b2a45; /* Azul oscuro */
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: background 0.3s ease;
+  position: relative;
+}
+
+/* El círculo blanco que se desliza y contiene la imagen del sol/luna */
+.toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  background-color: #fff;
+  background-image: url('../assets/sol.png'); /* Imagen del Sol */
+  background-size: 14px;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), background-image 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 0;
+}
+
+/* Estado del switch cuando está en MODO OSCURO */
+body.dark-mode .toggle-track {
+  background: #4A3B69; /* Fondo morado oscuro */
+}
+
+body.dark-mode .toggle-thumb {
+  transform: translateX(28px); /* Deslizar a la derecha */
+  background-image: url('../assets/luna.png'); /* Cambia a la imagen de la Luna */
+}
+
+/* Ajuste en móvil para que el botón se acomode en el menú */
+@media (max-width: 780px) {
+  .nav-theme {
+    padding: 1rem 1.5rem;
+    justify-content: flex-start;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
 }
