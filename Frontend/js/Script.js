@@ -207,3 +207,21 @@ document.addEventListener('DOMContentLoaded', () => {
   iniciarAutoplay();
 
 });
+/* JS DEL PUNTERO CON BRILLO Y RASTRO */
+document.addEventListener('mousemove', function(e) {
+            // Crear el elemento del punto
+            const punto = document.createElement('div');
+            punto.classList.add('punto-brillante');
+
+            // Posicionar el punto exactamente donde está el mouse
+            punto.style.left = e.pageX + 'px';
+            punto.style.top = e.pageY + 'px';
+
+            // Añadir el punto al documento
+            document.body.appendChild(punto);
+
+            // Eliminar el punto del HTML después de 0.8 segundos (tiempo de la animación)
+            setTimeout(() => {
+                punto.remove();
+            }, 100);
+});

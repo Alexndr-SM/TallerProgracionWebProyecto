@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Montañas</title>
+    <link rel="stylesheet" href="../css/style.css>
 </head>
 <body>
     <header>
     <div class="wrap header-inner">
         <!-- Logo -->
         <div class="logo">
-            <img src="assets/logoIcaTurismo.png" alt="IcaTurismo" class="logo-img">
+            <img src=".assets/logoIcaTurismo.png" alt="IcaTurismo" class="logo-img">
             <h1>IcaTurismo</h1>
             <span>Promoción de destinos</span>
         </div>
@@ -21,30 +22,30 @@
             </button>
             <!-- Enlaces de navegación + menú Cuenta -->
             <ul class="nav-links" id="navLinks">
-                <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#playas">Playas</a></li>
-                <li><a href="#montanas">Montañas</a></li>
-                <li><a href="#cultura">Cultura</a></li>
-                <li><a href="#contacto">Contacto</a></li>
+                <li><a href="../index.html">Inicio</a></li>
+                <li><a href="playas.html">Playas</a></li>
+                <li><a href="montañas.html">Montañas</a></li>
+                <li><a href="cultura.html">Cultura</a></li>
+                <li><a href="../index.html/#contacto">Contacto</a></li>
                 <!-- Cuenta: invitados ven Login/Registro; con sesión ven su Nombre y Cerrar sesión -->
                 <li class="nav-user" id="navUser">
                     <!-- Menú para invitados (sin sesión) -->
                     <div id="guestArea">
                         <button class="user-btn" id="userBtn" aria-label="Menú de usuario" aria-expanded="false">
-                            <img src="assets/Person.png" alt="Usuario">
+                            <img src="../assets/Person.png" alt="Usuario">
                             <span>Cuenta</span>
                             <span class="chevron">▾</span>
                         </button>
                         <div class="user-dropdown" id="userDropdown">
-                            <a href="html/login.html">Iniciar sesión</a>
-                            <a href="html/registro.html">Registrarse</a>
+                            <a href="login.html">Iniciar sesión</a>
+                            <a href="registro.html">Registrarse</a>
                         </div>
                     </div>
                     
                     <!-- Menú para usuarios logueados (oculto por defecto) -->
                     <div id="userArea" class="is-hidden" hidden>
                         <button class="user-btn" id="userProfileBtn" aria-label="Menú de usuario" aria-expanded="false">
-                            <img src="assets/Person.png" alt="Usuario">
+                            <img src="../assets/Person.png" alt="Usuario">
                             <span id="userNameDisplay">Usuario</span>
                             <span class="chevron">▾</span>
                         </button>
@@ -57,6 +58,9 @@
         </nav>
     </div>
 </header>
-
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/Script.js"></script>
+<script src="../js/theme.js"></script>
 </body>
 </html>
