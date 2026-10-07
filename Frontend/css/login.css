@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap');
 
 /* Variables de color, fuentes y medidas del login */
@@ -9,8 +10,52 @@
   --ochre-light: #e7b169;
   --radius-lg: 14px;
   --shadow-lg: 0 20px 48px rgba(27, 42, 69, 0.22);
+
+  /* --- Tokens del tema CLARO --- */
+  --a-bg: linear-gradient(160deg, #fbf3e2 0%, #f1e6cf 50%, #e9dcc0 100%);
+  --a-card: #fffbf3;
+  --a-card-border: #e3d5b3;
+  --a-title: #1b2a45;
+  --a-sub: #6b5946;
+  --a-label: #3a2a1e;
+  --a-icon: #7a6a56;
+  --a-input-bg: #ffffff;
+  --a-input-text: #3a2a1e;
+  --a-placeholder: #a09484;
+  --a-border: rgba(58, 42, 30, 0.2);
+  --a-border-strong: rgba(58, 42, 30, 0.35);
+  --a-divider: #7a6a56;
+  --a-social-hover: #f7efdc;
+  --a-social-hover-text: #1b2a45;
+  --a-link: #a66c22;
+  --a-link-hover: #7d4f14;
+  --toggle-bg: rgba(255, 251, 243, 0.9);
+  color-scheme: light;
   --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
   --font-body: 'Work Sans', 'Segoe UI', sans-serif;
+}
+
+/* --- Tokens del tema OSCURO (se activa con <html data-theme="dark">) --- */
+:root[data-theme="dark"] {
+  --a-bg: linear-gradient(160deg, #0f1729 0%, var(--ink) 40%, var(--ink-soft) 100%);
+  --a-card: #1a2740;
+  --a-card-border: rgba(255, 255, 255, 0.06);
+  --a-title: #ffffff;
+  --a-sub: #a8b0c0;
+  --a-label: #c5cdd8;
+  --a-icon: #7a8699;
+  --a-input-bg: #121c30;
+  --a-input-text: #e8edf5;
+  --a-placeholder: #5a6578;
+  --a-border: rgba(255, 255, 255, 0.1);
+  --a-border-strong: rgba(255, 255, 255, 0.2);
+  --a-divider: #5a6578;
+  --a-social-hover: #1a2740;
+  --a-social-hover-text: #ffffff;
+  --a-link: var(--ochre);
+  --a-link-hover: var(--ochre-light);
+  --toggle-bg: rgba(11, 18, 34, 0.85);
+  color-scheme: dark;
 }
 
 /* Reset: incluye padding y border dentro del tamaño del elemento */
@@ -26,7 +71,9 @@ body.auth-page {
   align-items: center;
   justify-content: center;
   font-family: var(--font-body);
-  background: linear-gradient(160deg, #0f1729 0%, var(--ink) 40%, var(--ink-soft) 100%);
+  background: var(--a-bg);
+  background-attachment: fixed;
+  color: var(--a-label);
   padding: 2rem 1rem;
   line-height: 1.55;
 }
@@ -35,46 +82,37 @@ body.auth-page {
 .auth-card {
   width: 100%;
   max-width: 420px;
-  background: #1a2740;
+  background: var(--a-card);
   border-radius: 18px;
   padding: 2.4rem 2rem 2rem;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid var(--a-card-border);
 }
 
-/* Logo (imagen + nombre + subtítulo): bloque centrado en la parte superior de la tarjeta */
+/* Logo (sol + nombre + subtítulo): bloque centrado en la parte superior de la tarjeta */
 .auth-logo {
   text-align: center;
   margin-bottom: 1.6rem;
 }
 
-/* Imagen del logo */
+/* Imagen del logo en las tarjetas de login/registro */
 .auth-logo .logo-img {
-  height: 75px;
+  height: 140px; /* Un poco más grande para que resalte en el formulario */
   width: auto;
   margin: 0 auto 0.8rem;
   display: block;
 }
 
-/* Título "IcaTurismo" del logo: texto blanco con tipografía de títulos */
-.auth-logo h1 {
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: 1.55rem;
-  margin: 0 0 0.2rem;
-  line-height: 1.15;
-}
-
 /* Subtítulo "Promoción de destinos" debajo del nombre */
 .auth-logo p {
-  color: var(--ochre-light);
+  color: var(--a-link);
   font-size: 0.85rem;
   margin: 0;
 }
 
 /* Título "Bienvenido de nuevo": saludo centrado en blanco */
 .auth-card h2 {
-  color: #fff;
+  color: var(--a-title);
   font-family: var(--font-display);
   text-align: center;
   font-size: 1.45rem;
@@ -85,7 +123,7 @@ body.auth-page {
 /* Subtítulo del formulario: frase secundaria centrada en gris */
 .auth-card .subtitle {
   text-align: center;
-  color: #a8b0c0;
+  color: var(--a-sub);
   font-size: 0.92rem;
   margin: 0 0 1.8rem;
 }
@@ -98,7 +136,7 @@ body.auth-page {
 /* Etiqueta del campo (ej. "Correo electrónico"): texto gris encima del input */
 .form-group label {
   display: block;
-  color: #c5cdd8;
+  color: var(--a-label);
   font-size: 0.88rem;
   font-weight: 500;
   margin-bottom: 0.4rem;
@@ -115,7 +153,7 @@ body.auth-page {
 .input-wrap .icon-left {
   position: absolute;
   left: 14px;
-  color: #7a8699;
+  color: var(--a-icon);
   font-size: 1rem;
   pointer-events: none;
 }
@@ -124,10 +162,10 @@ body.auth-page {
 .input-wrap input {
   width: 100%;
   padding: 0.85rem 1rem 0.85rem 2.6rem;
-  background: #121c30;
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--a-input-bg);
+  border: 1px solid var(--a-border);
   border-radius: 10px;
-  color: #e8edf5;
+  color: var(--a-input-text);
   font-family: var(--font-body);
   font-size: 0.95rem;
   outline: none;
@@ -136,7 +174,7 @@ body.auth-page {
 
 /* Texto de ayuda dentro del input vacío (placeholder) */
 .input-wrap input::placeholder {
-  color: #5a6578;
+  color: var(--a-placeholder);
 }
 
 /* Estado al enfocar el input: borde y halo ocre */
@@ -151,7 +189,7 @@ body.auth-page {
   right: 12px;
   background: none;
   border: none;
-  color: #7a8699;
+  color: var(--a-icon);
   cursor: pointer;
   font-size: 1.1rem;
   padding: 4px;
@@ -160,7 +198,7 @@ body.auth-page {
 
 /* Hover del botón ojo: color ocre claro */
 .input-wrap .toggle-pass:hover {
-  color: var(--ochre-light);
+  color: var(--a-link-hover);
 }
 
 /* Fila de opciones: "Recordarme" a la izquierda y "Olvidé contraseña" a la derecha */
@@ -177,7 +215,7 @@ body.auth-page {
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  color: #a8b0c0;
+  color: var(--a-sub);
   cursor: pointer;
   margin: 0;
 }
@@ -192,14 +230,14 @@ body.auth-page {
 
 /* Enlace "¿Olvidaste tu contraseña?" en ocre */
 .form-options a {
-  color: var(--ochre);
+  color: var(--a-link);
   font-weight: 500;
   text-decoration: none;
 }
 
 /* Hover del enlace "¿Olvidaste tu contraseña?" */
 .form-options a:hover {
-  color: var(--ochre-light);
+  color: var(--a-link-hover);
 }
 
 /* Botón principal "Iniciar sesión": ancho completo con degradado ocre */
@@ -236,7 +274,7 @@ body.auth-page {
   align-items: center;
   gap: 1rem;
   margin: 1.5rem 0;
-  color: #5a6578;
+  color: var(--a-divider);
   font-size: 0.85rem;
 }
 
@@ -246,7 +284,7 @@ body.auth-page {
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(255,255,255,0.1);
+  background: var(--a-border);
 }
 
 /* Contenedor de botones sociales: dos columnas (Google y Facebook) */
@@ -264,10 +302,10 @@ body.auth-page {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: #121c30;
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--a-input-bg);
+  border: 1px solid var(--a-border);
   border-radius: 10px;
-  color: #c5cdd8;
+  color: var(--a-label);
   font-family: var(--font-body);
   font-size: 0.9rem;
   font-weight: 500;
@@ -278,9 +316,9 @@ body.auth-page {
 
 /* Hover del botón social: fondo y borde más claros */
 .btn-social:hover {
-  background: #1a2740;
-  border-color: rgba(255,255,255,0.2);
-  color: #fff;
+  background: var(--a-social-hover);
+  border-color: var(--a-border-strong);
+  color: var(--a-social-hover-text);
 }
 
 /* Icono "G" de Google en rojo */
@@ -301,20 +339,20 @@ body.auth-page {
 .auth-footer {
   text-align: center;
   font-size: 0.9rem;
-  color: #a8b0c0;
+  color: var(--a-sub);
   margin: 0;
 }
 
 /* Enlace "Regístrate aquí" en ocre */
 .auth-footer a {
-  color: var(--ochre);
+  color: var(--a-link);
   font-weight: 600;
   text-decoration: none;
 }
 
 /* Hover del enlace "Regístrate aquí" */
 .auth-footer a:hover {
-  color: var(--ochre-light);
+  color: var(--a-link-hover);
 }
 
 /* Enlace "Volver al inicio": centrado debajo de la tarjeta */
@@ -322,118 +360,35 @@ body.auth-page {
   display: block;
   text-align: center;
   margin-top: 1.4rem;
-  color: #7a8699;
+  color: var(--a-icon);
   font-size: 0.88rem;
   text-decoration: none;
 }
 
 /* Hover de "Volver al inicio": color ocre claro */
 .back-home:hover {
-  color: var(--ochre-light);
+  color: var(--a-link-hover);
 }
+
 
 /* =========================================================
-   MODO OSCURO Y BOTÓN DE TEMA
+   TEMA: botón flotante y ajustes
    ========================================================= */
-
-/* Variables para el Modo Oscuro (Paleta 2) */
-body.dark-mode {
-  --ink: #2A2336;
-  --ink-soft: #3A3050;
-  --paper: #1A1625;
-  --sand: #2A2336;
-  --umber: #E5E0EB;
-  --umber-soft: #B8B0C8;
-  --line: #4A3B69;
-  --ochre: #D68C9B;
-  --ochre-dark: #B06A78;
-  --ochre-light: #E8A8B5;
-  --teal: #6B5B95;
-  --teal-dark: #4A3B69;
-  --teal-light: #8B7BB5;
+.theme-toggle--floating {
+  color: var(--a-title);
+  border-color: var(--a-border);
+}
+.theme-toggle--floating:hover {
+  color: var(--a-link-hover);
+  border-color: var(--a-link);
+  background: var(--toggle-bg);
 }
 
-/* Fondo oscuro para la página de autenticación */
-body.auth-page.dark-mode {
-  background: linear-gradient(160deg, #1A1625 0%, #2A2336 100%);
+/* Autocompletado del navegador respetando el tema */
+.input-wrap input:-webkit-autofill,
+.input-wrap input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--a-input-text);
+  caret-color: var(--a-input-text);
+  -webkit-box-shadow: 0 0 0 1000px var(--a-input-bg) inset;
+  transition: background-color 9999s ease-in-out 0s;
 }
-
-/* Tarjeta oscura */
-body.auth-page.dark-mode .auth-card {
-  background: #2A2336;
-  border-color: rgba(255,255,255,0.05);
-}
-
-/* Inputs oscuros */
-body.auth-page.dark-mode .input-wrap input {
-  background: #1A1625;
-  color: #E5E0EB;
-  border-color: #4A3B69;
-}
-
-body.auth-page.dark-mode .input-wrap input::placeholder {
-  color: #8B7BB5;
-}
-
-/* Botón de tema flotante */
-.theme-toggle-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-}
-
-.theme-toggle-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  position: relative;
-  width: 50px;
-  height: 26px;
-}
-
-.toggle-track {
-  width: 100%;
-  height: 100%;
-  background: #1b2a45;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 4px;
-  box-sizing: border-box;
-  border: 1px solid rgba(255,255,255,0.2);
-  transition: background 0.3s ease;
-  position: relative;
-}
-
-.toggle-icon {
-  width: 14px;
-  height: 14px;
-  object-fit: contain;
-  z-index: 1;
-}
-
-.toggle-thumb {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
-  background: #fff;
-  border-radius: 50%;
-  transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  z-index: 0;
-}
-
-body.dark-mode .toggle-track {
-  background: #4A3B69;
-}
-
-body.dark-mode .toggle-thumb {
-  transform: translateX(24px);
-}
-
-

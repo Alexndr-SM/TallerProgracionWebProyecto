@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IcaTurismo · Destinos de Ica</title>
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#1b2a45">
+    <!-- Tema claro/oscuro: se carga primero para evitar parpadeos -->
+    <script src="js/theme.js"></script>
+    <link rel="stylesheet" href="css/theme.css">
     <!-- Estilos de la página principal -->
     <link rel="stylesheet" href="css/style.css">
     <!-- Favicon -->
@@ -28,22 +33,10 @@
             <!-- Enlaces de navegación + menú Cuenta -->
             <ul class="nav-links" id="navLinks">
                 <li><a href="#inicio">Inicio</a></li>
-                <li><a href="html/playas.html">Playas</a></li>
-                <li><a href="html/montañas.html">Montañas</a></li>
-                <li><a href="html/cultura.html">Cultura</a></li>
+                <li><a href="#playas">Playas</a></li>
+                <li><a href="#montanas">Montañas</a></li>
+                <li><a href="#cultura">Cultura</a></li>
                 <li><a href="#contacto">Contacto</a></li>
-                
-                  <!-- BOTÓN DE TEMA CLARO/OSCURO -->
-                <li class="nav-theme">
-                    <button id="themeToggle" class="theme-toggle-btn" aria-label="Cambiar tema">
-                        <div class="toggle-track">
-                            <div class="toggle-thumb"></div>
-                        </div>
-                    </button>
-                </li>
-                
-                <!-- FIN BOTÓN DE TEMA -->
-
                 <!-- Cuenta: invitados ven Login/Registro; con sesión ven su Nombre y Cerrar sesión -->
                 <li class="nav-user" id="navUser">
                     <!-- Menú para invitados (sin sesión) -->
@@ -72,6 +65,11 @@
                     </div>
                 </li>
             </ul>
+            <!-- Botón modo claro / oscuro -->
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Cambiar a modo oscuro" aria-pressed="false">
+                <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
         </nav>
     </div>
 </header>
@@ -82,7 +80,7 @@
         <div class="carrusel-slides" id="carruselSlides">
             <!-- Slide 1: Playas -->
             <div class="slide">
-                <img src="https://media.viajando.travel/p/4f058b8a126555c0cb4660468d9ead3f/adjuntos/236/imagenes/000/825/0000825240/1200x675/smart/ica-reserva-natural-paracas.jpg" alt="Playas de Ica">
+                <img src="https://blog.redbus.pe/wp-content/uploads/2026/01/Playa-Roja.jpg" alt="Playas de Ica">
                 <div class="slide-texto">
                     <span class="kicker">Ica · Perú</span>
                     <h2>Playas de ensueño</h2>
@@ -112,7 +110,7 @@
             </div>
             <!-- Slide 4: General -->
             <div class="slide">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/6/65/Santuario_de_Luren%2C_2019.jpg" alt="Destinos de Ica">
+                <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/ea/a0/d8/caption.jpg?w=300&h=-1&s=1" alt="Ica en general">
                 <div class="slide-texto">
                     <span class="kicker">Ica · Perú</span>
                     <h2>Descubre Ica</h2>
@@ -351,6 +349,5 @@
 <script src="js/config.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/Script.js"></script>
-<script src="js/theme.js"></script>
 </body>
 </html>
