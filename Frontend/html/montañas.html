@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Montañas</title>
-    <link rel="stylesheet" href="../css/style.css>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <header>
     <div class="wrap header-inner">
         <!-- Logo -->
         <div class="logo">
-            <img src=".assets/logoIcaTurismo.png" alt="IcaTurismo" class="logo-img">
+            <img src="../assets/logoIcaTurismo.png" alt="IcaTurismo" class="logo-img">
             <h1>IcaTurismo</h1>
             <span>Promoción de destinos</span>
         </div>
@@ -26,7 +26,18 @@
                 <li><a href="playas.html">Playas</a></li>
                 <li><a href="montañas.html">Montañas</a></li>
                 <li><a href="cultura.html">Cultura</a></li>
-                <li><a href="../index.html/#contacto">Contacto</a></li>
+                <li><a href="../index.html#contacto">Contacto</a></li>
+
+                <!-- BOTÓN DE TEMA CLARO/OSCURO -->
+                <li class="nav-theme">
+                    <button id="themeToggle" class="theme-toggle-btn" aria-label="Cambiar tema">
+                        <div class="toggle-track">
+                            <div class="toggle-thumb"></div>
+                        </div>
+                    </button>
+                </li>
+                <!-- FIN BOTÓN DE TEMA -->
+
                 <!-- Cuenta: invitados ven Login/Registro; con sesión ven su Nombre y Cerrar sesión -->
                 <li class="nav-user" id="navUser">
                     <!-- Menú para invitados (sin sesión) -->
