@@ -22,3 +22,5 @@ document
         alert("Por favor, selecciona un método de pago válido.");
     }
   });
+/*Reservas desde fecha actual*/
+document.getElementById('fecha').min = new Date().toISOString().split('T')[0];
