@@ -5,6 +5,85 @@
 
 // Espera a que el HTML esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
+  const headerActions = document.querySelector('.header-actions');
+  const navUser = document.getElementById('navUser');
+  const languageAnchor = navUser || headerActions?.querySelector('.theme-toggle');
+
+  if (headerActions && languageAnchor) {
+    const languages = [
+      {
+        label: 'English (United States)',
+        flag: 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg?utm_source=es.wikipedia.org&utm_campaign=index&utm_content=original'
+      },
+      {
+        label: 'Español (Perú)',
+        flag: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Flag_of_Peru_%281884%E2%80%931950%29.svg/960px-Flag_of_Peru_%281884%E2%80%931950%29.svg.png?utm_source=es.wikipedia.org&utm_campaign=index&utm_content=thumbnail'
+      },
+      {
+        label: 'Français (France)',
+        flag: 'https://www.divinachartermenorca.com/static/img/flags/flag_fr.png?r=455ec45755e6a5c39749b27e97794789872cad68'
+      }
+    ];
+    const languagePicker = document.createElement('div');
+    languagePicker.className = 'language-picker';
+
+    const languageToggle = document.createElement('button');
+    languageToggle.type = 'button';
+    languageToggle.className = 'language-toggle';
+    languageToggle.setAttribute('aria-label', 'Mostrar idiomas');
+    languageToggle.setAttribute('aria-expanded', 'false');
+    languageToggle.setAttribute('aria-controls', 'languageOptions');
+    languageToggle.title = 'Idiomas';
+    languageToggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>';
+
+    const languageOptions = document.createElement('div');
+    languageOptions.className = 'language-options';
+    languageOptions.id = 'languageOptions';
+    languageOptions.setAttribute('role', 'group');
+    languageOptions.setAttribute('aria-label', 'Opciones de idioma');
+
+    languages.forEach(({ label, flag }) => {
+      const option = document.createElement('button');
+      option.type = 'button';
+      option.className = 'language-option';
+      option.setAttribute('aria-label', label);
+      option.title = label;
+
+      const image = document.createElement('img');
+      image.src = flag;
+      image.alt = '';
+      image.loading = 'lazy';
+
+      option.appendChild(image);
+      option.addEventListener('click', () => closeLanguageOptions());
+      languageOptions.appendChild(option);
+    });
+
+    languagePicker.append(languageToggle, languageOptions);
+    if (navUser) navUser.after(languagePicker);
+    else languageAnchor.before(languagePicker);
+
+    function closeLanguageOptions(returnFocus = false) {
+      languagePicker.classList.remove('open');
+      languageToggle.setAttribute('aria-expanded', 'false');
+      if (returnFocus) languageToggle.focus();
+    }
+
+    languageToggle.addEventListener('click', () => {
+      const isOpen = languagePicker.classList.toggle('open');
+      languageToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!languagePicker.contains(event.target)) closeLanguageOptions();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && languagePicker.classList.contains('open')) {
+        closeLanguageOptions(true);
+      }
+    });
+  }
 
   /* =========================================================
      MENÚ HAMBURGUESA (móvil)
@@ -40,8 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
      DROPDOWN DE USUARIO (botón Cuenta / Perfil)
      Muestra/oculta las opciones: Iniciar sesión, Registrarse o Cerrar sesión
      ========================================================= */
-  const navUser = document.getElementById('navUser');
-
   function initDropdown(btnId, dropdownId) {
     const btn = document.getElementById(btnId);
     const dropdown = document.getElementById(dropdownId);

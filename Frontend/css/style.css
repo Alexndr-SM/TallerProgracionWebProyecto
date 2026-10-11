@@ -184,17 +184,24 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.75rem;
   height: var(--header-h);
   max-width: 1360px;
 }
 
 /* Logo (imagen + nombre + subtítulo) */
-.logo { display: flex; align-items: center; gap: 0.7rem; }
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
 
 .logo-img {
   height: 60px;
   width: auto;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 /* Nombre del logo: mayúsculas espaciadas como en la referencia */
@@ -206,6 +213,9 @@ header {
   font-size: 1.15rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Subtítulo del logo (oculto en móvil estrecho) */
@@ -226,6 +236,7 @@ nav { display: flex; align-items: center; }
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  flex: 0 0 auto;
 }
 .cart-link {
   display: grid;
@@ -420,6 +431,94 @@ nav { display: flex; align-items: center; }
 }
 .user-dropdown a::after { display: none !important; }
 
+/* Selector visual de idioma; la selección aún no cambia el contenido. */
+.language-picker {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.language-toggle,
+.language-option {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.language-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.language-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+
+.language-toggle:hover,
+.language-option:hover {
+  border-color: var(--seafoam);
+  color: var(--seafoam);
+}
+
+.language-toggle:hover { background: rgba(255, 255, 255, 0.12); }
+
+.language-toggle:focus-visible,
+.language-option:focus-visible {
+  outline: 2px solid var(--seafoam);
+  outline-offset: 2px;
+}
+
+.language-options {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 200;
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--menu-bg);
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.language-picker.open .language-options {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.language-option {
+  width: 38px;
+  height: 34px;
+  border-radius: var(--radius);
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.language-option:hover { background: rgba(159, 211, 200, 0.14); }
+
+.language-option img {
+  width: 24px;
+  height: 18px;
+  object-fit: contain;
+}
+
 /* ---------------------------------------------------------
    5. BOTÓN HAMBURGUESA (móvil / tablet)
    --------------------------------------------------------- */
@@ -513,13 +612,14 @@ nav { display: flex; align-items: center; }
 }
 
 @media (max-width: 560px) {
-  .logo { gap: 0.4rem; }
+  .logo { gap: 0.25rem; }
   .logo-img { height: 40px; }
   .logo .logo-name {
     font-size: 0.9rem;
     letter-spacing: 0.08em;
   }
-  .header-actions { gap: 0.25rem; }
+  .header-actions { gap: 0.2rem; }
+  .hamburger { padding: 6px; }
   .header-actions .user-btn {
     justify-content: center;
     width: 40px;
@@ -529,6 +629,14 @@ nav { display: flex; align-items: center; }
   .header-actions .user-btn img { width: 24px; height: 24px; }
   .header-actions .user-btn > span { display: none; }
   .cart-link { flex: 0 0 40px; }
+}
+
+@media (max-width: 700px) {
+  .logo .logo-name { display: none; }
+}
+
+@media (max-width: 300px) {
+  .cart-link { display: none; }
 }
 
 /* ---------------------------------------------------------
