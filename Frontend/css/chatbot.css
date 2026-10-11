@@ -1,0 +1,100 @@
+[id*="chatbase"],
+div:has(> iframe[src*="chatbase.co"]) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+#chatbase-bubble-button {
+  right: 20px !important;
+  bottom: 75px !important;
+  background-color: #0c0f3600 !important;
+}
+
+#chatbase-bubble-window {
+  background-color: #0c0f3600 !important;
+}
+
+#chatbase-bubble-window > div {
+  background-color: #0c0f3600 !important;
+}
+
+body.home-page #chatbase-bubble-button[aria-expanded="false"] > div {
+  background: url("../assets/chatbot.png") center / contain no-repeat !important;
+}
+
+body.home-page #chatbase-bubble-button[aria-expanded="false"] svg {
+  display: none !important;
+}
+
+body.home-page #chatbase-bubble-button {
+  display: none !important;
+}
+
+.chatbot-launcher {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 2147483646;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.chatbot-launcher img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+}
+
+.chatbot-launcher:hover,
+.chatbot-launcher:focus-visible {
+  transform: scale(1.08);
+}
+
+iframe[src*="chatbase.co"] {
+  position: fixed !important;
+  top: auto !important;
+  right: 20px !important;
+  bottom: 75px !important;
+  width: 250px !important;
+  max-width: 250px !important;
+  height: 250px !important;
+  max-height: 250px !important;
+  border: none !important;
+  border-radius: 12px !important;
+  background: #0C0F36 !important;
+  box-shadow: 0 8px 20px rgba(79, 67, 216, 0.3) !important;
+}
+
+@media (max-width: 480px) {
+  #chatbase-bubble-button {
+    right: 12px !important;
+    bottom: 68px !important;
+  }
+
+  iframe[src*="chatbase.co"] {
+    right: 12px !important;
+    bottom: 68px !important;
+    width: min(250px, calc(100vw - 24px)) !important;
+    max-width: min(250px, calc(100vw - 24px)) !important;
+    height: min(250px, calc(100vw - 24px)) !important;
+    max-height: min(250px, calc(100vw - 24px)) !important;
+  }
+
+  .chatbot-launcher {
+    right: 1rem;
+    bottom: 1rem;
+    width: 52px;
+    height: 52px;
+  }
+}

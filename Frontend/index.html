@@ -5,16 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IcaTurismo · Destinos de Ica</title>
     <meta name="color-scheme" content="light dark">
-    <meta name="theme-color" content="#1b2a45">
+    <meta name="theme-color" content="#0a2c33">
     <!-- Tema claro/oscuro: se carga primero para evitar parpadeos -->
     <script src="js/theme.js"></script>
     <link rel="stylesheet" href="css/theme.css">
+    <!-- Fuentes: preconnect + <link> (más rápido que @import dentro del CSS) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,500&family=Inter:wght@300;400;500&display=swap">
     <!-- Estilos de la página principal -->
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/comentarios.css">
+    <link rel="stylesheet" href="css/chatbot.css">
     <!-- Favicon -->
     <link rel="icon" href="assets/UTP.webp" type="image/webp">
 </head>
-<body>
+<body class="home-page">
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
 
 <!-- ========== ENCABEZADO / NAV ========== -->
 <header>
@@ -22,135 +29,186 @@
         <!-- Logo -->
         <div class="logo">
             <img src="assets/logoIcaTurismo.png" alt="IcaTurismo" class="logo-img">
-            <h1>IcaTurismo</h1>
-            <span>Promoción de destinos</span>
+            <p class="logo-name">IcaTurismo</p>
         </div>
-        <nav>
-            <!-- Botón hamburguesa (solo visible en móvil) -->
-            <button class="hamburger" id="hamburger" aria-label="Menú">
-                <span></span><span></span><span></span>
-            </button>
-            <!-- Enlaces de navegación + menú Cuenta -->
+        <nav class="site-nav" aria-label="Principal">
             <ul class="nav-links" id="navLinks">
                 <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#playas">Playas</a></li>
-                <li><a href="#montanas">Montañas</a></li>
-                <li><a href="#cultura">Cultura</a></li>
+                <li><a href="html/playas.html">Playas</a></li>
+                <li><a href="html/dunas.html">Dunas</a></li>
+                <li><a href="html/cultura.html">Cultura</a></li>
                 <li><a href="#contacto">Contacto</a></li>
-                <!-- Cuenta: invitados ven Login/Registro; con sesión ven su Nombre y Cerrar sesión -->
-                <li class="nav-user" id="navUser">
-                    <!-- Menú para invitados (sin sesión) -->
-                    <div id="guestArea">
-                        <button class="user-btn" id="userBtn" aria-label="Menú de usuario" aria-expanded="false">
-                            <img src="assets/Person.png" alt="Usuario">
-                            <span>Cuenta</span>
-                            <span class="chevron">▾</span>
-                        </button>
-                        <div class="user-dropdown" id="userDropdown">
-                            <a href="html/login.html">Iniciar sesión</a>
-                            <a href="html/registro.html">Registrarse</a>
-                        </div>
-                    </div>
-                    
-                    <!-- Menú para usuarios logueados (oculto por defecto) -->
-                    <div id="userArea" class="is-hidden" hidden>
-                        <button class="user-btn" id="userProfileBtn" aria-label="Menú de usuario" aria-expanded="false">
-                            <img src="assets/Person.png" alt="Usuario">
-                            <span id="userNameDisplay">Usuario</span>
-                            <span class="chevron">▾</span>
-                        </button>
-                        <div class="user-dropdown" id="userProfileDropdown">
-                            <a href="#" id="logoutAction">Cerrar sesión</a>
-                        </div>
-                    </div>
-                </li>
             </ul>
-            <!-- Botón modo claro / oscuro -->
+        </nav>
+        <div class="header-actions">
+            <button type="button" class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="nav-user" id="navUser">
+                <div id="guestArea">
+                    <button type="button" class="user-btn" id="userBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true">
+                        <img src="assets/Person.png" alt="">
+                        <span>Cuenta</span>
+                        <span class="chevron" aria-hidden="true">▾</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="html/login.html">Iniciar sesión</a>
+                        <a href="html/registro.html">Registrarse</a>
+                    </div>
+                </div>
+                <div id="userArea" class="is-hidden" hidden>
+                    <button type="button" class="user-btn" id="userProfileBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true">
+                        <img src="assets/Person.png" alt="">
+                        <span id="userNameDisplay">Usuario</span>
+                        <span class="chevron" aria-hidden="true">▾</span>
+                    </button>
+                    <div class="user-dropdown" id="userProfileDropdown">
+                        <a href="#" id="logoutAction">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
             <button type="button" class="theme-toggle" data-theme-toggle aria-label="Cambiar a modo oscuro" aria-pressed="false">
                 <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
                 <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             </button>
-        </nav>
+            <a class="cart-link" href="html/compras.html" aria-label="Ir al carrito de compras" title="Carrito de compras">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.2 10.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 8H6"/><circle cx="10" cy="19" r="1.3"/><circle cx="18" cy="19" r="1.3"/></svg>
+            </a>
+        </div>
     </div>
 </header>
 
+<main id="contenido">
+<h1 class="sr-only">IcaTurismo: destinos turísticos de Ica, Perú</h1>
+
 <!-- ========== CARRUSEL DE IMÁGENES ========== -->
-<section class="carrusel" id="inicio">
+<section class="carrusel" id="inicio" aria-roledescription="carrusel" aria-label="Destinos destacados de Ica">
     <div class="carrusel-contenedor">
-        <div class="carrusel-slides" id="carruselSlides">
+        <div class="carrusel-slides" id="carruselSlides" aria-live="off">
             <!-- Slide 1: Playas -->
-            <div class="slide">
-                <img src="https://blog.redbus.pe/wp-content/uploads/2026/01/Playa-Roja.jpg" alt="Playas de Ica">
+            <div class="slide active" role="group" aria-roledescription="diapositiva" aria-label="1 de 4">
+                <img src="https://www.ytuqueplanes.com/imagenes/fotos/regiones/RC-BANNER-INT-Ica.webp" alt="Playas de Ica">
                 <div class="slide-texto">
                     <span class="kicker">Ica · Perú</span>
                     <h2>Playas de ensueño</h2>
                     <p>Paracas, Islas Ballestas y más.</p>
-                    <a href="#destinos" class="btn-hero">Explora más</a>
+                    <a href="#destinos" class="btn-hero">Explora más<span class="sr-only"> sobre playas de ensueño</span></a>
                 </div>
             </div>
-            <!-- Slide 2: Montañas -->
-            <div class="slide">
-                <img src="https://www.civitatis.com/f/peru/paracas/islas-ballestas-reserva-nacional-paracas-589x392.jpg" alt="Montañas de Ica">
+            <!-- Slide 2: Dunas -->
+            <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="2 de 4">
+                <img loading="lazy" decoding="async" src="https://www.paracasexplorer.com/wp-content/uploads/2019/04/4-2.jpg" alt="Aventura en las dunas de Ica">
                 <div class="slide-texto">
                     <span class="kicker">Ica · Perú</span>
-                    <h2>Montañas y aventura</h2>
-                    <p>Trekking y paisajes andinos.</p>
-                    <a href="#destinos" class="btn-hero">Explora más</a>
+                    <h2>Dunas y aventura</h2>
+                    <p>Buggy, sandboard y atardeceres en Huacachina.</p>
+                    <a href="#destinos" class="btn-hero">Explora más<span class="sr-only"> sobre dunas y aventura</span></a>
                 </div>
             </div>
             <!-- Slide 3: Cultura -->
-            <div class="slide">
-                <img src="https://www.peru.travel/Contenido/Destino/Imagen/es/5/1.2/Principal/oasis-huacachina-ica-peru-desktop.jpg" alt="Cultura de Ica">
+            <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="3 de 4">
+                <img loading="lazy" decoding="async" src="https://www.peru.travel/Contenido/Destino/Imagen/es/5/1.2/Principal/oasis-huacachina-ica-peru-desktop.jpg" alt="Cultura de Ica">
                 <div class="slide-texto">
                     <span class="kicker">Ica · Perú</span>
                     <h2>Cultura e historia</h2>
                     <p>Líneas de Nazca, bodegas y museos.</p>
-                    <a href="#destinos" class="btn-hero">Explora más</a>
+                    <a href="#destinos" class="btn-hero">Explora más<span class="sr-only"> sobre cultura e historia</span></a>
                 </div>
             </div>
             <!-- Slide 4: General -->
-            <div class="slide">
-                <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/ea/a0/d8/caption.jpg?w=300&h=-1&s=1" alt="Ica en general">
+            <div class="slide" role="group" aria-roledescription="diapositiva" aria-label="4 de 4">
+                <img loading="lazy" decoding="async" src="https://upload.wikimedia.org/wikipedia/commons/6/65/Santuario_de_Luren%2C_2019.jpg?utm_source=es.wikipedia.org&utm_campaign=index&utm_content=original" alt="Ica en general">
                 <div class="slide-texto">
                     <span class="kicker">Ica · Perú</span>
                     <h2>Descubre Ica</h2>
                     <p>Un destino lleno de vida y tradición.</p>
-                    <a href="#destinos" class="btn-hero">Explora más</a>
+                    <a href="#destinos" class="btn-hero">Explora más<span class="sr-only"> sobre descubre ica</span></a>
                 </div>
             </div>
         </div>
 
         <!-- Botones anterior / siguiente -->
-        <button class="carrusel-btn prev" id="prevBtn">&#10094;</button>
-        <button class="carrusel-btn next" id="nextBtn">&#10095;</button>
+        <button type="button" class="carrusel-btn prev" id="prevBtn" aria-label="Diapositiva anterior"><span aria-hidden="true">&#10094;</span></button>
+        <button type="button" class="carrusel-btn next" id="nextBtn" aria-label="Diapositiva siguiente"><span aria-hidden="true">&#10095;</span></button>
+        <!-- Pausa/reanudar autoplay (WCAG 2.2.2) -->
+        <button type="button" class="carrusel-pausa" id="pausaBtn" aria-label="Pausar carrusel" aria-pressed="false"><span aria-hidden="true">❚❚</span></button>
 
         <!-- Puntos indicadores (se generan con JS) -->
         <div class="carrusel-indicadores" id="indicadores"></div>
     </div>
 </section>
 
+<!-- ========== SERVICIOS ========== -->
+<section class="services-section" aria-labelledby="services-title">
+    <div class="wrap">
+        <h2 class="section-title scroll-reveal" id="services-title">Nuestros servicios</h2>
+        <div class="section-underline scroll-reveal"></div>
+        <div class="services-grid">
+            <article class="service-card scroll-reveal">
+                <div class="service-icon" aria-hidden="true">🛏️</div>
+                <h3>Alojamiento</h3>
+                <p>Encuentra opciones cómodas para descansar y disfrutar cada día de tu visita a Ica.</p>
+            </article>
+            <article class="service-card scroll-reveal">
+                <div class="service-icon" aria-hidden="true">🚌</div>
+                <h3>Transporte</h3>
+                <p>Muévete con facilidad entre los principales destinos y atractivos de la región.</p>
+            </article>
+            <article class="service-card scroll-reveal">
+                <div class="service-icon" aria-hidden="true">🍽️</div>
+                <h3>Alimentación</h3>
+                <p>Descubre sabores locales y disfruta de alternativas para acompañar tu recorrido.</p>
+            </article>
+            <article class="service-card scroll-reveal">
+                <div class="service-icon" aria-hidden="true">🧭</div>
+                <h3>Actividades</h3>
+                <p>Vive experiencias culturales y aventuras para conocer Ica desde nuevas perspectivas.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- ========== SOBRE NOSOTROS ========== -->
+<section class="about-section" aria-labelledby="about-title">
+    <div class="wrap about-content">
+        <div class="about-copy scroll-reveal" data-reveal="left">
+            <span class="about-kicker">Conoce Ica con nosotros</span>
+            <h2 id="about-title">Sobre nosotros</h2>
+            <div class="about-underline"></div>
+            <p>IcaTurismo nace del deseo de compartir la riqueza de nuestra región y acercar a cada viajero a sus paisajes, cultura y tradiciones. Queremos ayudarte a descubrir cada rincón de Ica y hacer de tu visita una experiencia especial.</p>
+            <p>Te acompañamos a explorar el destino con información útil, propuestas para todos los gustos y el cariño de quienes disfrutan mostrar lo mejor de Ica.</p>
+        </div>
+        <div class="about-image scroll-reveal" data-reveal="right">
+            <img src="https://i.pinimg.com/originals/5d/69/46/5d6946550bd854e789a2fd30fdfa0393.jpg?nii=t"
+                alt="Paisaje turístico de Ica"
+                loading="lazy"
+                decoding="async">
+        </div>
+    </div>
+</section>
+
 <!-- ========== BENEFICIOS ========== -->
 <section class="beneficios">
     <div class="wrap">
-        <h2 class="section-title">¿Por qué elegir Ica?</h2>
-        <div class="section-underline"></div>
+        <h2 class="section-title scroll-reveal">¿Por qué elegir Ica?</h2>
+        <div class="section-underline scroll-reveal"></div>
         <div class="beneficios-grid">
-            <div class="beneficio">
+            <div class="beneficio scroll-reveal">
                 <div class="icono-circulo">🏖️</div>
                 <h3>Playas únicas</h3>
                 <p>Litoral desértico y reservas naturales como Paracas.</p>
             </div>
-            <div class="beneficio">
+            <div class="beneficio scroll-reveal">
                 <div class="icono-circulo">⛰️</div>
                 <h3>Paisajes de altura</h3>
                 <p>Rutas de trekking entre dunas, valles y cañones.</p>
             </div>
-            <div class="beneficio">
+            <div class="beneficio scroll-reveal">
                 <div class="icono-circulo">🏺</div>
                 <h3>Historia viva</h3>
                 <p>Líneas de Nazca, museos y bodegas centenarias.</p>
             </div>
-            <div class="beneficio">
+            <div class="beneficio scroll-reveal">
                 <div class="icono-circulo">🌵</div>
                 <h3>Aventura real</h3>
                 <p>Sandboard, kitesurf y experiencias en el desierto.</p>
@@ -161,9 +219,9 @@
 
 <!-- ========== HERO CTA ========== -->
 <section class="hero">
-    <div class="wrap hero-content">
+    <div class="wrap hero-content scroll-reveal">
         <h2>Descubre los tesoros de Ica</h2>
-        <p>Playas doradas, montañas imponentes y cultura milenaria te esperan.</p>
+        <p>Playas doradas, dunas emocionantes y cultura milenaria te esperan.</p>
         <a href="#destinos" class="btn-hero">Explora más</a>
     </div>
 </section>
@@ -171,15 +229,15 @@
 <!-- ========== DESTINOS (tarjetas) ========== -->
 <section class="destinos" id="destinos">
     <div class="wrap">
-        <h2 class="section-title">Nuestros Destinos</h2>
-        <div class="section-underline"></div>
+        <h2 class="section-title scroll-reveal">Nuestros Destinos</h2>
+        <div class="section-underline scroll-reveal"></div>
         <div class="grid-destinos">
 
             <!-- Tarjeta Playas -->
-            <div class="card" id="playas">
+            <a class="card scroll-reveal" id="playas" href="html/playas.html" aria-label="Ir a Playas de Ica">
                 <div class="card-media">
                     <span class="badge">Playas</span>
-                    <img src="https://blog.redbus.pe/wp-content/uploads/2026/01/Playa-Roja.jpg" alt="Playas de Ica">
+                    <img loading="lazy" decoding="async" src="https://blog.redbus.pe/wp-content/uploads/2026/01/Playa-Roja.jpg" alt="Playas de Ica">
                 </div>
                 <div class="card-body">
                     <h3>Playas de ensueño</h3>
@@ -208,48 +266,48 @@
                         </table>
                     </div>
                 </div>
-            </div>
+            </a>
 
-            <!-- Tarjeta Montañas -->
-            <div class="card" id="montanas">
+            <!-- Tarjeta Dunas -->
+            <a class="card scroll-reveal" id="dunas" href="html/dunas.html" aria-label="Ir a las Dunas de Ica">
                 <div class="card-media">
-                    <span class="badge badge--teal">Montañas</span>
-                    <img src="https://elcomercio.pe/resizer/b365PQHeOYu1QDdLaUj14RB6zDE=/1200x675/smart/filters:format(jpeg):quality(75)/arc-anglerfish-arc2-prod-elcomercio.s3.amazonaws.com/public/U3NKCIBAFJB5DDNAC6OOQNB6O4.jpg" alt="Montañas de Ica">
+                    <span class="badge badge--teal">Dunas</span>
+                    <img loading="lazy" decoding="async" src="https://www.paracasexplorer.com/wp-content/uploads/2019/04/4-2.jpg" alt="Dunas del desierto de Ica">
                 </div>
                 <div class="card-body">
-                    <h3>Montañas y aventura</h3>
-                    <p>Trekking, valles y paisajes andinos para los amantes de la naturaleza.</p>
+                    <h3>Dunas y aventura</h3>
+                    <p>Recorre el desierto de Huacachina en buggy y prueba el sandboard.</p>
                     <div class="card-content">
-                        <h4>Rutas</h4>
+                        <h4>Experiencias</h4>
                         <ul>
-                            <li>Cerro Tupac</li>
-                            <li>Valle de los Viñedos</li>
-                            <li>Cañón de los Perdidos</li>
+                            <li>Paseo en buggy</li>
+                            <li>Sandboard</li>
+                            <li>Atardecer en el desierto</li>
                         </ul>
-                        <h4>Consejos</h4>
+                        <h4>Recomendaciones</h4>
                         <ol>
-                            <li>Ropa de abrigo</li>
-                            <li>Hidratación</li>
+                            <li>Usar bloqueador solar</li>
+                            <li>Llevar agua y ropa cómoda</li>
                         </ol>
-                        <h4>Dificultad</h4>
+                        <h4>Precios referenciales</h4>
                         <table class="tabla-simple">
                             <thead>
-                                <tr><th>Ruta</th><th>Dificultad</th></tr>
+                                <tr><th>Actividad</th><th>Desde (S/.)</th></tr>
                             </thead>
                             <tbody>
-                                <tr><td>Cerro Tupac</td><td>Media</td></tr>
-                                <tr><td>Cañón</td><td>Alta</td></tr>
+                                <tr><td>Buggy y sandboard</td><td>90</td></tr>
+                                <tr><td>Atardecer en buggy</td><td>70</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
+            </a>
 
             <!-- Tarjeta Cultura -->
-            <div class="card" id="cultura">
+            <a class="card scroll-reveal" id="cultura" href="html/cultura.html" aria-label="Ir a Cultura de Ica">
                 <div class="card-media">
                     <span class="badge badge--ink">Cultura</span>
-                    <img src="https://museos.cultura.pe/sites/default/files/styles/carrusel_museo_full/public/museos/galeria/rnm_436983113_0.jpg?itok=YrapR-hI" alt="Cultura de Ica">
+                    <img loading="lazy" decoding="async" src="https://museos.cultura.pe/sites/default/files/styles/carrusel_museo_full/public/museos/galeria/rnm_436983113_0.jpg?itok=YrapR-hI" alt="Cultura de Ica">
                 </div>
                 <div class="card-body">
                     <h3>Cultura e historia</h3>
@@ -278,7 +336,7 @@
                         </table>
                     </div>
                 </div>
-            </div>
+            </a>
 
         </div>
     </div>
@@ -288,14 +346,14 @@
 <!-- ========== VIDEO Y MAPA ========== -->
 <section class="media-section" id="ubicacion">
     <div class="wrap">
-        <h2 class="section-title">Vive Ica y ubícanos</h2>
-        <div class="section-underline"></div>
+        <h2 class="section-title scroll-reveal">Vive Ica y ubícanos</h2>
+        <div class="section-underline scroll-reveal"></div>
         <div class="media-grid">
             <!-- Video a la izquierda: en bucle, sin controles de YouTube -->
-            <div class="media-video">
+            <div class="media-video scroll-reveal" data-reveal="left">
                 <div class="video-frame">
                     <iframe
-                        src="https://www.youtube.com/embed/IjnYfpsW2e4?autoplay=1&mute=1&loop=1&playlist=IjnYfpsW2e4&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1"
+                        src="https://www.youtube-nocookie.com/embed/IjnYfpsW2e4?autoplay=1&mute=1&loop=1&playlist=IjnYfpsW2e4&controls=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1"
                         title="Video de Ica"
                         allow="autoplay; encrypted-media; picture-in-picture"
                         allowfullscreen
@@ -305,7 +363,7 @@
                 </div>
             </div>
             <!-- Mapa a la derecha -->
-            <div class="media-map">
+            <div class="media-map scroll-reveal" data-reveal="right">
                 <div class="map-frame">
                     <iframe
                         src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7740.288109378249!2d-75.7357121!3d-14.0686695!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9110e3db5c16ca7d%3A0x14a969e069453071!2sUniversidad%20Tecnol%C3%B3gica%20Del%20Per%C3%BA!5e0!3m2!1ses-419!2spe!4v1790225641935!5m2!1ses-419!2spe"
@@ -319,35 +377,178 @@
         </div>
     </div>
 </section>
-<!-- ========== CONTACTO ========== -->
-<section id="contacto" class="contacto">
-    <div class="wrap contacto-caja">
-        <h2>Contacto</h2>
-        <p>¿Listo para planificar tu viaje? Escríbenos.</p>
-        <address>
-            <strong>IcaTurismo</strong><br>
-            Calle Los Turistas 123, Ica<br>
-            Tel: (056) 123-456<br>
-            Email: <a href="mailto:info@icaturismo.dev">info@icaturismo.dev</a>
-        </address>
+
+<!-- ========== OPINIONES Y COMENTARIOS (VISTA PREVIA) ========== -->
+<section class="reviews-section" id="opiniones">
+    <div class="wrap">
+        <h2 class="section-title scroll-reveal">Opiniones de nuestros visitantes</h2>
+        <div class="section-underline scroll-reveal"></div>
+        <p class="reviews-note scroll-reveal">Comentarios de muestra Clientes y sus experiencias.</p>
+
+        <div class="reviews-list">
+            <article class="review-card scroll-reveal">
+                <div class="review-heading">
+                    <h3>María G.</h3>
+                    <span class="review-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span>
+                </div>
+                <p>Una experiencia increíble. Los paisajes de Ica son únicos y la visita estuvo muy bien organizada.</p>
+            </article>
+            <article class="review-card scroll-reveal">
+                <div class="review-heading">
+                    <h3>José R.</h3>
+                    <span class="review-stars" role="img" aria-label="4 de 5 estrellas">★★★★☆</span>
+                </div>
+                <p>Disfruté mucho el recorrido y aprendí bastante sobre la historia y la cultura de la región.</p>
+            </article>
+            <article class="review-card scroll-reveal">
+                <div class="review-heading">
+                    <h3>Andrea M.</h3>
+                    <span class="review-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span>
+                </div>
+                <p>Las playas y la comida fueron lo mejor del viaje. Definitivamente volvería.</p>
+            </article>
+            <article class="review-card scroll-reveal">
+                <div class="review-heading">
+                    <h3>Carlos P.</h3>
+                    <span class="review-stars" role="img" aria-label="4 de 5 estrellas">★★★★☆</span>
+                </div>
+                <p>Muy buenos lugares para conocer y excelentes recomendaciones para planificar la visita.</p>
+            </article>
+            <article class="review-card scroll-reveal">
+                <div class="review-heading">
+                    <h3>Lucía T.</h3>
+                    <span class="review-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span>
+                </div>
+                <p>Ica tiene mucho por descubrir. Me encantó conocer sus paisajes, bodegas y tradiciones.</p>
+            </article>
+            <article class="review-card scroll-reveal">
+                <div class="review-heading">
+                    <h3>Diego A.</h3>
+                    <span class="review-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span>
+                </div>
+                <p>Un destino maravilloso para disfrutar en familia. Las dunas y el atardecer fueron inolvidables.</p>
+            </article>
+        </div>
+        <div class="reviews-actions scroll-reveal">
+            <a class="btn-hero" href="html/comentarios.html">Ver todos los comentarios</a>
+        </div>
+
+        <div class="review-form-card scroll-reveal">
+            <h3>Deja tu comentario</h3>
+            <p>Esta opción estará disponible próximamente.</p>
+            <form>
+                <fieldset disabled>
+                    <div class="review-form-fields">
+                        <label>
+                            Tu nombre
+                            <input type="text" name="review-name" placeholder="Escribe tu nombre">
+                        </label>
+                        <label>
+                            Tu comentario
+                            <textarea name="review-text" rows="4" placeholder="Cuéntanos cómo fue tu experiencia"></textarea>
+                        </label>
+                        <div class="review-rating">
+                            <span>Tu calificación</span>
+                            <div class="review-rating-stars" aria-label="Selector de calificación, próximamente">
+                                <input type="radio" id="rating-5" name="rating" value="5">
+                                <label for="rating-5" aria-label="5 estrellas">★</label>
+                                <input type="radio" id="rating-4" name="rating" value="4">
+                                <label for="rating-4" aria-label="4 estrellas">★</label>
+                                <input type="radio" id="rating-3" name="rating" value="3">
+                                <label for="rating-3" aria-label="3 estrellas">★</label>
+                                <input type="radio" id="rating-2" name="rating" value="2">
+                                <label for="rating-2" aria-label="2 estrellas">★</label>
+                                <input type="radio" id="rating-1" name="rating" value="1">
+                                <label for="rating-1" aria-label="1 estrella">★</label>
+                            </div>
+                        </div>
+                        <button type="button" class="review-submit">Publicar comentario</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
     </div>
 </section>
+
+<!-- ========== CONTACTO ========== -->
+<section id="contacto" class="contacto">
+    <div class="wrap contacto-caja scroll-reveal">
+        <h2>Contacto</h2>
+        <p>¿Listo para planificar tu viaje? Escríbenos.</p>
+        <a class="btn-hero" href="html/contacto.html">Contáctanos</a>
+    </div>
+</section>
+
+</main>
 
 <!-- ========== PIE DE PÁGINA ========== -->
 <footer>
     <div class="wrap footer-content">
-        <p>&copy; 2026 IcaTurismo · Empresa de turismo con sede en Ica</p>
-        <p>Síguenos en redes:
-            <a href="https://www.facebook.com/samantha.sp.946?locale=es_LA">Facebook</a> ·
-            <a href="https://www.instagram.com/sammn_uu/">Instagram</a> ·
-            <a href="https://www.youtube.com/@Styx117-S">YouTube</a>
-        </p>
+        <div class="footer-top">
+            <div class="footer-brand">
+                <a class="footer-logo" href="#inicio" aria-label="IcaTurismo, volver al inicio">
+                    <img src="assets/logoIcaTurismo.png" alt="">
+                    <span>IcaTurismo</span>
+                </a>
+            </div>
+            <div class="footer-payment-banner">
+                <img src="assets/FormaPago/FormasDePago.png" alt="Formas de pago aceptadas: Visa, Mastercard, PayPal, PagoEfectivo, Yape y Plin" loading="lazy">
+            </div>
+        </div>
+
+        <div class="footer-main">
+            <div class="footer-column">
+                <h2>Explora</h2>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#destinos">Nuestros destinos</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h2>Destinos</h2>
+                <ul>
+                    <li><a href="html/playas.html">Playas</a></li>
+                    <li><a href="html/dunas.html">Dunas</a></li>
+                    <li><a href="html/cultura.html">Cultura</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h2>Síguenos</h2>
+                <ul>
+                    <li><a href="https://www.facebook.com/samantha.sp.946?locale=es_LA" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+                    <li><a href="https://www.instagram.com/sammn_uu/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                    <li><a href="https://www.youtube.com/@Styx117-S" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h2>Contacto</h2>
+                <address>
+                    Calle Los Turistas 123, Ica<br>
+                    <a href="tel:+51056123456">(056) 123-456</a><br>
+                    <a href="mailto:info@icaturismo.dev">info@icaturismo.dev</a>
+                </address>
+                <a class="footer-back-to-top" href="#inicio">Volver al inicio ↑</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 IcaTurismo · Empresa de turismo con sede en Ica</p>
+        </div>
     </div>
 </footer>
+
+<button class="chatbot-launcher" type="button" aria-label="Abrir el chat de IcaTurismo">
+    <img src="assets/chatbot.png" alt="">
+</button>
 
 <!-- Script de interacciones (hamburguesa, dropdown Cuenta, carrusel) -->
 <script src="js/config.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/Script.js"></script>
+<script src="js/chatbot.js"></script>
+
 </body>
 </html>

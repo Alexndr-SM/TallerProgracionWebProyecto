@@ -15,17 +15,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (hamburger && navLinks) {
     // Al hacer clic en el botón: alterna la clase .active
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('active'); // Anima a forma de X
-      navLinks.classList.toggle('active');  // Expande / colapsa el menú
+    function setMenu(abierto) {
+      hamburger.classList.toggle('active', abierto);
+      navLinks.classList.toggle('active', abierto);
+      hamburger.setAttribute('aria-expanded', String(abierto));
+      hamburger.setAttribute('aria-label', abierto ? 'Cerrar menú' : 'Abrir menú');
+    }
+    hamburger.addEventListener('click', () => setMenu(!navLinks.classList.contains('active')));
+    // Escape cierra el menú móvil y devuelve el foco al botón
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && navLinks.classList.contains('active')) {
+        setMenu(false);
+        hamburger.focus();
+      }
     });
 
     // Al hacer clic en cualquier enlace, se cierra el menú (mejor UX en móvil)
     navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        navLinks.classList.remove('active');
-      });
+      link.addEventListener('click', () => setMenu(false));
     });
   }
 
@@ -128,100 +135,109 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* =========================================================
      CARRUSEL PRINCIPAL
-     Cambia de imagen con botones, puntos y autoplay
+     Botones, puntos, autoplay, pausa y accesibilidad
      ========================================================= */
-  const track = document.getElementById('carruselSlides');           // Contenedor de slides
-  const indicadoresContenedor = document.getElementById('indicadores'); // Contenedor de puntos
-  const prevBtn = document.getElementById('prevBtn');                // Botón anterior
-  const nextBtn = document.getElementById('nextBtn');                // Botón siguiente
+  const track = document.getElementById('carruselSlides');
+  if (!track) return; // páginas sin carrusel
 
-  // Si no hay carrusel en esta página, no continúa
-  if (!track) return;
+  const indicadoresContenedor = document.getElementById('indicadores');
+  const prevBtn  = document.getElementById('prevBtn');
+  const nextBtn  = document.getElementById('nextBtn');
+  const contenedor = track.closest('.carrusel-contenedor');
 
-  const slides = Array.from(track.querySelectorAll('.slide')); // Todas las diapositivas
+  const slides = Array.from(track.querySelectorAll('.slide'));
   const total = slides.length;
-  let indiceActual = 0;        // Índice del slide visible
-  let autoplayTimer = null;    // Referencia al setInterval
-  const INTERVALO_MS = 5000;   // Cada 5 segundos cambia sola
+  if (!total) return;
 
-  // Crea un punto (dot) por cada slide
+  const INTERVALO_MS = 5000;
+  const reducirMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let indiceActual = 0;
+  let autoplayTimer = null;
+  let pausadoPorUsuario = reducirMovimiento; // con "reducir movimiento" no arranca solo
+  let pausadoPorHover = false;
+
+  // Puntos: <button> reales (se alcanzan con Tab y Enter/Espacio)
+  const dots = slides.map((_, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.setAttribute('aria-label', `Ir a la diapositiva ${i + 1} de ${total}`);
+    dot.addEventListener('click', () => irASlide(i));
+    return dot;
+  });
   if (indicadoresContenedor) {
     indicadoresContenedor.innerHTML = '';
-    slides.forEach((_, i) => {
-      const dot = document.createElement('span');
-      dot.setAttribute('aria-label', `Ir a la imagen ${i + 1}`);
-      dot.addEventListener('click', () => irASlide(i)); // Clic en el punto salta a ese slide
-      indicadoresContenedor.appendChild(dot);
-    });
+    dots.forEach(d => indicadoresContenedor.appendChild(d));
   }
-  const dots = indicadoresContenedor
-    ? Array.from(indicadoresContenedor.children)
-    : [];
 
-  // Muestra el slide del índice indicado y actualiza los puntos
   function mostrarSlide(indice) {
     slides.forEach((slide, i) => {
-      slide.classList.toggle('active', i === indice); // Solo uno tiene .active
+      const activo = i === indice;
+      slide.classList.toggle('active', activo);
+      slide.setAttribute('aria-hidden', String(!activo));
     });
     dots.forEach((dot, i) => {
       dot.classList.toggle('active', i === indice);
+      if (i === indice) dot.setAttribute('aria-current', 'true');
+      else dot.removeAttribute('aria-current');
     });
     indiceActual = indice;
   }
 
-  // Va a un índice (con ciclo: al final vuelve al primero)
   function irASlide(indice) {
     mostrarSlide((indice + total) % total);
-    reiniciarAutoplay(); // Reinicia el temporizador al interactuar
+    iniciarAutoplay(); // reinicia el temporizador (ya limpia el anterior)
   }
 
-  function siguiente() { irASlide(indiceActual + 1); }
-  function anterior()  { irASlide(indiceActual - 1); }
-
-  // Inicia el cambio automático de slides
-  function iniciarAutoplay() {
-    autoplayTimer = setInterval(() => {
-      mostrarSlide((indiceActual + 1) % total);
-    }, INTERVALO_MS);
-  }
-
-  // Detiene y vuelve a iniciar el autoplay
-  function reiniciarAutoplay() {
+  // Un único temporizador: SIEMPRE se limpia antes de crear otro
+  function detenerAutoplay() {
     clearInterval(autoplayTimer);
-    iniciarAutoplay();
+    autoplayTimer = null;
+  }
+  function iniciarAutoplay() {
+    detenerAutoplay();
+    if (pausadoPorUsuario || pausadoPorHover || document.hidden) return;
+    autoplayTimer = setInterval(() => mostrarSlide((indiceActual + 1) % total), INTERVALO_MS);
   }
 
-  // Eventos de los botones
-  if (prevBtn) prevBtn.addEventListener('click', anterior);
-  if (nextBtn) nextBtn.addEventListener('click', siguiente);
+  if (prevBtn) prevBtn.addEventListener('click', () => irASlide(indiceActual - 1));
+  if (nextBtn) nextBtn.addEventListener('click', () => irASlide(indiceActual + 1));
 
-  // Pausa el autoplay mientras el mouse está sobre el carrusel
-  const contenedor = track.closest('.carrusel-contenedor');
+  // Pausa mientras hay mouse o foco dentro del carrusel
   if (contenedor) {
-    contenedor.addEventListener('mouseenter', () => clearInterval(autoplayTimer));
-    contenedor.addEventListener('mouseleave', iniciarAutoplay);
+    contenedor.addEventListener('mouseenter', () => { pausadoPorHover = true;  iniciarAutoplay(); });
+    contenedor.addEventListener('mouseleave', () => { pausadoPorHover = false; iniciarAutoplay(); });
+    contenedor.addEventListener('focusin',    () => { pausadoPorHover = true;  iniciarAutoplay(); });
+    contenedor.addEventListener('focusout',   () => { pausadoPorHover = false; iniciarAutoplay(); });
   }
 
-  // Estado inicial: primer slide + arranque del autoplay
+  // No gastar CPU con la pestaña oculta
+  document.addEventListener('visibilitychange', iniciarAutoplay);
+
+  // Flechas del teclado cuando el carrusel tiene el foco
+  if (contenedor) {
+    contenedor.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft')  irASlide(indiceActual - 1);
+      if (e.key === 'ArrowRight') irASlide(indiceActual + 1);
+    });
+  }
+
   mostrarSlide(0);
   iniciarAutoplay();
 
-});
-/* JS DEL PUNTERO CON BRILLO Y RASTRO */
-document.addEventListener('mousemove', function(e) {
-            // Crear el elemento del punto
-            const punto = document.createElement('div');
-            punto.classList.add('punto-brillante');
+  // Anima los bloques al entrar y salir de pantalla para que se repita al desplazarse.
+  const elementosAnimados = document.querySelectorAll('.scroll-reveal');
+  const movimientoReducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-            // Posicionar el punto exactamente donde está el mouse
-            punto.style.left = e.pageX + 'px';
-            punto.style.top = e.pageY + 'px';
+  if (!movimientoReducido && 'IntersectionObserver' in window) {
+    document.documentElement.classList.add('scroll-reveal-ready');
+    const observador = new IntersectionObserver((entradas) => {
+      entradas.forEach((entrada) => {
+        entrada.target.classList.toggle('is-visible', entrada.isIntersecting);
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -5% 0px' });
 
-            // Añadir el punto al documento
-            document.body.appendChild(punto);
+    elementosAnimados.forEach((elemento) => observador.observe(elemento));
+  }
 
-            // Eliminar el punto del HTML después de 0.8 segundos (tiempo de la animación)
-            setTimeout(() => {
-                punto.remove();
-            }, 100);
 });

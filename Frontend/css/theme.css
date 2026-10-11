@@ -1,0 +1,83 @@
+/* =========================================================
+   IcaTurismo — theme.css
+   Piezas compartidas del modo claro / oscuro:
+   botón de cambio de tema y transición suave.
+   Los colores de cada tema viven en cada hoja de estilos
+   (style.css, login.css, registro.css) como variables.
+   ========================================================= */
+
+/* Transición suave SOLO mientras se cambia de tema */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 0.3s ease, color 0.3s ease,
+              border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* ---------- Botón de cambio de tema ---------- */
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  background: transparent;
+  color: #f6f1e8;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #9fd3c8;
+  color: #9fd3c8;
+}
+.theme-toggle:active { transform: scale(0.94); }
+.theme-toggle:focus-visible {
+  outline: 2px solid #9fd3c8;
+  outline-offset: 2px;
+}
+
+/* Los dos iconos se apilan; se muestra el que corresponde al tema */
+.theme-toggle svg {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: opacity 0.25s ease, transform 0.35s ease;
+}
+/* Modo claro activo -> mostramos la luna (acción: ir a oscuro) */
+.theme-toggle .icon-sun  { opacity: 0; transform: rotate(-90deg) scale(0.5); }
+.theme-toggle .icon-moon { opacity: 1; transform: rotate(0) scale(1); }
+/* Modo oscuro activo -> mostramos el sol (acción: ir a claro) */
+[data-theme="dark"] .theme-toggle .icon-sun  { opacity: 1; transform: rotate(0) scale(1); }
+[data-theme="dark"] .theme-toggle .icon-moon { opacity: 0; transform: rotate(90deg) scale(0.5); }
+
+/* Variante flotante para login / registro (esquina superior derecha) */
+.theme-toggle--floating {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 50;
+  background: var(--toggle-bg, rgba(6, 40, 48, 0.7));
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transition,
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after { transition: none !important; }
+  .theme-toggle svg { transition: none; }
+}
+

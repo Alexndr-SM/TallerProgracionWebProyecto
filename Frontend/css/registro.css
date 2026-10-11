@@ -1,325 +1,385 @@
+/* =========================================================
+   IcaTurismo — registro.css
+   Estilos de la pantalla de registro.
+   Mismo lenguaje visual que style.css: foto de fondo con velo
+   marino, tarjeta de cristal, serif ligera + sans fina y
+   botones blancos con letras espaciadas.
+   ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap');
+/* Fuentes (misma pareja que style.css) */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,500&family=Inter:wght@300;400;500&display=swap');
 
-/* Variables de color, fuentes y medidas del registro */
+/* ---------------------------------------------------------
+   1. VARIABLES
+   --------------------------------------------------------- */
 :root {
-  --ink: #1b2a45;
-  --ink-soft: #24365a;
-  --ochre: #c9862e;
-  --ochre-dark: #a66c22;
-  --ochre-light: #e7b169;
-  --radius-lg: 14px;
-  --shadow-lg: 0 20px 48px rgba(27, 42, 69, 0.22);
-  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
-  --font-body: 'Work Sans', 'Segoe UI', sans-serif;
+  /* Paleta base */
+  --deep: #0f3f46;
+  --seafoam: #9fd3c8;
+  --sand: #f1e7d6;
+  --peach: #e6b996;
+
+  --radius: 4px;
+  --radius-lg: 10px;
+  --font-display: 'Cormorant Garamond', 'Cormorant', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* --- Tokens del tema CLARO (mar de día) --- */
+  --a-veil-top: rgba(10, 82, 92, 0.5);
+  --a-veil-bottom: rgba(6, 46, 56, 0.8);
+  --a-card: rgba(6, 40, 48, 0.66);
+  --a-card-border: rgba(255, 255, 255, 0.24);
+  --a-title: #ffffff;
+  --a-sub: rgba(246, 241, 232, 0.78);
+  --a-label: #f6f1e8;
+  --a-icon: rgba(246, 241, 232, 0.7);
+  --a-input-bg: rgba(255, 255, 255, 0.08);
+  --a-input-solid: #0f4048;            /* para el autocompletado del navegador */
+  --a-input-text: #ffffff;
+  --a-placeholder: rgba(246, 241, 232, 0.5);
+  --a-border: rgba(255, 255, 255, 0.3);
+  --a-border-strong: rgba(255, 255, 255, 0.55);
+  --a-divider: rgba(246, 241, 232, 0.65);
+  --a-social-hover: rgba(255, 255, 255, 0.14);
+  --a-social-hover-text: #ffffff;
+  --a-link: var(--seafoam);
+  --a-link-hover: #ffffff;
+  --a-shadow: 0 24px 56px rgba(2, 20, 26, 0.4);
+  --toggle-bg: rgba(6, 40, 48, 0.7);
+  color-scheme: dark;
 }
 
-/* Reset: incluye padding y border dentro del tamaño del elemento */
-* {
-  box-sizing: border-box;
+/* --- Tokens del tema OSCURO (se activa con <html data-theme="dark">) --- */
+:root[data-theme="dark"] {
+  --a-veil-top: rgba(3, 22, 30, 0.7);
+  --a-veil-bottom: rgba(2, 12, 18, 0.9);
+  --a-card: rgba(3, 18, 25, 0.74);
+  --a-card-border: rgba(255, 255, 255, 0.16);
+  --a-input-solid: #0a2128;
+  --a-shadow: 0 24px 56px rgba(0, 0, 0, 0.55);
+  --toggle-bg: rgba(2, 14, 20, 0.8);
 }
 
-/* Página de registro: fondo degradado oscuro y centra la tarjeta en la pantalla */
+/* Reset */
+* { box-sizing: border-box; }
+
+/* ---------------------------------------------------------
+   2. PÁGINA
+   --------------------------------------------------------- */
+html { background: #0c3a41; }
+
+/* Página de registro: tarjeta centrada sobre la foto de fondo */
 body.auth-page {
   margin: 0;
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-body);
-  background: linear-gradient(160deg, #0f1729 0%, var(--ink) 40%, var(--ink-soft) 100%);
+  background: transparent;
+  color: var(--a-label);
   padding: 2rem 1rem;
-  line-height: 1.55;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Tarjeta del formulario de registro: caja centrada con fondo azul oscuro */
+/* FONDO PRINCIPAL: foto fija + velo marino (pseudo-elemento fixed, apto para móvil) */
+body.auth-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, var(--a-veil-top) 0%, var(--a-veil-bottom) 100%),
+    url('../assets/imagenplaya.jpg') center / cover no-repeat;
+}
+
+/* Tarjeta de cristal */
 .auth-card {
   width: 100%;
-  max-width: 420px;
-  background: #1a2740;
-  border-radius: 18px;
-  padding: 2.4rem 2rem 2rem;
-  box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255,255,255,0.06);
+  max-width: 440px;
+  background: var(--a-card);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  border-radius: var(--radius-lg);
+  padding: 2.6rem 2.2rem 2.2rem;
+  box-shadow: var(--a-shadow);
+  border: 1px solid var(--a-card-border);
 }
 
-/* Logo (sol + nombre + subtítulo): bloque centrado en la parte superior de la tarjeta */
-.auth-logo {
-  text-align: center;
-  margin-bottom: 1.6rem;
-}
+/* Logo centrado en la parte superior */
+.auth-logo { text-align: center; margin-bottom: 1.6rem; }
 
-/* Imagen del logo en las tarjetas de login/registro */
 .auth-logo .logo-img {
-  height: 120px; /* Un poco más grande para que resalte en el formulario */
+  height: 96px;
   width: auto;
   margin: 0 auto 0.8rem;
   display: block;
 }
 
-/* Subtítulo "Promoción de destinos" debajo del nombre */
+/* Subtítulo "Promoción de destinos" */
 .auth-logo p {
-  color: var(--ochre-light);
-  font-size: 0.85rem;
+  color: var(--peach);
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
   margin: 0;
 }
 
-/* Título "Crea tu cuenta": saludo centrado en blanco */
+/* Título del formulario */
 .auth-card h2 {
-  color: #fff;
+  color: var(--a-title);
   font-family: var(--font-display);
+  font-weight: 400;
   text-align: center;
-  font-size: 1.45rem;
+  font-size: 2.3rem;
   margin: 0 0 0.35rem;
-  line-height: 1.15;
+  line-height: 1.1;
 }
 
-/* Subtítulo del formulario: frase secundaria centrada en gris */
+/* Frase secundaria */
 .auth-card .subtitle {
   text-align: center;
-  color: #a8b0c0;
+  color: var(--a-sub);
   font-size: 0.92rem;
-  margin: 0 0 1.8rem;
+  font-weight: 300;
+  margin: 0 0 1.9rem;
 }
 
-/* Grupo de campo: separa cada label + input del formulario */
-.form-group {
-  margin-bottom: 1.15rem;
-}
+/* ---------------------------------------------------------
+   3. FORMULARIO
+   --------------------------------------------------------- */
+.form-group { margin-bottom: 1.15rem; }
 
-/* Etiqueta del campo (ej. "Nombre completo"): texto gris encima del input */
+/* Etiqueta del campo */
 .form-group label {
   display: block;
-  color: #c5cdd8;
-  font-size: 0.88rem;
-  font-weight: 500;
+  color: var(--a-label);
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0.03em;
   margin-bottom: 0.4rem;
 }
 
-/* Contenedor del input: permite colocar el icono a la izquierda y el ojo a la derecha */
-.input-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+/* Contenedor del input (icono a la izquierda, ojo a la derecha) */
+.input-wrap { position: relative; display: flex; align-items: center; }
 
-/* Icono a la izquierda del input (👤, ✉, 🔒) */
 .input-wrap .icon-left {
   position: absolute;
   left: 14px;
-  color: #7a8699;
+  color: var(--a-icon);
   font-size: 1rem;
   pointer-events: none;
 }
 
-/* Campo de texto / correo / contraseña: fondo oscuro y borde sutil */
+/* Campo de texto: cristal con borde fino */
 .input-wrap input {
   width: 100%;
   padding: 0.85rem 1rem 0.85rem 2.6rem;
-  background: #121c30;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 10px;
-  color: #e8edf5;
+  background: var(--a-input-bg);
+  border: 1px solid var(--a-border);
+  border-radius: var(--radius);
+  color: var(--a-input-text);
   font-family: var(--font-body);
   font-size: 0.95rem;
+  font-weight: 300;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
+.input-wrap input::placeholder { color: var(--a-placeholder); }
 
-/* Texto de ayuda dentro del input vacío (placeholder) */
-.input-wrap input::placeholder {
-  color: #5a6578;
-}
-
-/* Estado al enfocar el input: borde y halo ocre */
+/* Foco: borde y halo verde agua */
 .input-wrap input:focus {
-  border-color: var(--ochre);
-  box-shadow: 0 0 0 3px rgba(201, 134, 46, 0.18);
+  border-color: var(--seafoam);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(159, 211, 200, 0.22);
 }
 
-/* Botón del ojo: muestra u oculta la contraseña (lado derecho del input) */
+/* Botón del ojo (mostrar/ocultar contraseña) */
 .input-wrap .toggle-pass {
   position: absolute;
   right: 12px;
   background: none;
   border: none;
-  color: #7a8699;
+  color: var(--a-icon);
   cursor: pointer;
   font-size: 1.1rem;
   padding: 4px;
   line-height: 1;
 }
+.input-wrap .toggle-pass:hover { color: var(--a-link-hover); }
 
-/* Hover del botón ojo: color ocre claro */
-.input-wrap .toggle-pass:hover {
-  color: var(--ochre-light);
-}
-
-/* Fila del checkbox: "Acepto los términos y condiciones" */
+/* Fila de opciones ("Recordarme" / "Olvidé contraseña") */
 .form-options {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
 }
-
-/* Label del checkbox de términos */
 .form-options label {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  color: #a8b0c0;
+  gap: 0.5rem;
+  color: var(--a-sub);
   cursor: pointer;
   margin: 0;
 }
-
-/* Checkbox de términos: color ocre al marcar */
 .form-options input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: var(--ochre);
+  accent-color: var(--seafoam);
   cursor: pointer;
 }
-
-/* Enlaces dentro de form-options (si los hubiera) */
 .form-options a {
-  color: var(--ochre);
-  font-weight: 500;
+  color: var(--a-link);
   text-decoration: none;
 }
-
-/* Hover de enlaces en form-options */
 .form-options a:hover {
-  color: var(--ochre-light);
+  color: var(--a-link-hover);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
 }
 
-/* Botón principal "Crear cuenta": ancho completo con degradado ocre */
+/* Botón principal: blanco, letras espaciadas (igual que .btn-hero) */
 .btn-auth {
   width: 100%;
-  padding: 0.95rem 1.5rem;
+  padding: 1rem 1.5rem;
   border: none;
-  border-radius: 10px;
-  background: linear-gradient(180deg, #e89b2e 0%, var(--ochre-dark) 100%);
-  color: #fff;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1rem;
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--deep);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.76rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.18s ease, box-shadow 0.2s ease, filter 0.2s ease;
-  box-shadow: 0 4px 14px rgba(201, 134, 46, 0.35);
+  box-shadow: 0 8px 22px rgba(2, 24, 30, 0.25);
+  transition: transform 0.18s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
-
-/* Hover del botón principal: sube y aumenta la sombra */
 .btn-auth:hover {
+  background: var(--seafoam);
   transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(201, 134, 46, 0.45);
-  filter: brightness(1.05);
+  box-shadow: 0 12px 28px rgba(2, 24, 30, 0.32);
 }
+.btn-auth:active { transform: translateY(0); }
+.btn-auth:disabled { opacity: 0.7; cursor: wait; transform: none; }
 
-/* Clic del botón principal: vuelve a su posición */
-.btn-auth:active {
-  transform: translateY(0);
-}
-
-/* Separador "o regístrate con": texto con líneas a ambos lados */
+/* Separador "o continúa con" */
 .auth-divider {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin: 1.5rem 0;
-  color: #5a6578;
-  font-size: 0.85rem;
+  margin: 1.6rem 0;
+  color: var(--a-divider);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
 }
-
-/* Líneas izquierda y derecha del separador */
 .auth-divider::before,
 .auth-divider::after {
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(255,255,255,0.1);
+  background: var(--a-border);
 }
 
-/* Contenedor de botones sociales: dos columnas (Google y Facebook) */
+/* Botones sociales: contorno fino */
 .social-btns {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.6rem;
 }
-
-/* Botón social individual: fondo oscuro con icono y texto centrados */
 .btn-social {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: #121c30;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 10px;
-  color: #c5cdd8;
+  background: transparent;
+  border: 1px solid var(--a-border);
+  border-radius: var(--radius);
+  color: var(--a-label);
   font-family: var(--font-body);
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.88rem;
+  font-weight: 400;
   cursor: pointer;
   transition: background 0.2s ease, border-color 0.2s ease;
   text-decoration: none;
 }
-
-/* Hover del botón social: fondo y borde más claros */
 .btn-social:hover {
-  background: #1a2740;
-  border-color: rgba(255,255,255,0.2);
-  color: #fff;
+  background: var(--a-social-hover);
+  border-color: var(--a-border-strong);
+  color: var(--a-social-hover-text);
 }
 
-/* Icono "G" de Google en rojo */
-.btn-social .g-icon {
-  color: #ea4335;
-  font-weight: 700;
-  font-size: 1.1rem;
-}
+/* Iconos de marca (tonos claros para que se lean sobre cristal oscuro) */
+.btn-social .g-icon  { color: #ff8a7a; font-weight: 700; font-size: 1.1rem; }
+.btn-social .fb-icon { color: #8ab4ff; font-weight: 700; font-size: 1.1rem; }
 
-/* Icono "f" de Facebook en azul */
-.btn-social .fb-icon {
-  color: #1877f2;
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-
-/* Pie del formulario: texto "¿Ya tienes cuenta?" centrado */
+/* Pie del formulario */
 .auth-footer {
   text-align: center;
   font-size: 0.9rem;
-  color: #a8b0c0;
+  color: var(--a-sub);
   margin: 0;
 }
-
-/* Enlace "Inicia sesión" en ocre */
 .auth-footer a {
-  color: var(--ochre);
-  font-weight: 600;
-  text-decoration: none;
+  color: var(--a-link);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
 }
+.auth-footer a:hover { color: var(--a-link-hover); }
 
-/* Hover del enlace "Inicia sesión" */
-.auth-footer a:hover {
-  color: var(--ochre-light);
-}
-
-/* Enlace "Volver al inicio": centrado debajo de la tarjeta */
+/* "Volver al inicio" */
 .back-home {
   display: block;
   text-align: center;
-  margin-top: 1.4rem;
-  color: #7a8699;
-  font-size: 0.88rem;
+  margin-top: 1.5rem;
+  color: var(--a-icon);
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   text-decoration: none;
+  transition: color 0.2s ease;
+}
+.back-home:hover { color: var(--a-link-hover); }
+
+/* ---------------------------------------------------------
+   4. TEMA, FOCO Y AJUSTES
+   --------------------------------------------------------- */
+.theme-toggle--floating {
+  color: #fff;
+  border-color: var(--a-border);
+}
+.theme-toggle--floating:hover {
+  color: var(--seafoam);
+  border-color: var(--seafoam);
+  background: var(--toggle-bg);
 }
 
-/* Hover de "Volver al inicio": color ocre claro */
-.back-home:hover {
-  color: var(--ochre-light);
+/* Autocompletado del navegador respetando el tema */
+.input-wrap input:-webkit-autofill,
+.input-wrap input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--a-input-text);
+  caret-color: var(--a-input-text);
+  -webkit-box-shadow: 0 0 0 1000px var(--a-input-solid) inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+:focus-visible { outline: 2px solid var(--seafoam); outline-offset: 3px; }
+::selection { background: var(--seafoam); color: #0a2c33; }
+
+@media (max-width: 420px) {
+  .auth-card { padding: 2.2rem 1.4rem 1.8rem; }
+  .auth-card h2 { font-size: 2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
