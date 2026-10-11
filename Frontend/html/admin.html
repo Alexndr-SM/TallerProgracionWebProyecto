@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>Panel de administración · IcaTurismo</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="icon" href="../assets/UTP.webp" type="image/webp">
+    <script src="../js/theme.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+</head>
+<body class="admin-page">
+    <header class="admin-header">
+        <a class="admin-brand" href="../index.html">
+            <img src="../assets/logoIcaTurismo.png" alt="" class="admin-brand__logo">
+            <span>IcaTurismo <small>Administración</small></span>
+        </a>
+        <div class="admin-header__actions">
+            <button type="button" class="theme-toggle" data-theme-toggle
+                aria-label="Cambiar a modo oscuro" aria-pressed="false" title="Cambiar tema">
+                <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <button type="button" class="admin-logout" id="logoutButton">Cerrar sesión</button>
+        </div>
+    </header>
+
+    <main class="admin-main" id="adminContent" hidden>
+        <section class="admin-welcome" aria-labelledby="welcomeTitle">
+            <p class="admin-eyebrow">Área restringida · Administrador</p>
+            <h1 id="welcomeTitle">Panel de administración</h1>
+            <p id="welcomeMessage">Verificando permisos de acceso...</p>
+        </section>
+
+        <section class="admin-card" aria-labelledby="sessionTitle">
+            <div class="admin-card__icon" aria-hidden="true">✓</div>
+            <div>
+                <h2 id="sessionTitle">Sesión segura</h2>
+                <p>Tu acceso fue validado por el servidor y tu cuenta tiene permisos de administrador.</p>
+            </div>
+            <span class="admin-badge">Administrador</span>
+        </section>
+
+        <a class="admin-back" href="../index.html">← Volver al sitio</a>
+    </main>
+
+    <p class="admin-status" id="adminStatus" role="status" aria-live="polite">Verificando acceso...</p>
+
+    <script>
+        (async function () {
+            const loginUrl = 'login.html';
+            const status = document.getElementById('adminStatus');
+            const content = document.getElementById('adminContent');
+
+            if (!Auth.isLoggedIn()) {
+                window.location.replace(loginUrl);
+                return;
+            }
+
+            if (!Auth.isAdmin()) {
+                alert('Esta página es exclusiva para administradores.');
+                window.location.replace('../index.html');
+                return;
+            }
+
+            try {
+                const response = await fetch((window.API_URL || '').replace(/\/$/, '') + '/api/auth/admin/dashboard', {
+                    headers: { Authorization: 'Bearer ' + Auth.getToken() },
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (response.status === 401) {
+                    Auth.logout();
+                    return;
+                }
+                if (response.status === 403) {
+                    alert(data.message || 'Esta página es exclusiva para administradores.');
+                    window.location.replace('../index.html');
+                    return;
+                }
+                if (!response.ok || !data.ok) {
+                    throw new Error(data.message || 'No se pudo validar el acceso al panel.');
+                }
+
+                document.getElementById('welcomeMessage').textContent =
+                    'Bienvenido, ' + (data.user.nombre || 'administrador') + '.';
+                status.hidden = true;
+                content.hidden = false;
+            } catch (error) {
+                status.textContent = error.message || 'No se pudo validar el acceso al panel.';
+            }
+        })();
+
+        document.getElementById('logoutButton').addEventListener('click', function () {
+            Auth.logout();
+        });
+    </script>
+</body>
+</html>

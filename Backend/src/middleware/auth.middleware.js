@@ -18,6 +18,7 @@ function requireAuth(req, res, next) {
       id: payload.id,
       email: payload.email,
       nombre: payload.nombre,
+      rol: payload.rol,
     };
     next();
   } catch {
@@ -25,4 +26,15 @@ function requireAuth(req, res, next) {
   }
 }
 
-module.exports = { requireAuth };
+function requireAdmin(req, res, next) {
+  if (req.user && req.user.rol === 'admin') {
+    return next();
+  }
+
+  return res.status(403).json({
+    ok: false,
+    message: 'Acceso denegado. Se requieren permisos de administrador.',
+  });
+}
+
+module.exports = { requireAuth, requireAdmin };

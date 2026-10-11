@@ -57,8 +57,13 @@ async function ensureTable() {
       nombre VARCHAR(120) NOT NULL,
       email VARCHAR(180) NOT NULL UNIQUE,
       password_hash VARCHAR(255) NOT NULL,
+      rol VARCHAR(20) NOT NULL DEFAULT 'cliente',
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+  `);
+  await pool.query(`
+    ALTER TABLE usuarios
+    ADD COLUMN IF NOT EXISTS rol VARCHAR(20) NOT NULL DEFAULT 'cliente';
   `);
   console.log('Tabla usuarios verificada.');
 }

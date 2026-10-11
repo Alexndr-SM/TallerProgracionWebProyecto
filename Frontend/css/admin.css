@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  color-scheme: light;
+  --admin-bg: #f3f5f3;
+  --admin-surface: #ffffff;
+  --admin-text: #193b3d;
+  --admin-muted: #687978;
+  --admin-border: #dce5e1;
+  --admin-accent: #16756b;
+  --admin-accent-soft: #e5f3ef;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --admin-bg: #122426;
+  --admin-surface: #1b3031;
+  --admin-text: #edf5f1;
+  --admin-muted: #b0c1bc;
+  --admin-border: #344b49;
+  --admin-accent: #8ed1bd;
+  --admin-accent-soft: #28423e;
+}
+
+* { box-sizing: border-box; }
+
+body.admin-page {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.admin-header {
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem max(1.25rem, calc((100% - 1120px) / 2));
+  background: var(--admin-surface);
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-brand,
+.admin-header__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.admin-brand {
+  color: var(--admin-text);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.admin-brand__logo { width: 48px; height: 48px; object-fit: contain; }
+.admin-brand small { display: block; color: var(--admin-muted); font-size: 0.72rem; font-weight: 400; }
+.admin-header .theme-toggle { border-color: var(--admin-border); color: var(--admin-text); }
+
+.admin-logout {
+  border: 1px solid var(--admin-border);
+  border-radius: 4px;
+  padding: 0.65rem 0.9rem;
+  background: transparent;
+  color: var(--admin-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.admin-logout:hover { border-color: var(--admin-accent); color: var(--admin-accent); }
+
+.admin-main {
+  width: min(100% - 2rem, 960px);
+  margin: 4rem auto;
+}
+
+.admin-welcome { margin-bottom: 2rem; }
+.admin-eyebrow { color: var(--admin-accent); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+.admin-welcome h1 { margin: 0.4rem 0; font: 500 clamp(2.4rem, 6vw, 3.6rem)/1.05 'Cormorant Garamond', Georgia, serif; }
+.admin-welcome > p:last-child { color: var(--admin-muted); }
+
+.admin-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.4rem;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-surface);
+  box-shadow: 0 12px 30px rgba(18, 45, 41, 0.06);
+}
+
+.admin-card__icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--admin-accent-soft);
+  color: var(--admin-accent);
+  font-size: 1.3rem;
+}
+
+.admin-card h2 { margin: 0 0 0.35rem; font-size: 1rem; }
+.admin-card p { margin: 0; color: var(--admin-muted); font-size: 0.9rem; line-height: 1.6; }
+.admin-badge { margin-left: auto; padding: 0.4rem 0.65rem; border-radius: 99px; background: var(--admin-accent-soft); color: var(--admin-accent); font-size: 0.75rem; white-space: nowrap; }
+.admin-back { display: inline-block; margin-top: 1.5rem; color: var(--admin-accent); text-decoration: none; }
+.admin-back:hover { text-decoration: underline; }
+.admin-status { width: min(100% - 2rem, 960px); margin: 4rem auto; color: var(--admin-muted); }
+
+[hidden] { display: none !important; }
+
+@media (max-width: 560px) {
+  .admin-header { padding-inline: 1rem; }
+  .admin-header__actions { gap: 0.55rem; }
+  .admin-logout { padding: 0.55rem 0.65rem; font-size: 0.82rem; }
+  .admin-main { margin-top: 2.5rem; }
+  .admin-card { align-items: flex-start; flex-wrap: wrap; }
+  .admin-badge { margin-left: 3.5rem; }
+}

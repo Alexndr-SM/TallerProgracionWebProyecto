@@ -33,6 +33,11 @@
     return Boolean(getToken());
   }
 
+  function isAdmin() {
+    const user = getUser();
+    return Boolean(user && user.rol === 'admin');
+  }
+
   async function login(email, password) {
     let res;
     try {
@@ -98,5 +103,6 @@
     getToken,
     getUser,
     isLoggedIn,
+    isAdmin,
   };
 })();

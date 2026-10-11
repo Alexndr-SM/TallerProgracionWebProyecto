@@ -7,7 +7,7 @@ const JWT_EXPIRES = '7d'; // el login se mantiene 7 días
 
 function signToken(user) {
   return jwt.sign(
-    { id: user.id, email: user.email, nombre: user.nombre },
+    { id: user.id, email: user.email, nombre: user.nombre, rol: user.rol },
     JWT_SECRET,
     { expiresIn: JWT_EXPIRES }
   );
@@ -34,7 +34,7 @@ async function register(req, res) {
     const result = await query(
       `INSERT INTO usuarios (nombre, email, password_hash)
        VALUES ($1, $2, $3)
-       RETURNING id, nombre, email, created_at`,
+       RETURNING id, nombre, email, rol, created_at`,
       [nombre.trim(), email.toLowerCase().trim(), password_hash]
     );
 
@@ -45,7 +45,7 @@ async function register(req, res) {
       ok: true,
       message: 'Cuenta creada correctamente.',
       token,
-      user: { id: user.id, nombre: user.nombre, email: user.email },
+      user: { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol },
     });
   } catch (err) {
     console.error('register:', err);
@@ -63,7 +63,7 @@ async function login(req, res) {
     }
 
     const result = await query(
-      'SELECT id, nombre, email, password_hash FROM usuarios WHERE email = $1',
+      'SELECT id, nombre, email, password_hash, rol FROM usuarios WHERE email = $1',
       [email.toLowerCase().trim()]
     );
 
@@ -83,7 +83,7 @@ async function login(req, res) {
       ok: true,
       message: 'Inicio de sesión correcto.',
       token,
-      user: { id: user.id, nombre: user.nombre, email: user.email },
+      user: { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol },
     });
   } catch (err) {
     console.error('login:', err);
