@@ -17,9 +17,9 @@ div:has(> iframe[src*="chatbase.co"]) {
   top: auto !important;
   right: 20px !important;
   bottom: 75px !important;
-  width: min(406px, calc(100vw - 24px)) !important;
-  height: min(600px, calc(100dvh - 110px)) !important;
-  max-height: calc(100dvh - 110px) !important;
+  width: min(250px, calc(100vw - 24px)) !important;
+  height: min(250px, calc(100dvh - 100px)) !important;
+  max-height: min(250px, calc(100dvh - 100px)) !important;
   background-color: #0c0f3600 !important;
 }
 
@@ -76,10 +76,10 @@ iframe[src*="chatbase.co"] {
   top: auto !important;
   right: 20px !important;
   bottom: 75px !important;
-  width: min(406px, calc(100vw - 24px)) !important;
-  max-width: min(406px, calc(100vw - 24px)) !important;
-  height: min(600px, calc(100dvh - 110px)) !important;
-  max-height: calc(100dvh - 110px) !important;
+  width: min(250px, calc(100vw - 24px)) !important;
+  max-width: min(250px, calc(100vw - 24px)) !important;
+  height: min(250px, calc(100dvh - 100px)) !important;
+  max-height: min(250px, calc(100dvh - 100px)) !important;
   border: none !important;
   border-radius: 12px !important;
   background: #0C0F36 !important;
@@ -95,18 +95,18 @@ iframe[src*="chatbase.co"] {
   #chatbase-bubble-window {
     right: 12px !important;
     bottom: 68px !important;
-    width: min(406px, calc(100vw - 24px)) !important;
-    height: min(600px, calc(100dvh - 100px)) !important;
-    max-height: calc(100dvh - 100px) !important;
+    width: min(250px, calc(100vw - 24px)) !important;
+    height: min(250px, calc(100dvh - 100px)) !important;
+    max-height: min(250px, calc(100dvh - 100px)) !important;
   }
 
   iframe[src*="chatbase.co"] {
     right: 12px !important;
     bottom: 68px !important;
-    width: min(406px, calc(100vw - 24px)) !important;
-    max-width: min(406px, calc(100vw - 24px)) !important;
-    height: min(600px, calc(100dvh - 100px)) !important;
-    max-height: calc(100dvh - 100px) !important;
+    width: min(250px, calc(100vw - 24px)) !important;
+    max-width: min(250px, calc(100vw - 24px)) !important;
+    height: min(250px, calc(100dvh - 100px)) !important;
+    max-height: min(250px, calc(100dvh - 100px)) !important;
   }
 
   .chatbot-launcher {
