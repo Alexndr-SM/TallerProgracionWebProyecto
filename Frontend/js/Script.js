@@ -6,7 +6,46 @@
 // Espera a que el HTML esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
   const headerActions = document.querySelector('.header-actions');
-  const navUser = document.getElementById('navUser');
+  let navUser = document.getElementById('navUser');
+
+  if (headerActions && !navUser) {
+    const scriptUrl = document.querySelector('script[src$="/js/Script.js"]')?.src;
+    if (!scriptUrl) throw new Error('No se pudo determinar la ruta del menú de cuenta.');
+
+    const accountUrl = (file) => new URL(`../html/${file}`, scriptUrl).href;
+    navUser = document.createElement('div');
+    navUser.className = 'nav-user';
+    navUser.id = 'navUser';
+
+    const guestArea = document.createElement('div');
+    guestArea.id = 'guestArea';
+    guestArea.innerHTML = `
+      <button type="button" class="user-btn" id="userBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true">
+        <img src="${new URL('../assets/Person.png', scriptUrl).href}" alt="">
+        <span>Cuenta</span><span class="chevron" aria-hidden="true">▾</span>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <a href="${accountUrl('login.html')}">Iniciar sesión</a>
+        <a href="${accountUrl('registro.html')}">Registrarse</a>
+      </div>`;
+
+    const userArea = document.createElement('div');
+    userArea.id = 'userArea';
+    userArea.className = 'is-hidden';
+    userArea.hidden = true;
+    userArea.innerHTML = `
+      <button type="button" class="user-btn" id="userProfileBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true">
+        <img src="${new URL('../assets/Person.png', scriptUrl).href}" alt="">
+        <span id="userNameDisplay">Usuario</span><span class="chevron" aria-hidden="true">▾</span>
+      </button>
+      <div class="user-dropdown" id="userProfileDropdown">
+        <a href="#" id="logoutAction">Cerrar sesión</a>
+      </div>`;
+
+    navUser.append(guestArea, userArea);
+    headerActions.insertBefore(navUser, headerActions.querySelector('.theme-toggle'));
+  }
+
   const languageAnchor = navUser || headerActions?.querySelector('.theme-toggle');
 
   if (headerActions && languageAnchor) {

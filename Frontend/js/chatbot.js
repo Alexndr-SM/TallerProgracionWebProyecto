@@ -28,26 +28,4 @@
     widgetObserver.observe(document.body, { childList: true, subtree: true });
     window.setTimeout(() => widgetObserver.disconnect(), 10000);
   });
-
-  if (!document.body.classList.contains('contact-page')) return;
-
-  function keepChatOpen() {
-    const button = document.getElementById('chatbase-bubble-button');
-    if (!button || button.dataset.keepOpen === 'true') return;
-
-    button.dataset.keepOpen = 'true';
-    const openChat = () => {
-      if (button.isConnected && button.getAttribute('aria-expanded') !== 'true') {
-        button.click();
-      }
-    };
-
-    const stateObserver = new MutationObserver(openChat);
-    stateObserver.observe(button, { attributes: true, attributeFilter: ['aria-expanded'] });
-    window.setTimeout(openChat, 250);
-  }
-
-  const widgetObserver = new MutationObserver(keepChatOpen);
-  widgetObserver.observe(document.body, { childList: true, subtree: true });
-  keepChatOpen();
 })();

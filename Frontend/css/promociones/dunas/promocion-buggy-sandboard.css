@@ -1,5 +1,5 @@
 .offer-detail-page { margin-top: calc(var(--header-h) * -1); }
-.offer-detail { padding: calc(var(--header-h) + 2.5rem) 0 5rem; background: linear-gradient(180deg,rgba(4,31,39,.64),rgba(4,31,39,.78)), url("../assets/imagendunas.jpg") center / cover fixed; }
+.offer-detail { padding: calc(var(--header-h) + 2.5rem) 0 5rem; background: linear-gradient(180deg,rgba(4,31,39,.64),rgba(4,31,39,.78)), url("../../../assets/imagendunas.jpg") center / cover fixed; }
 .offer-back { display: inline-block; margin-bottom: 1.5rem; color: var(--seafoam); }
 .offer-hero { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); overflow: hidden; background: var(--glass-strong); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-lg); }
 .offer-copy { padding: clamp(1.5rem,4vw,3.5rem); }

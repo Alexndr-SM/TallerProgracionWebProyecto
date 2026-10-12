@@ -30,9 +30,9 @@
         <nav class="site-nav" aria-label="Principal">
             <ul class="nav-links">
                 <li><a href="../index.html#inicio">Inicio</a></li>
-                <li><a href="playas.html">Playas</a></li>
-                <li><a href="dunas.html">Dunas</a></li>
-                <li><a href="cultura.html">Cultura</a></li>
+                <li><a href="promociones/playas/playas.html">Playas</a></li>
+                <li><a href="promociones/dunas/dunas.html">Dunas</a></li>
+                <li><a href="promociones/cultura/cultura.html">Cultura</a></li>
                 <li><a href="#contenido" aria-current="page">Contacto</a></li>
             </ul>
         </nav>
@@ -51,21 +51,105 @@
     </div>
 </header>
 
-<main id="contenido">
-    <section class="contacto">
+<main id="contenido" class="contact-main">
+    <section class="contact-intro" aria-labelledby="contact-title">
         <div class="wrap contact-layout">
-            <div class="contacto-caja">
-                <h1>Contáctanos</h1>
-                <p>Estamos aquí para ayudarte a planificar tu próxima experiencia en Ica.</p>
-                <address>
-                    <strong>IcaTurismo</strong><br>
-                    Calle Los Turistas 123, Ica<br>
-                    Tel: <a href="tel:+51056123456">(056) 123-456</a><br>
-                    Email: <a href="mailto:info@icaturismo.dev">info@icaturismo.dev</a>
-                </address>
-                <a class="btn-hero" href="../index.html">Volver al inicio</a>
+            <div class="contact-photo">
+                <img src="../assets/imagenplaya.jpg" alt="Costa y paisaje de Ica">
             </div>
-            <div class="contact-chat-space" aria-hidden="true"></div>
+            <div class="contact-form-panel">
+                <h1 id="contact-title">¿Tienes alguna pregunta?</h1>
+                <p>Estamos aquí para ayudarte a planificar tu próxima experiencia en Ica. Escríbenos y te responderemos pronto.</p>
+                <form class="contact-form" action="mailto:info@icaturismo.dev" method="post" enctype="text/plain">
+                    <div class="contact-name-fields">
+                        <label for="contact-first-name">Nombre *
+                            <input id="contact-first-name" name="Nombre" autocomplete="given-name" required>
+                        </label>
+                        <label for="contact-last-name">Apellido *
+                            <input id="contact-last-name" name="Apellido" autocomplete="family-name" required>
+                        </label>
+                    </div>
+                    <label for="contact-email">Correo electrónico *
+                        <input id="contact-email" type="email" name="Correo" autocomplete="email" required>
+                    </label>
+                    <label for="contact-message">Mensaje *
+                        <textarea id="contact-message" name="Mensaje" rows="5" required></textarea>
+                    </label>
+                    <button class="contact-submit" type="submit">Enviar mensaje</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-company" aria-labelledby="company-contact-title">
+        <div class="wrap">
+            <h2 id="company-contact-title">Información de contacto</h2>
+            <dl class="contact-details">
+                <div>
+                    <dt>Dirección</dt>
+                    <dd>Calle Los Turistas 123, Ica</dd>
+                </div>
+                <div>
+                    <dt>Teléfono</dt>
+                    <dd><a href="tel:+51056123456">(056) 123-456</a></dd>
+                </div>
+                <div>
+                    <dt>Correo electrónico</dt>
+                    <dd><a href="mailto:info@icaturismo.dev">info@icaturismo.dev</a></dd>
+                </div>
+            </dl>
+        </div>
+    </section>
+
+    <section class="contact-socials" aria-labelledby="contact-socials-title">
+        <div class="wrap">
+            <h2 id="contact-socials-title">Síguenos en nuestras redes sociales</h2>
+            <ul class="contact-social-list">
+                <li>
+                    <a class="contact-social-link" href="https://www.facebook.com/samantha.sp.946?locale=es_LA" target="_blank" rel="noopener noreferrer" aria-label="Síguenos en Facebook">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.4 21v-8h2.7l.4-3.1h-3.1v-2c0-.9.3-1.5 1.6-1.5h1.7V3.6c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.5-4 4.2v2.3H7.6V13h2.7v8z"/></svg>
+                        <span>Facebook</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="contact-social-link" href="https://www.instagram.com/sammn_uu/" target="_blank" rel="noopener noreferrer" aria-label="Síguenos en Instagram">
+                        <svg class="instagram-mark" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg>
+                        <span>Instagram</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="contact-social-link" href="https://www.youtube.com/@Styx117-S" target="_blank" rel="noopener noreferrer" aria-label="Síguenos en YouTube">
+                        <svg class="youtube-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 7.2a2.7 2.7 0 0 0-1.9-1.9C17.4 4.8 12 4.8 12 4.8s-5.4 0-7.1.5A2.7 2.7 0 0 0 3 7.2 28 28 0 0 0 2.5 12a28 28 0 0 0 .5 4.8 2.7 2.7 0 0 0 1.9 1.9c1.7.5 7.1.5 7.1.5s5.4 0 7.1-.5a2.7 2.7 0 0 0 1.9-1.9 28 28 0 0 0 .5-4.8 28 28 0 0 0-.5-4.8Z"/><path d="m10 15.5 5-3.5-5-3.5z"/></svg>
+                        <span>YouTube</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="contact-whatsapp-section" aria-labelledby="contact-whatsapp-title">
+        <div class="wrap">
+            <h2 id="contact-whatsapp-title">Chatea con nosotros</h2>
+            <p>¿Prefieres escribirnos por WhatsApp? Estamos listos para ayudarte.</p>
+            <a class="contact-whatsapp" href="https://wa.me/51991682946?text=Hola%2C%20quiero%20más%20información" target="_blank" rel="noopener noreferrer">
+                <img src="../assets/whatsapp.png" alt="">
+                <span>Iniciar chat en WhatsApp</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="contact-map-section" aria-labelledby="contact-map-title">
+        <div class="wrap">
+            <h2 id="contact-map-title">Encuéntranos en Ica</h2>
+            <div class="contact-map-frame">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7740.288109378249!2d-75.7357121!3d-14.0686695!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9110e3db5c16ca7d%3A0x14a969e069453071!2sUniversidad%20Tecnol%C3%B3gica%20Del%20Per%C3%BA!5e0!3m2!1ses-419!2spe!4v1790225641935!5m2!1ses-419!2spe"
+                    title="Mapa de Ica"
+                    allowfullscreen
+                    loading="lazy"
+                    referrerpolicy="strict-origin-when-cross-origin">
+                </iframe>
+            </div>
         </div>
     </section>
 </main>
@@ -95,9 +179,9 @@
             <div class="footer-column">
                 <h2>Destinos</h2>
                 <ul>
-                    <li><a href="playas.html">Playas</a></li>
-                    <li><a href="dunas.html">Dunas</a></li>
-                    <li><a href="cultura.html">Cultura</a></li>
+                    <li><a href="promociones/playas/playas.html">Playas</a></li>
+                    <li><a href="promociones/dunas/dunas.html">Dunas</a></li>
+                    <li><a href="promociones/cultura/cultura.html">Cultura</a></li>
                 </ul>
             </div>
             <div class="footer-column">
@@ -116,6 +200,9 @@
     </div>
 </footer>
 
+<button class="chatbot-launcher" type="button" aria-label="Abrir el chat de IcaTurismo">
+    <img src="../assets/chatbot.png" alt="">
+</button>
 <script src="../js/config.js"></script>
 <script src="../js/auth.js"></script>
 <script src="../js/Script.js"></script>
