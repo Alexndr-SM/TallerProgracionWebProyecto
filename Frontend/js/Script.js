@@ -341,6 +341,17 @@ document.addEventListener('DOMContentLoaded', () => {
   mostrarSlide(0);
   iniciarAutoplay();
 
+  // Restablece el reverso al salir con el mouse; hover mantiene el giro mientras está encima.
+  const tarjetaEquipo = document.querySelector('.about-image');
+  const giroEquipo = tarjetaEquipo?.querySelector('.about-image-toggle');
+  if (tarjetaEquipo && giroEquipo) {
+    tarjetaEquipo.addEventListener('pointerleave', (evento) => {
+      if (evento.pointerType === 'mouse') {
+        giroEquipo.checked = false;
+      }
+    });
+  }
+
   // Anima los bloques al entrar y salir de pantalla para que se repita al desplazarse.
   const elementosAnimados = document.querySelectorAll('.scroll-reveal');
   const movimientoReducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

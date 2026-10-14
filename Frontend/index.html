@@ -28,7 +28,7 @@
     <div class="wrap header-inner">
         <!-- Logo -->
         <div class="logo">
-            <img src="assets/logoIcaTurismo.png" alt="IcaTurismo" class="logo-img">
+            <a href="#inicio"><img src="assets/logoIcaTurismo.png" alt="IcaTurismo" class="logo-img"></a>
             <p class="logo-name" >IcaTurismo</p>
         </div>
         <nav class="site-nav" aria-label="Principal">
@@ -178,12 +178,30 @@
             <p>IcaTurismo nace del deseo de compartir la riqueza de nuestra región y acercar a cada viajero a sus paisajes, cultura y tradiciones. Queremos ayudarte a descubrir cada rincón de Ica y hacer de tu visita una experiencia especial.</p>
             <p>Te acompañamos a explorar el destino con información útil, propuestas para todos los gustos y el cariño de quienes disfrutan mostrar lo mejor de Ica.</p>
         </div>
-        <div class="about-image scroll-reveal" data-reveal="right">
-            <img src="https://eepsicologia.com/wp-content/uploads/diferencia-entre-grupo-y-equipo.jpg"
-                alt="Paisaje turístico de Ica"
-                loading="lazy"
-                decoding="async">
-                
+        <div class="about-image scroll-reveal" data-reveal="right"
+            role="group" aria-label="Integrantes del equipo IcaTurismo">
+            <input class="about-image-toggle" type="checkbox" id="about-team-toggle"
+                aria-label="Voltear para mostrar u ocultar los integrantes del equipo">
+            <label class="about-image-inner" for="about-team-toggle">
+                <div class="about-image-front">
+                    <img src="https://eepsicologia.com/wp-content/uploads/diferencia-entre-grupo-y-equipo.jpg"
+                        alt="Equipo de IcaTurismo"
+                        loading="lazy"
+                        decoding="async">
+                    <span class="about-image-hint" aria-hidden="true">Conoce al equipo</span>
+                </div>
+                <div class="about-image-back">
+                    <h3>Integrantes del equipo</h3>
+                    <ul>
+                        <li>Gutierres Sotelo Diego</li>
+                        <li>Sotelo Marcos Alexander</li>
+                        <li>Sarmiento Palomino Samantha</li>
+                        <li>Peña Torres Mariana</li>
+                        <li>Santillan Solis Jordan</li>
+                        <li>Taxis Unzueta Abraham</li>
+                    </ul>
+                </div>
+            </label>
         </div>
     </div>
 </section>
