@@ -34,7 +34,7 @@ async function register(req, res) {
     const result = await query(
       `INSERT INTO usuarios (nombre, email, password_hash)
        VALUES ($1, $2, $3)
-       RETURNING id, nombre, email, rol, created_at`,
+       RETURNING id, nombre, email, rol, foto_perfil_url, created_at`,
       [nombre.trim(), email.toLowerCase().trim(), password_hash]
     );
 
@@ -45,7 +45,13 @@ async function register(req, res) {
       ok: true,
       message: 'Cuenta creada correctamente.',
       token,
-      user: { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol },
+      user: {
+        id: user.id,
+        nombre: user.nombre,
+        email: user.email,
+        rol: user.rol,
+        foto_perfil_url: user.foto_perfil_url,
+      },
     });
   } catch (err) {
     console.error('register:', err);
@@ -63,7 +69,7 @@ async function login(req, res) {
     }
 
     const result = await query(
-      'SELECT id, nombre, email, password_hash, rol FROM usuarios WHERE email = $1',
+      'SELECT id, nombre, email, password_hash, rol, foto_perfil_url FROM usuarios WHERE email = $1',
       [email.toLowerCase().trim()]
     );
 
@@ -83,7 +89,13 @@ async function login(req, res) {
       ok: true,
       message: 'Inicio de sesión correcto.',
       token,
-      user: { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol },
+      user: {
+        id: user.id,
+        nombre: user.nombre,
+        email: user.email,
+        rol: user.rol,
+        foto_perfil_url: user.foto_perfil_url,
+      },
     });
   } catch (err) {
     console.error('login:', err);
