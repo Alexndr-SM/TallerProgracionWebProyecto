@@ -175,3 +175,5 @@ async function start() {
     console.log(`API escuchando en puerto ${PORT}`);
   });
 }
+
+start();
