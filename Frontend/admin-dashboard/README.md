@@ -12,7 +12,17 @@ pnpm dev
 pnpm build
 ```
 
-Para publicar el sitio estático, compila el dashboard y despliega también `dist/` junto con `Frontend/html/admin.html`. La página administrativa carga `dist/admin-dashboard.js` y `dist/admin-dashboard.css`.
+## Despliegue en Render
+
+El bundle `dist/` está ignorado por Git: Render tiene que generarlo durante el deploy. En el Static Site existente, configura:
+
+- **Root Directory:** vacío (raíz del repositorio).
+- **Build Command:** `pnpm --dir Frontend/admin-dashboard install --frozen-lockfile && pnpm --dir Frontend/admin-dashboard build`
+- **Publish Directory:** `Frontend`
+
+Así Vite genera `Frontend/admin-dashboard/dist/`, las mismas rutas que carga `Frontend/html/admin.html`. No configures `Frontend/html` como directorio de publicación: las rutas relativas de páginas y recursos están planteadas desde `Frontend`.
+
+Para desarrollo local, desde esta carpeta ejecuta `pnpm install` y luego `pnpm dev`. También puedes verificar el bundle de producción con `pnpm build`.
 
 ## Datos de demostración
 

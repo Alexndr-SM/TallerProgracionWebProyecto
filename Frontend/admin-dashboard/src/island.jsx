@@ -16,6 +16,7 @@ if (container) {
         <App user={user} />
       </StrictMode>,
     )
+    container.dispatchEvent(new Event('admin:mounted'))
   }
 
   function mountFromPage() {
@@ -24,9 +25,15 @@ if (container) {
       mountDashboard(JSON.parse(container.dataset.adminUser || 'null'))
     } catch (error) {
       console.error('No se pudo leer el usuario administrador.', error)
+      container.dispatchEvent(new CustomEvent('admin:mount-error', { detail: error }))
     }
   }
 
   container.addEventListener('admin:authorized', mountFromPage)
+  container.addEventListener('admin:mount-error', (event) => {
+    const status = document.getElementById('adminStatus')
+    status.textContent = event.detail?.message || 'No se pudo montar el dashboard administrativo.'
+    status.hidden = false
+  })
   mountFromPage()
 }

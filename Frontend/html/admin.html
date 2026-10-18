@@ -12,7 +12,7 @@
     <script src="../js/theme.js"></script>
     <script src="../js/config.js"></script>
     <script src="../js/auth.js"></script>
-    <script type="module" src="../admin-dashboard/dist/admin-dashboard.js"></script>
+    <script type="module" src="../admin-dashboard/dist/admin-dashboard.js" onerror="document.getElementById('adminStatus').textContent = 'No se cargó el dashboard. Verifica que Render compile Frontend/admin-dashboard y publique la carpeta Frontend.'"></script>
 </head>
 <body class="admin-page">
     <main class="admin-main" id="adminContent" hidden>
@@ -26,6 +26,11 @@
             const status = document.getElementById('adminStatus');
             const content = document.getElementById('adminContent');
             const dashboard = document.querySelector('[data-admin-dashboard]');
+
+            dashboard.addEventListener('admin:mounted', function () {
+                status.hidden = true;
+                content.hidden = false;
+            });
 
             if (!Auth.isLoggedIn()) {
                 window.location.replace(loginUrl);
@@ -60,8 +65,6 @@
                 dashboard.dataset.adminUser = JSON.stringify(data.user);
                 dashboard.dataset.adminAuthorized = 'true';
                 dashboard.dispatchEvent(new Event('admin:authorized'));
-                status.hidden = true;
-                content.hidden = false;
             } catch (error) {
                 status.textContent = error.message || 'No se pudo validar el acceso al panel.';
             }
