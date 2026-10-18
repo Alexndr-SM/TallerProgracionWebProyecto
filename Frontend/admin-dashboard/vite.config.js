@@ -10,4 +10,14 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    lib: {
+      entry: fileURLToPath(new URL('./src/island.jsx', import.meta.url)),
+      formats: ['es'],
+      fileName: () => 'admin-dashboard.js',
+      cssFileName: 'admin-dashboard',
+    },
+    outDir: 'dist',
+    emptyOutDir: true,
+  },
 })

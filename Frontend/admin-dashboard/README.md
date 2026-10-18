@@ -1,16 +1,19 @@
-# React + Vite
+# Panel de administración IcaTurismo
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+El dashboard React se integra como una isla en `../html/admin.html`. La página conserva su validación de sesión y permisos con la API; React solo se monta después de que el servidor confirma el acceso administrativo. Sus estilos y dependencias se compilan en un bundle aislado y no se cargan en las demás páginas del sitio.
 
-Currently, two official plugins are available:
+## Desarrollo y compilación
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Desde esta carpeta:
 
-## React Compiler
+```sh
+pnpm install
+pnpm dev
+pnpm build
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Para publicar el sitio estático, compila el dashboard y despliega también `dist/` junto con `Frontend/html/admin.html`. La página administrativa carga `dist/admin-dashboard.js` y `dist/admin-dashboard.css`.
 
-## Expanding the Oxlint configuration
+## Datos de demostración
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+Los productos, empleados y el tema se guardan en el `localStorage` del navegador. Los pedidos, clientes, estadísticas, eventos y puntos usan datos de ejemplo. Crear empleados, asignar permisos y editar el catálogo todavía no actualiza la base de datos ni crea cuentas en la API. La autorización real para entrar al panel permanece en el servidor.
