@@ -75,6 +75,10 @@
     <main id="contenido" class="reserva-layout">
         <section class="formulario-contenedor" aria-labelledby="reserva-titulo">
         <h1 id="reserva-titulo">Completa tu reserva</h1>
+        <p class="reserva-acceso" id="reserva-acceso" role="status" hidden>
+            Inicia sesión con una cuenta registrada para reservar.
+            <a href="login.html">Iniciar sesión</a> o <a href="registro.html">crear una cuenta</a>.
+        </p>
         <form id="form-reserva" action="#" method="POST">
       
       <div class="grupo-input">
@@ -107,7 +111,7 @@
         </select>
       </div>
 
-      <button type="submit" class="btn-pagar">Proceder al Pago</button>
+    <button type="submit" class="btn-pagar">Continuar al pago</button>
       
     </form>
         </section>
@@ -142,6 +146,8 @@
                 <p class="pago-descripcion">Realiza el pago desde tu billetera digital. Los datos para completar la operación se mostrarán al confirmar la reserva.</p>
                 <div class="pago-marca pago-marca--yape" aria-hidden="true">Yape <span>/</span> Plin</div>
             </div>
+            <p id="reserva-mensaje" class="reserva-mensaje" role="status" aria-live="polite" hidden></p>
+            <button type="button" class="btn-pagar" id="confirmar-reserva">Confirmar reserva</button>
             <button type="button" class="btn-volver" id="volver-reserva">Volver a los datos</button>
         </section>
     </main>
@@ -202,9 +208,9 @@
         </div>
     </div>
 </footer>
-<script src="../js/metodoPago.js"></script>
 <script src="../js/config.js"></script>
 <script src="../js/auth.js"></script>
+<script src="../js/metodoPago.js"></script>
 <script src="../js/Script.js"></script>
 </body>
 </html>

@@ -32,7 +32,7 @@ COMMENT ON COLUMN usuarios.foto_perfil_public_id IS 'Identificador de la foto de
 -- Reservas del formulario de compra, incluidas las realizadas como invitado
 CREATE TABLE IF NOT EXISTS reservas (
   id              SERIAL PRIMARY KEY,
-  usuario_id      INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
+  usuario_id      INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
   nombre          VARCHAR(120) NOT NULL,
   email           VARCHAR(180) NOT NULL,
   fecha_tour      DATE NOT NULL,

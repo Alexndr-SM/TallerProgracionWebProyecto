@@ -30,12 +30,26 @@ CREATE TABLE IF NOT EXISTS comentarios (
 );
 CREATE INDEX IF NOT EXISTS idx_comentarios_created_at
   ON comentarios (created_at DESC);
+CREATE TABLE IF NOT EXISTS reservas (
+  id SERIAL PRIMARY KEY,
+  usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+  nombre VARCHAR(120) NOT NULL,
+  email VARCHAR(180) NOT NULL,
+  fecha_tour DATE NOT NULL,
+  asistentes SMALLINT NOT NULL CHECK (asistentes BETWEEN 1 AND 15),
+  metodo_pago VARCHAR(20) NOT NULL CHECK (metodo_pago IN ('tarjeta', 'paypal', 'yape')),
+  estado VARCHAR(20) NOT NULL DEFAULT 'pendiente'
+    CHECK (estado IN ('pendiente', 'confirmada', 'cancelada')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_reservas_fecha_tour ON reservas (fecha_tour);
+CREATE INDEX IF NOT EXISTS idx_reservas_email ON reservas (email);
 `;
 
 async function init() {
   try {
     await pool.query(SQL);
-    console.log('Tablas "usuarios" y "comentarios" listas.');
+    console.log('Tablas "usuarios", "reservas" y "comentarios" listas.');
   } catch (err) {
     console.error('Error creando tabla:', err.message);
     process.exit(1);

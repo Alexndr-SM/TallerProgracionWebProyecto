@@ -15,6 +15,7 @@ const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/auth.routes');
 const commentRoutes = require('./routes/comment.routes');
+const reservationRoutes = require('./routes/reservation.routes');
 const { pool } = require('./config/database');
 
 const app = express();
@@ -52,6 +53,7 @@ app.get('/api/health', async (_req, res) => {
 // Rutas de autenticación
 app.use('/api/auth', authRoutes);
 app.use('/api/comentarios', commentRoutes);
+app.use('/api/reservas', reservationRoutes);
 
 // Crear tabla usuarios al arrancar (si no existe)
 async function ensureTable() {
@@ -77,6 +79,24 @@ async function ensureTable() {
       ADD COLUMN IF NOT EXISTS foto_perfil_public_id VARCHAR(255);
   `);
   await pool.query(`
+    CREATE TABLE IF NOT EXISTS reservas (
+      id SERIAL PRIMARY KEY,
+      usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+      nombre VARCHAR(120) NOT NULL,
+      email VARCHAR(180) NOT NULL,
+      fecha_tour DATE NOT NULL,
+      asistentes SMALLINT NOT NULL CHECK (asistentes BETWEEN 1 AND 15),
+      metodo_pago VARCHAR(20) NOT NULL CHECK (metodo_pago IN ('tarjeta', 'paypal', 'yape')),
+      estado VARCHAR(20) NOT NULL DEFAULT 'pendiente'
+        CHECK (estado IN ('pendiente', 'confirmada', 'cancelada')),
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS idx_reservas_fecha_tour ON reservas (fecha_tour);
+    CREATE INDEX IF NOT EXISTS idx_reservas_email ON reservas (email);
+  `);
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS comentarios (
       id SERIAL PRIMARY KEY,
       usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
@@ -89,7 +109,7 @@ async function ensureTable() {
     CREATE INDEX IF NOT EXISTS idx_comentarios_created_at
     ON comentarios (created_at DESC);
   `);
-  console.log('Tablas usuarios y comentarios verificadas.');
+  console.log('Tablas usuarios, reservas y comentarios verificadas.');
 }
 
 async function start() {
