@@ -11,7 +11,6 @@ const user = (process.env.DB_USER || '').trim();
 const password = (process.env.DB_PASSWORD || '').trim();
 const database = (process.env.DB_DATABASE || '').trim();
 const connectionString = (process.env.DATABASE_URL || '').trim();
-
 if (!connectionString && (!host || !user || !password || !database)) {
   console.error('Faltan variables de BD. Se necesitan:');
   console.error('DATABASE_URL o DB_HOST, DB_PORT, DB_USER, DB_PASSWORD y DB_DATABASE');
