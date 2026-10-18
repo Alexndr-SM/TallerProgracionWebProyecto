@@ -97,9 +97,18 @@
       </div>
 
       <div class="grupo-input">
+        <label for="promocion">Promoción</label>
+        <select id="promocion" name="promocion" required disabled>
+          <option value="">Cargando promociones...</option>
+        </select>
+      </div>
+
+      <div class="grupo-input">
         <label for="personas">Número de asistentes</label>
         <input type="number" id="personas" name="personas" min="1" max="15" required value="1">
       </div>
+
+      <p class="reserva-total" id="reserva-total" aria-live="polite">Selecciona una promoción para ver el total.</p>
 
       <div class="grupo-input">
         <label for="pago">Método de pago</label>
@@ -116,35 +125,11 @@
     </form>
         </section>
         <section class="panel-pago" id="panel-pago" aria-live="polite" aria-label="Método de pago" hidden>
-            <div class="pago-metodo" data-metodo="tarjeta" hidden>
-                <p class="pago-etiqueta">Pago seguro</p>
-                <h2>Tarjeta de crédito o débito</h2>
-                <div class="grupo-input">
-                    <label for="numero-tarjeta">Número de tarjeta</label>
-                    <input id="numero-tarjeta" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456">
-                </div>
-                <div class="pago-campos-dobles">
-                    <div class="grupo-input">
-                        <label for="vencimiento-tarjeta">Vencimiento</label>
-                        <input id="vencimiento-tarjeta" type="text" autocomplete="cc-exp" placeholder="MM/AA">
-                    </div>
-                    <div class="grupo-input">
-                        <label for="cvv-tarjeta">Código de seguridad</label>
-                        <input id="cvv-tarjeta" type="password" inputmode="numeric" autocomplete="cc-csc" placeholder="CVV">
-                    </div>
-                </div>
-            </div>
-            <div class="pago-metodo" data-metodo="paypal" hidden>
-                <p class="pago-etiqueta">Pago en línea</p>
-                <h2>PayPal</h2>
-                <p class="pago-descripcion">Al continuar, podrás iniciar sesión en PayPal para autorizar el pago de tu reserva.</p>
-                <div class="pago-marca pago-marca--paypal" aria-hidden="true">PayPal</div>
-            </div>
-            <div class="pago-metodo" data-metodo="yape" hidden>
-                <p class="pago-etiqueta">Pago desde tu celular</p>
-                <h2>Yape o Plin</h2>
-                <p class="pago-descripcion">Realiza el pago desde tu billetera digital. Los datos para completar la operación se mostrarán al confirmar la reserva.</p>
-                <div class="pago-marca pago-marca--yape" aria-hidden="true">Yape <span>/</span> Plin</div>
+            <div class="pago-metodo">
+                <p class="pago-etiqueta">Resumen de reserva</p>
+                <h2 id="resumen-promocion"></h2>
+                <p id="resumen-total"></p>
+                <p class="pago-descripcion">El método seleccionado se guardará en la reserva, pero el pago quedará pendiente. Esta página aún no procesa cobros ni solicita datos de tarjeta.</p>
             </div>
             <p id="reserva-mensaje" class="reserva-mensaje" role="status" aria-live="polite" hidden></p>
             <button type="button" class="btn-pagar" id="confirmar-reserva">Confirmar reserva</button>

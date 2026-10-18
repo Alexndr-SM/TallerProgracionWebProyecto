@@ -24,6 +24,17 @@ Así Vite genera `Frontend/admin-dashboard/dist/`, las mismas rutas que carga `F
 
 Para desarrollo local, desde esta carpeta ejecuta `pnpm install` y luego `pnpm dev`. También puedes verificar el bundle de producción con `pnpm build`.
 
-## Datos de demostración
+## Datos y permisos
 
-Los productos, empleados y el tema se guardan en el `localStorage` del navegador. Los pedidos, clientes, estadísticas, eventos y puntos usan datos de ejemplo. Crear empleados, asignar permisos y editar el catálogo todavía no actualiza la base de datos ni crea cuentas en la API. La autorización real para entrar al panel permanece en el servidor.
+El panel consulta PostgreSQL mediante la API: muestra reservas y clientes reales, mantiene las promociones del catálogo y permite a los administradores registrar empleados. Al iniciar la API se agregan las columnas/tablas que faltan y se inicializan las promociones que ya aparecen en las páginas de categorías; las modificaciones posteriores del catálogo se conservan.
+
+| Rol | Acceso |
+| --- | --- |
+| `admin` | Resumen, reservas, clientes, promociones y equipo |
+| `registrador` | Resumen, reservas (incluidas reservas presenciales) y consulta de clientes |
+| `soporte` | Resumen, consulta de reservas y clientes |
+| `editor` | Alta, edición y desactivación de promociones |
+
+El estado activo/inactivo se valida en el servidor en cada solicitud autenticada. Para las reservas se guarda una copia del nombre y del precio unitario de la promoción, de modo que cambios futuros no alteren el historial. Los formularios de pago todavía no se conectan a una pasarela: las reservas muestran el pago como pendiente y la página no solicita ni almacena datos de tarjetas.
+
+El tema se conserva en `localStorage`; los datos operativos ya no se guardan allí.

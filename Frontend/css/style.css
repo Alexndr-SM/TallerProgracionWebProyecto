@@ -1730,6 +1730,13 @@ footer {
     }
     .pago-campos-dobles { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .pago-descripcion { line-height: 1.65; }
+    .reserva-total {
+      padding: .9rem 1rem;
+      border: 1px solid color-mix(in srgb, var(--seafoam) 45%, transparent);
+      border-radius: 6px;
+      color: var(--text);
+      font-weight: 650;
+    }
     .pago-marca {
       display: grid;
       min-height: 130px;

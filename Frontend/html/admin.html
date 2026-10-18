@@ -57,8 +57,8 @@
                         return;
                     }
 
-                    if (!Auth.isAdmin()) {
-                        alert('Esta página es exclusiva para administradores.');
+                    if (!Auth.isStaff()) {
+                        alert('Esta página es exclusiva para el equipo de IcaTurismo.');
                         window.location.replace('../index.html');
                         return;
                     }

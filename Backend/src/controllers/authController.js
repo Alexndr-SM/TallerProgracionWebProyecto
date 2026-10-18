@@ -69,7 +69,7 @@ async function login(req, res) {
     }
 
     const result = await query(
-      'SELECT id, nombre, email, password_hash, rol, foto_perfil_url FROM usuarios WHERE email = $1',
+      'SELECT id, nombre, email, password_hash, rol, estado_cuenta, foto_perfil_url FROM usuarios WHERE email = $1',
       [email.toLowerCase().trim()]
     );
 
@@ -78,11 +78,15 @@ async function login(req, res) {
     }
 
     const user = result.rows[0];
+    if (user.estado_cuenta !== 'activo') {
+      return res.status(403).json({ ok: false, message: 'La cuenta está inactiva. Contacta con un administrador.' });
+    }
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) {
       return res.status(401).json({ ok: false, message: 'Correo o contraseña incorrectos.' });
     }
 
+    await query('UPDATE usuarios SET ultimo_acceso = NOW() WHERE id = $1', [user.id]);
     const token = signToken(user);
 
     return res.json({
@@ -94,6 +98,7 @@ async function login(req, res) {
         nombre: user.nombre,
         email: user.email,
         rol: user.rol,
+        estado_cuenta: user.estado_cuenta,
         foto_perfil_url: user.foto_perfil_url,
       },
     });

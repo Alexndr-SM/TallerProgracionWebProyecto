@@ -1,393 +1,405 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Activity,
-  ArrowDownRight,
-  ArrowRight,
-  ArrowUpRight,
-  Bell,
-  CalendarDays,
-  Check,
-  ChevronDown,
-  ChevronRight,
-  CircleHelp,
-  Compass,
-  CreditCard,
-  Download,
-  Ellipsis,
   LayoutDashboard,
   LogOut,
   Menu,
   Package,
   Plus,
   Search,
-  Settings,
   ShieldCheck,
   ShoppingBag,
-  Sparkles,
-  Star,
-  Tag,
   Users,
   X,
 } from 'lucide-react'
+import logoUrl from './assets/logo-ica.webp?no-inline'
 import './App.css'
 
-const seedProducts = [
-  { id: 'P-1042', name: 'Aventura en las dunas', category: 'Aventura', price: 145, stock: 28, sold: 86, status: 'Activo', color: 'sand' },
-  { id: 'P-1038', name: 'Ruta de bodegas de Ica', category: 'Cultura', price: 95, stock: 34, sold: 72, status: 'Activo', color: 'wine' },
-  { id: 'P-1024', name: 'Islas Ballestas + Paracas', category: 'Naturaleza', price: 180, stock: 19, sold: 64, status: 'Activo', color: 'sea' },
-  { id: 'P-1019', name: 'Museo Regional de Ica', category: 'Cultura', price: 38, stock: 42, sold: 51, status: 'Activo', color: 'clay' },
-  { id: 'P-1008', name: 'Sandboard al atardecer', category: 'Aventura', price: 120, stock: 6, sold: 43, status: 'Poco stock', color: 'sunset' },
-]
-
-const seedEmployees = [
-  { id: 'EMP-01', name: 'Mariana Torres', email: 'mariana@icaturismo.com', role: 'Administrador', status: 'Activo', initials: 'MT', tone: 'mint' },
-  { id: 'EMP-02', name: 'Diego Ramírez', email: 'diego@icaturismo.com', role: 'Editor', status: 'Activo', initials: 'DR', tone: 'peach' },
-  { id: 'EMP-03', name: 'Lucía Salas', email: 'lucia@icaturismo.com', role: 'Soporte', status: 'Activo', initials: 'LS', tone: 'lilac' },
-]
-
-const orders = [
-  { id: '#IT-2481', customer: 'Camila Mendoza', item: 'Aventura en las dunas', date: 'Hoy, 10:42', total: 290, status: 'Confirmado', initials: 'CM', tone: 'mint' },
-  { id: '#IT-2480', customer: 'Andrés Flores', item: 'Islas Ballestas + Paracas', date: 'Hoy, 10:18', total: 180, status: 'Pendiente', initials: 'AF', tone: 'peach' },
-  { id: '#IT-2479', customer: 'Valeria Rojas', item: 'Ruta de bodegas de Ica', date: 'Ayer, 16:35', total: 190, status: 'Confirmado', initials: 'VR', tone: 'lilac' },
-  { id: '#IT-2478', customer: 'Mateo Castillo', item: 'Museo Regional de Ica', date: 'Ayer, 15:08', total: 76, status: 'Completado', initials: 'MC', tone: 'blue' },
-]
-
-const customers = [
-  { name: 'Camila Mendoza', email: 'camila.m@email.com', since: '18 oct, 2026', orders: 8, points: 1240, initials: 'CM', tone: 'mint' },
-  { name: 'Andrés Flores', email: 'andres.f@email.com', since: '17 oct, 2026', orders: 5, points: 860, initials: 'AF', tone: 'peach' },
-  { name: 'Valeria Rojas', email: 'valeria.r@email.com', since: '16 oct, 2026', orders: 12, points: 2100, initials: 'VR', tone: 'lilac' },
-  { name: 'Mateo Castillo', email: 'mateo.c@email.com', since: '15 oct, 2026', orders: 3, points: 420, initials: 'MC', tone: 'blue' },
-  { name: 'Sofía Herrera', email: 'sofia.h@email.com', since: '14 oct, 2026', orders: 6, points: 980, initials: 'SH', tone: 'rose' },
-]
-
-const navGroups = [
-  {
-    label: 'Principal',
-    items: [
-      { id: 'dashboard', label: 'Resumen', icon: LayoutDashboard },
-      { id: 'pedidos', label: 'Pedidos', icon: ShoppingBag, count: '12' },
-      { id: 'clientes', label: 'Clientes', icon: Users },
-      { id: 'productos', label: 'Productos', icon: Package },
-    ],
-  },
-  {
-    label: 'Administración',
-    items: [
-      { id: 'puntos', label: 'Puntos y beneficios', icon: Sparkles },
-      { id: 'equipo', label: 'Equipo', icon: ShieldCheck },
-    ],
-  },
-]
-
-function readSaved(key, fallback) {
-  try {
-    const value = localStorage.getItem(key)
-    return value ? JSON.parse(value) : fallback
-  } catch (error) {
-    console.error(`No se pudieron leer los datos locales de "${key}".`, error)
-    return fallback
-  }
+const roleLabels = {
+  admin: 'Administrador',
+  registrador: 'Registrador',
+  soporte: 'Soporte',
+  editor: 'Editor',
 }
 
-function saveSaved(key, value) {
+const rolePages = {
+  admin: ['dashboard', 'pedidos', 'clientes', 'productos', 'equipo'],
+  registrador: ['dashboard', 'pedidos', 'clientes'],
+  soporte: ['dashboard', 'pedidos', 'clientes'],
+  editor: ['productos'],
+}
+const today = new Date().toISOString().slice(0, 10)
+
+const navigation = [
+  { id: 'dashboard', label: 'Resumen', icon: LayoutDashboard },
+  { id: 'pedidos', label: 'Reservas', icon: ShoppingBag },
+  { id: 'clientes', label: 'Clientes', icon: Users },
+  { id: 'productos', label: 'Promociones', icon: Package },
+  { id: 'equipo', label: 'Equipo', icon: ShieldCheck },
+]
+
+const api = async (path, options = {}) => {
+  const base = (window.API_URL || '').replace(/\/$/, '')
+  if (!base) throw new Error('No se configuró la dirección de la API.')
+  const response = await fetch(`${base}/api${path}`, {
+    ...options,
+    headers: {
+      ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+      Authorization: `Bearer ${window.Auth?.getToken() || ''}`,
+      ...options.headers,
+    },
+  })
+  const data = await response.json().catch(() => ({}))
+  if (!response.ok || !data.ok) {
+    if (response.status === 401) window.Auth?.logout()
+    throw new Error(data.message || 'La solicitud no se pudo completar.')
+  }
+  return data
+}
+
+const money = (value) => new Intl.NumberFormat('es-PE', {
+  style: 'currency',
+  currency: 'PEN',
+}).format(Number(value) || 0)
+
+const date = (value) => {
+  if (!value) return 'Sin actividad'
+  const normalized = typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? `${value}T12:00:00`
+    : value
+  return new Intl.DateTimeFormat('es-PE', { dateStyle: 'medium' }).format(new Date(normalized))
+}
+
+const initials = (name = '') => name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'IT'
+
+function readTheme() {
   try {
-    localStorage.setItem(key, JSON.stringify(value))
+    return localStorage.getItem('icat_admin_theme') !== 'false'
+  } catch (error) {
+    console.error('No se pudo leer el tema del panel.', error)
     return true
-  } catch (error) {
-    console.error(`No se pudieron guardar los datos locales de "${key}".`, error)
-    return false
   }
 }
 
-function money(value) {
-  return `S/ ${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+function LoadingState({ loading, error, onRetry }) {
+  if (loading) return <p className="empty-state" role="status">Cargando información desde la base de datos...</p>
+  if (error) return <div className="permission-notice" role="alert"><p>{error}</p><button className="button button--quiet" onClick={onRetry}>Reintentar</button></div>
+  return null
 }
 
-function Avatar({ initials, tone = 'mint', size = '' }) {
-  return <span className={`avatar avatar--${tone} ${size ? `avatar--${size}` : ''}`}>{initials}</span>
+function Heading({ title, description, action }) {
+  return <div className="section-heading"><div><p className="eyebrow">IcaTurismo · Administración</p><h1>{title}</h1><p className="section-description">{description}</p></div>{action}</div>
 }
 
-function SectionHeading({ eyebrow, title, description, action }) {
-  return (
-    <div className="section-heading">
-      <div>
-        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-        <h1>{title}</h1>
-        {description && <p className="section-description">{description}</p>}
-      </div>
-      {action}
-    </div>
-  )
-}
-
-function DashboardHome({ user, products, onNavigate, period, setPeriod }) {
-  const firstName = user?.nombre?.split(' ')[0] || 'Admin'
-  const bestSellers = [...products].sort((a, b) => b.sold - a.sold).slice(0, 3)
-  return (
-    <>
-      <SectionHeading
-        eyebrow="Domingo, 18 de octubre de 2026"
-        title={`¡Hola, ${firstName}!`}
-        description="Aquí tienes el resumen de lo que está pasando en tu negocio."
-        action={<button className="button button--quiet date-button"><CalendarDays size={16} /> 1–18 oct, 2026 <ChevronDown size={15} /></button>}
-      />
-
-      <div className="stat-grid">
-        <article className="stat-card stat-card--highlight">
-          <div className="stat-card__top"><span>Ventas totales</span><span className="stat-icon"><CreditCard size={17} /></span></div>
-          <strong>S/ 24,680</strong>
-          <div className="stat-card__bottom"><span className="trend trend--up"><ArrowUpRight size={14} /> 12.8%</span><span>vs. mes anterior</span><svg className="sparkline" viewBox="0 0 78 28" aria-hidden="true"><path d="M1 23 13 18 25 21 38 11 50 14 63 5 77 8" /></svg></div>
-        </article>
-        <article className="stat-card">
-          <div className="stat-card__top"><span>Pedidos</span><span className="stat-icon"><ShoppingBag size={17} /></span></div>
-          <strong>186</strong>
-          <div className="stat-card__bottom"><span className="trend trend--up"><ArrowUpRight size={14} /> 8.2%</span><span>vs. mes anterior</span><svg className="sparkline sparkline--blue" viewBox="0 0 78 28" aria-hidden="true"><path d="M1 21 13 15 25 18 38 9 50 15 63 7 77 4" /></svg></div>
-        </article>
-        <article className="stat-card">
-          <div className="stat-card__top"><span>Clientes activos</span><span className="stat-icon"><Users size={17} /></span></div>
-          <strong>1,284</strong>
-          <div className="stat-card__bottom"><span className="trend trend--up"><ArrowUpRight size={14} /> 6.4%</span><span>vs. mes anterior</span><svg className="sparkline sparkline--peach" viewBox="0 0 78 28" aria-hidden="true"><path d="M1 22 13 17 25 19 38 13 50 15 63 8 77 5" /></svg></div>
-        </article>
-        <article className="stat-card">
-          <div className="stat-card__top"><span>Ticket promedio</span><span className="stat-icon"><Tag size={17} /></span></div>
-          <strong>S/ 132.69</strong>
-          <div className="stat-card__bottom"><span className="trend trend--down"><ArrowDownRight size={14} /> 2.1%</span><span>vs. mes anterior</span><svg className="sparkline sparkline--rose" viewBox="0 0 78 28" aria-hidden="true"><path d="M1 5 13 9 25 8 38 13 50 11 63 19 77 22" /></svg></div>
-        </article>
-      </div>
-
-      <div className="dashboard-grid">
-        <section className="panel sales-panel">
-          <div className="panel-heading">
-            <div><h2>Rendimiento de ventas</h2><p>Ingresos generados en el periodo seleccionado</p></div>
-            <select className="select select--small" value={period} onChange={(event) => setPeriod(event.target.value)} aria-label="Periodo de ventas">
-              <option value="7">Últimos 7 días</option><option value="30">Últimos 30 días</option><option value="90">Últimos 90 días</option>
-            </select>
-          </div>
-          <div className="chart-summary"><strong>S/ 24,680</strong><span className="trend trend--up"><ArrowUpRight size={14} /> 12.8%</span></div>
-          <div className="chart-wrap">
-            <div className="chart-y-labels"><span>S/ 8k</span><span>S/ 6k</span><span>S/ 4k</span><span>S/ 2k</span><span>S/ 0</span></div>
-            <svg className="sales-chart" viewBox="0 0 720 210" preserveAspectRatio="none" role="img" aria-label="Gráfico de ventas: tendencia ascendente durante el mes">
-              <defs><linearGradient id="salesFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#64d6b2" stopOpacity=".22" /><stop offset="100%" stopColor="#64d6b2" stopOpacity="0" /></linearGradient></defs>
-              {[20, 63, 106, 149, 192].map((y) => <line key={y} x1="0" x2="720" y1={y} y2={y} className="chart-gridline" />)}
-              <path className="chart-area" d="M0 153 C35 148 38 132 76 139 S119 155 151 126 S195 115 226 127 S267 103 302 112 S342 141 378 112 S420 102 452 93 S490 116 528 83 S567 104 603 71 S644 95 678 55 S704 49 720 30 V192 H0Z" />
-              <path className="chart-line" d="M0 153 C35 148 38 132 76 139 S119 155 151 126 S195 115 226 127 S267 103 302 112 S342 141 378 112 S420 102 452 93 S490 116 528 83 S567 104 603 71 S644 95 678 55 S704 49 720 30" />
-              <circle cx="603" cy="71" r="4" className="chart-dot" />
-            </svg>
-          </div>
-          <div className="chart-x-labels"><span>01 oct</span><span>05 oct</span><span>09 oct</span><span>13 oct</span><span>18 oct</span></div>
-        </section>
-        <section className="panel channel-panel">
-          <div className="panel-heading"><div><h2>Pedidos por categoría</h2><p>Distribución de tus experiencias</p></div><button className="icon-button" aria-label="Más opciones"><Ellipsis size={18} /></button></div>
-          <div className="donut-wrap"><div className="donut"><div><strong>186</strong><span>pedidos</span></div></div></div>
-          <div className="legend">
-            <span><i className="legend-dot legend-dot--mint" />Aventura <b>42%</b></span>
-            <span><i className="legend-dot legend-dot--blue" />Cultura <b>31%</b></span>
-            <span><i className="legend-dot legend-dot--peach" />Naturaleza <b>27%</b></span>
-          </div>
-        </section>
-      </div>
-
-      <div className="dashboard-grid dashboard-grid--lower">
-        <section className="panel orders-panel">
-          <div className="panel-heading"><div><h2>Pedidos recientes</h2><p>Las últimas reservas de tus clientes</p></div><button className="text-link" onClick={() => onNavigate('pedidos')}>Ver todos <ArrowRight size={15} /></button></div>
-          <OrderList items={orders.slice(0, 3)} compact />
-        </section>
-        <section className="panel best-panel">
-          <div className="panel-heading"><div><h2>Productos estrella</h2><p>Los favoritos de este mes</p></div><button className="text-link" onClick={() => onNavigate('productos')}>Ver catálogo <ArrowRight size={15} /></button></div>
-          <div className="best-list">
-            {bestSellers.map((product, index) => <div className="best-item" key={product.id}><span className={`product-thumb product-thumb--${product.color}`}><Compass size={18} /></span><div className="best-item__name"><strong>{product.name}</strong><span>{product.sold} reservas</span></div><span className="best-item__rank"><Star size={13} fill="currentColor" /> #{index + 1}</span></div>)}
-          </div>
-        </section>
-      </div>
-
-      <div className="dashboard-grid dashboard-grid--lower">
-        <section className="panel renewals-panel">
-          <div className="panel-heading"><div><h2>Próximos eventos</h2><p>Salidas y experiencias programadas</p></div><button className="text-link" onClick={() => onNavigate('pedidos')}>Calendario <ArrowRight size={15} /></button></div>
-          <div className="event-row"><span className="event-date"><b>19</b><small>OCT</small></span><div><strong>Atardecer en Huacachina</strong><span>12 viajeros · 4:30 p. m.</span></div><span className="event-status">Mañana</span></div>
-          <div className="event-row"><span className="event-date"><b>21</b><small>OCT</small></span><div><strong>Ruta de bodegas tradicionales</strong><span>8 viajeros · 9:00 a. m.</span></div><span className="event-status event-status--muted">En 3 días</span></div>
-          <div className="event-row"><span className="event-date"><b>23</b><small>OCT</small></span><div><strong>Paracas y las Islas Ballestas</strong><span>16 viajeros · 7:00 a. m.</span></div><span className="event-status event-status--muted">En 5 días</span></div>
-        </section>
-        <section className="panel loyalty-preview">
-          <div className="loyalty-preview__icon"><Sparkles size={20} /></div>
-          <p className="eyebrow">Muy pronto</p><h2>Un viaje, más recompensas</h2>
-          <p>Estamos preparando un programa de puntos para agradecer cada aventura que tus clientes vivan con IcaTurismo.</p>
-          <button className="text-link" onClick={() => onNavigate('puntos')}>Explorar beneficios <ArrowRight size={15} /></button>
-          <span className="loyalty-orbit loyalty-orbit--one" /><span className="loyalty-orbit loyalty-orbit--two" />
-        </section>
-      </div>
-    </>
-  )
-}
-
-function OrderList({ items, compact = false }) {
-  return <div className={`order-list ${compact ? 'order-list--compact' : ''}`}>
-    {items.map((order) => <div className="order-row" key={order.id}><Avatar initials={order.initials} tone={order.tone} /><div className="order-person"><strong>{order.customer}</strong><span>{order.item}</span></div><span className="order-date">{order.date}</span><span className={`status status--${order.status.toLowerCase()}`}>{order.status}</span><strong className="order-total">{money(order.total)}</strong></div>)}
-  </div>
-}
-
-function ProductsPage({ products, onAdd, onEdit, onDelete }) {
-  const [query, setQuery] = useState('')
-  const filtered = products.filter((product) => `${product.name} ${product.category} ${product.id}`.toLowerCase().includes(query.toLowerCase()))
+function SummaryPage({ summary, onNavigate }) {
+  const values = [
+    ['Reservas', summary?.reservations?.total, ShoppingBag],
+    ['Por atender', summary?.reservations?.pendientes, Activity],
+    ['Clientes activos', summary?.customers?.activos, Users],
+    ['Ingresos pagados', money(summary?.paid_sales), Package],
+  ]
   return <>
-    <SectionHeading eyebrow="Catálogo" title="Productos y experiencias" description="Administra tus experiencias, precios y disponibilidad." action={<button className="button button--primary" onClick={() => onAdd()}><Plus size={16} /> Nuevo producto</button>} />
-    <div className="catalog-summary">
-      <div><span>Productos activos</span><strong>{products.length}</strong></div><div><span>Reservas este mes</span><strong>316</strong></div><div><span>Stock por revisar</span><strong>{products.filter((product) => product.stock < 10).length}</strong></div>
+    <Heading title="Resumen" description="Actividad real registrada en la base de datos." />
+    <div className="stat-grid">
+      {values.map(([label, value, Icon]) => <article className="stat-card" key={label}><div className="stat-card__top"><span>{label}</span><span className="stat-icon"><Icon size={17} /></span></div><strong>{value ?? '—'}</strong></article>)}
     </div>
-    <section className="panel table-panel">
-      <div className="table-toolbar"><div><h2>Todos los productos</h2><span>{filtered.length} experiencias</span></div><label className="search-box"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar producto..." /></label></div>
-      <div className="table-scroll"><table><thead><tr><th>Experiencia</th><th>Categoría</th><th>Precio</th><th>Reservas</th><th>Disponibilidad</th><th>Estado</th><th /></tr></thead><tbody>
-        {filtered.map((product) => <tr key={product.id}><td><div className="table-product"><span className={`product-thumb product-thumb--${product.color}`}><Compass size={17} /></span><div><strong>{product.name}</strong><small>{product.id}</small></div></div></td><td>{product.category}</td><td className="table-strong">{money(product.price)}</td><td>{product.sold}</td><td><div className="stock-cell"><span>{product.stock} cupos</span><span className="stock-track"><i style={{ width: `${Math.min(product.stock * 2, 100)}%` }} /></span></div></td><td><span className={`status ${product.status === 'Activo' ? 'status--confirmado' : 'status--pendiente'}`}>{product.status}</span></td><td><div className="row-actions"><button className="icon-button" onClick={() => onEdit(product)} aria-label={`Editar ${product.name}`}><Settings size={15} /></button><button className="icon-button icon-button--danger" onClick={() => onDelete(product.id)} aria-label={`Eliminar ${product.name}`}><X size={15} /></button></div></td></tr>)}
-      </tbody></table>{filtered.length === 0 && <p className="empty-state">No encontramos productos con esa búsqueda.</p>}</div>
+    <section className="panel dashboard-shortcuts">
+      <h2>Accesos rápidos</h2>
+      <div className="shortcut-actions">
+        <button className="button button--quiet" onClick={() => onNavigate('pedidos')}>Ver reservas</button>
+        <button className="button button--quiet" onClick={() => onNavigate('clientes')}>Gestionar clientes</button>
+        <button className="button button--quiet" onClick={() => onNavigate('productos')}>Administrar promociones</button>
+      </div>
+      <p>Las reservas que aún no tienen integración con una pasarela aparecen con el pago pendiente. No se consideran ingresos pagados.</p>
     </section>
   </>
 }
 
-function EmployeesPage({ employees, onAdd, onRoleChange }) {
-  return <>
-    <SectionHeading eyebrow="Administración" title="Equipo y permisos" description="Invita a tu equipo y define qué puede hacer cada persona." action={<button className="button button--primary" onClick={onAdd}><Plus size={16} /> Nuevo empleado</button>} />
-    <div className="permission-notice"><ShieldCheck size={18} /><p><strong>Administración segura.</strong> El acceso real se valida en el servidor. Estas invitaciones y permisos son una vista previa local hasta conectar la gestión de usuarios.</p></div>
-    <div className="catalog-summary"><div><span>Miembros del equipo</span><strong>{employees.length}</strong></div><div><span>Administradores</span><strong>{employees.filter((employee) => employee.role === 'Administrador').length}</strong></div><div><span>Invitaciones pendientes</span><strong>{employees.filter((employee) => employee.status === 'Invitación').length}</strong></div></div>
-    <section className="panel table-panel">
-      <div className="table-toolbar"><div><h2>Mi equipo</h2><span>Miembros y nivel de acceso</span></div><span className="secure-label"><ShieldCheck size={15} /> Acceso protegido</span></div>
-      <div className="table-scroll"><table><thead><tr><th>Empleado</th><th>Permiso</th><th>Estado</th><th>Última actividad</th><th /></tr></thead><tbody>
-        {employees.map((employee) => <tr key={employee.id}><td><div className="table-person"><Avatar initials={employee.initials} tone={employee.tone} /><div><strong>{employee.name}</strong><small>{employee.email}</small></div></div></td><td><select className="role-select" value={employee.role} onChange={(event) => onRoleChange(employee.id, event.target.value)} aria-label={`Permiso para ${employee.name}`}><option>Administrador</option><option>Editor</option><option>Soporte</option></select></td><td><span className={`status ${employee.status === 'Activo' ? 'status--confirmado' : 'status--pendiente'}`}>{employee.status}</span></td><td className="muted-cell">Hoy, 9:24 a. m.</td><td><button className="icon-button" aria-label={`Más opciones para ${employee.name}`}><Ellipsis size={17} /></button></td></tr>)}
-      </tbody></table></div>
-    </section>
-  </>
-}
-
-function CustomersPage({ onNavigate }) {
-  return <>
-    <SectionHeading eyebrow="Comunidad" title="Clientes" description="Conoce a las personas que viajan con nosotros." action={<button className="button button--quiet" onClick={() => onNavigate('puntos')}><Sparkles size={16} /> Programa de puntos</button>} />
-    <div className="catalog-summary"><div><span>Clientes totales</span><strong>1,284</strong></div><div><span>Nuevos este mes</span><strong>86</strong></div><div><span>Clientes frecuentes</span><strong>312</strong></div></div>
-    <section className="panel table-panel"><div className="table-toolbar"><div><h2>Clientes recientes</h2><span>Últimas personas en unirse</span></div><label className="search-box"><Search size={16} /><input placeholder="Buscar cliente..." /></label></div><div className="table-scroll"><table><thead><tr><th>Cliente</th><th>Se unió</th><th>Pedidos</th><th>Puntos acumulados</th><th>Actividad</th></tr></thead><tbody>
-      {customers.map((customer) => <tr key={customer.email}><td><div className="table-person"><Avatar initials={customer.initials} tone={customer.tone} /><div><strong>{customer.name}</strong><small>{customer.email}</small></div></div></td><td>{customer.since}</td><td>{customer.orders} pedidos</td><td className="table-strong">{customer.points.toLocaleString('es-PE')} pts</td><td><span className="activity-label"><span /> Activo</span></td></tr>)}
-    </tbody></table></div></section>
-    <div className="coming-note"><Sparkles size={18} /><div><strong>Fidelización en camino</strong><span>Pronto podrás recompensar las compras y reservas de tus clientes con puntos.</span></div><button className="text-link" onClick={() => onNavigate('puntos')}>Ver detalles <ArrowRight size={15} /></button></div>
-  </>
-}
-
-function OrdersPage() {
-  const [query, setQuery] = useState('')
-  const filtered = orders.filter((order) => `${order.customer} ${order.item} ${order.id}`.toLowerCase().includes(query.toLowerCase()))
-  return <>
-    <SectionHeading eyebrow="Actividad" title="Pedidos y reservas" description="Consulta el estado de las reservas recientes." action={<button className="button button--quiet"><Download size={16} /> Exportar</button>} />
-    <div className="catalog-summary"><div><span>Pedidos del mes</span><strong>186</strong></div><div><span>Por confirmar</span><strong>12</strong></div><div><span>Reservas completadas</span><strong>148</strong></div></div>
-    <section className="panel table-panel"><div className="table-toolbar"><div><h2>Pedidos recientes</h2><span>{filtered.length} reservas en la lista</span></div><label className="search-box"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar pedido o cliente..." /></label></div><div className="table-scroll"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Experiencia</th><th>Fecha</th><th>Total</th><th>Estado</th></tr></thead><tbody>{filtered.map((order) => <tr key={order.id}><td className="table-strong">{order.id}</td><td><div className="table-person"><Avatar initials={order.initials} tone={order.tone} size="small" /><strong>{order.customer}</strong></div></td><td>{order.item}</td><td>{order.date}</td><td className="table-strong">{money(order.total)}</td><td><span className={`status status--${order.status.toLowerCase()}`}>{order.status}</span></td></tr>)}</tbody></table></div></section>
-  </>
-}
-
-function PointsPage() {
-  return <>
-    <SectionHeading eyebrow="Fidelización" title="Puntos y beneficios" description="Una nueva forma de agradecer cada viaje. Estamos preparando esta experiencia." />
-    <section className="points-hero panel"><div className="points-hero__content"><span className="points-chip"><Sparkles size={14} /> PRÓXIMAMENTE</span><h2>Cada aventura<br />merece una recompensa.</h2><p>Un programa de puntos para que tus clientes sumen en cada compra y los canjeen por nuevas experiencias en Ica.</p><div className="points-steps"><span><b>01</b> Compra una experiencia</span><span><b>02</b> Acumula puntos</span><span><b>03</b> Canjea un viaje</span></div></div><div className="points-card"><span className="points-card__brand"><Compass size={18} /> ICA CLUB</span><Sparkles className="points-card__sparkle" size={27} /><strong>1,240</strong><span>puntos disponibles</span><div className="points-progress"><i /></div><small>Te faltan 260 pts para tu recompensa</small></div></section>
-    <div className="catalog-summary points-stats"><div><span>Clientes que participarían</span><strong>1,284</strong></div><div><span>Puntos estimados en circulación</span><strong>248 mil</strong></div><div><span>Recompensa más popular</span><strong className="stat-text">Tour a Huacachina</strong></div></div>
-    <section className="panel points-note"><div className="points-note__icon"><CircleHelp size={18} /></div><div><h2>¿Qué sigue?</h2><p>Esta pantalla es una propuesta visual. La asignación y el canje de puntos requerirán definir reglas de negocio y conectarse a la base de datos en una siguiente etapa.</p></div></section>
-  </>
-}
-
-function ProductModal({ product, onClose, onSave }) {
-  const [form, setForm] = useState(product || { name: '', category: 'Aventura', price: '', stock: '', sold: 0, status: 'Activo', color: 'sand' })
-  const update = (key, value) => setForm((current) => ({ ...current, [key]: value }))
-  function submit(event) {
+function OrdersPage({ reservations, promotions, canCreate, onStatusChange, onCreate }) {
+  const [search, setSearch] = useState('')
+  const [showCreate, setShowCreate] = useState(false)
+  const [form, setForm] = useState({ nombre: '', email: '', fecha_tour: '', asistentes: 1, metodo_pago: 'tarjeta', promocion_id: '' })
+  const [formError, setFormError] = useState('')
+  const visible = reservations.filter((item) => `${item.id} ${item.nombre} ${item.email} ${item.promocion_nombre || ''}`.toLowerCase().includes(search.toLowerCase()))
+  async function submit(event) {
     event.preventDefault()
-    if (!form.name.trim() || Number(form.price) <= 0 || Number(form.stock) < 0) return
-    onSave({ ...form, id: product?.id || `P-${Date.now().toString().slice(-5)}`, price: Number(form.price), stock: Number(form.stock), sold: Number(form.sold) || 0 })
+    setFormError('')
+    try {
+      await onCreate({ ...form, asistentes: Number(form.asistentes), promocion_id: Number(form.promocion_id) })
+      setShowCreate(false)
+      setForm({ nombre: '', email: '', fecha_tour: '', asistentes: 1, metodo_pago: 'tarjeta', promocion_id: '' })
+    } catch (submitError) {
+      setFormError(submitError.message)
+    }
+  }
+  return <>
+    <Heading title="Reservas y pedidos" description="Reservas por promoción, total y estado del pago." action={canCreate && <button className="button button--primary" onClick={() => setShowCreate((open) => !open)}><Plus size={16} /> Reserva presencial</button>} />
+    {showCreate && <form className="panel local-reservation-form" onSubmit={submit}>
+      <h2>Registrar reserva en el local</h2>
+      <p>El total se calcula con el precio vigente y el pago queda pendiente de verificación.</p>
+      <div className="local-reservation-fields">
+        <label className="field-label">Nombre del cliente<input required maxLength="120" value={form.nombre} onChange={(event) => setForm({ ...form, nombre: event.target.value })} /></label>
+        <label className="field-label">Correo<input required type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} /></label>
+        <label className="field-label">Promoción<select required value={form.promocion_id} onChange={(event) => setForm({ ...form, promocion_id: event.target.value })}><option value="">Selecciona</option>{promotions.map((item) => <option key={item.id} value={item.id}>{item.nombre} · {money(item.precio)}</option>)}</select></label>
+        <label className="field-label">Fecha del tour<input required type="date" min={today} value={form.fecha_tour} onChange={(event) => setForm({ ...form, fecha_tour: event.target.value })} /></label>
+        <label className="field-label">Asistentes<input required min="1" max="15" type="number" value={form.asistentes} onChange={(event) => setForm({ ...form, asistentes: event.target.value })} /></label>
+        <label className="field-label">Método de pago<select value={form.metodo_pago} onChange={(event) => setForm({ ...form, metodo_pago: event.target.value })}><option value="tarjeta">Tarjeta</option><option value="paypal">PayPal</option><option value="yape">Yape / Plin</option></select></label>
+      </div>
+      {formError && <p className="form-error" role="alert">{formError}</p>}
+      <div className="modal-actions"><button className="button button--quiet" type="button" onClick={() => setShowCreate(false)}>Cancelar</button><button className="button button--primary" type="submit">Guardar reserva</button></div>
+    </form>}
+    <section className="panel table-panel">
+      <div className="table-toolbar"><div><h2>Reservas</h2><span>{visible.length} registros</span></div><label className="search-box"><Search size={16} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar reserva, cliente o promoción" /></label></div>
+      <div className="table-scroll"><table><thead><tr><th>N.º</th><th>Cliente</th><th>Promoción</th><th>Fecha del tour</th><th>Personas</th><th>Total</th><th>Pago</th><th>Reserva</th></tr></thead><tbody>
+        {visible.map((item) => <tr key={item.id}><td className="table-strong">#{item.id}</td><td><div className="table-person"><span className="avatar">{initials(item.nombre)}</span><div><strong>{item.nombre}</strong><small>{item.email}</small></div></div></td><td>{item.promocion_nombre || 'Sin promoción asignada'}</td><td>{date(item.fecha_tour)}</td><td>{item.asistentes}</td><td className="table-strong">{money(item.total)}</td><td><span className={`status status--${item.estado_pago}`}>{item.estado_pago}</span></td><td><select className="role-select" aria-label={`Estado de reserva ${item.id}`} value={item.estado} onChange={(event) => onStatusChange(item.id, event.target.value)}><option value="pendiente">Pendiente</option><option value="confirmada">Confirmada</option><option value="cancelada">Cancelada</option></select></td></tr>)}
+      </tbody></table>{visible.length === 0 && <p className="empty-state">No hay reservas que coincidan.</p>}</div>
+    </section>
+  </>
+}
+
+function CustomersPage({ customers, canEdit, onStatusChange }) {
+  const [search, setSearch] = useState('')
+  const visible = customers.filter((customer) => `${customer.nombre} ${customer.email}`.toLowerCase().includes(search.toLowerCase()))
+  const activeCount = customers.filter((customer) => customer.estado_cuenta === 'activo').length
+  return <>
+    <Heading title="Clientes" description="Cuentas de clientes y su actividad de reservas." />
+    <div className="catalog-summary"><div><span>Clientes</span><strong>{customers.length}</strong></div><div><span>Activos</span><strong>{activeCount}</strong></div><div><span>Inactivos</span><strong>{customers.length - activeCount}</strong></div></div>
+    <section className="panel table-panel">
+      <div className="table-toolbar"><div><h2>Clientes registrados</h2><span>Estado de cuenta y reservas asociadas</span></div><label className="search-box"><Search size={16} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar cliente" /></label></div>
+      <div className="table-scroll"><table><thead><tr><th>Cliente</th><th>Registro</th><th>Reservas</th><th>Último acceso</th><th>Estado</th>{canEdit && <th>Acción</th>}</tr></thead><tbody>
+        {visible.map((customer) => <tr key={customer.id}><td><div className="table-person"><span className="avatar">{initials(customer.nombre)}</span><div><strong>{customer.nombre}</strong><small>{customer.email}</small></div></div></td><td>{date(customer.created_at)}</td><td>{customer.reservas}</td><td>{date(customer.ultimo_acceso)}</td><td><span className={`status status--${customer.estado_cuenta}`}>{customer.estado_cuenta}</span></td>{canEdit && <td><button className="button button--quiet" onClick={() => onStatusChange(customer.id, customer.estado_cuenta === 'activo' ? 'inactivo' : 'activo')}>{customer.estado_cuenta === 'activo' ? 'Desactivar' : 'Activar'}</button></td>}</tr>)}
+      </tbody></table>{visible.length === 0 && <p className="empty-state">No hay clientes que coincidan.</p>}</div>
+    </section>
+  </>
+}
+
+function PromotionModal({ item, onClose, onSave }) {
+  const [form, setForm] = useState({
+    nombre: item?.nombre || '',
+    descripcion: item?.descripcion || '',
+    categoria: item?.categoria || 'Aventura',
+    precio: item?.precio || '',
+    activo: item?.activo ?? true,
+  })
+  const [error, setError] = useState('')
+  async function submit(event) {
+    event.preventDefault()
+    try {
+      await onSave({ ...form, precio: Number(form.precio) }, item?.id)
+      onClose()
+    } catch (saveError) {
+      setError(saveError.message)
+    }
   }
   return <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}><form className="modal" onSubmit={submit}>
-    <div className="modal-heading"><div><span className="eyebrow">{product ? 'Catálogo' : 'Nueva experiencia'}</span><h2>{product ? 'Editar producto' : 'Agregar producto'}</h2></div><button type="button" className="icon-button" onClick={onClose} aria-label="Cerrar"><X size={18} /></button></div>
-    <label className="field-label">Nombre de la experiencia<input required autoFocus value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="Ej. Tour al oasis de Huacachina" /></label>
-    <div className="form-grid"><label className="field-label">Categoría<select value={form.category} onChange={(event) => update('category', event.target.value)}><option>Aventura</option><option>Cultura</option><option>Naturaleza</option><option>Gastronomía</option></select></label><label className="field-label">Precio (S/)<input required min="1" type="number" step="0.01" value={form.price} onChange={(event) => update('price', event.target.value)} placeholder="120.00" /></label><label className="field-label">Cupos disponibles<input required min="0" type="number" value={form.stock} onChange={(event) => update('stock', event.target.value)} placeholder="20" /></label><label className="field-label">Estado<select value={form.status} onChange={(event) => update('status', event.target.value)}><option>Activo</option><option>Poco stock</option></select></label></div>
-    <div className="modal-actions"><button type="button" className="button button--quiet" onClick={onClose}>Cancelar</button><button className="button button--primary" type="submit"><Check size={16} /> {product ? 'Guardar cambios' : 'Crear producto'}</button></div>
+    <div className="modal-heading"><div><span className="eyebrow">Catálogo conectado</span><h2>{item ? 'Editar promoción' : 'Nueva promoción'}</h2></div><button type="button" className="icon-button" onClick={onClose} aria-label="Cerrar"><X size={18} /></button></div>
+    <p className="modal-description">Las promociones activas aparecerán en la página de reserva. El precio es por persona.</p>
+    <label className="field-label">Nombre<input required maxLength="180" value={form.nombre} onChange={(event) => setForm({ ...form, nombre: event.target.value })} /></label>
+    <label className="field-label">Descripción<textarea maxLength="2000" rows="3" value={form.descripcion} onChange={(event) => setForm({ ...form, descripcion: event.target.value })} /></label>
+    <div className="form-grid"><label className="field-label">Categoría<select value={form.categoria} onChange={(event) => setForm({ ...form, categoria: event.target.value })}><option>Aventura</option><option>Cultura</option><option>Naturaleza</option><option>Gastronomía</option></select></label><label className="field-label">Precio por persona (S/)<input required min="0.01" step="0.01" type="number" value={form.precio} onChange={(event) => setForm({ ...form, precio: event.target.value })} /></label></div>
+    {item && <label className="field-label">Estado<select value={String(form.activo)} onChange={(event) => setForm({ ...form, activo: event.target.value === 'true' })}><option value="true">Activa</option><option value="false">Inactiva</option></select></label>}
+    {error && <p className="form-error" role="alert">{error}</p>}
+    <div className="modal-actions"><button className="button button--quiet" type="button" onClick={onClose}>Cancelar</button><button className="button button--primary" type="submit">Guardar promoción</button></div>
   </form></div>
+}
+
+function PromotionsPage({ promotions, onSave, onAdd }) {
+  const [search, setSearch] = useState('')
+  const visible = promotions.filter((item) => `${item.nombre} ${item.categoria}`.toLowerCase().includes(search.toLowerCase()))
+  return <>
+    <Heading title="Promociones" description="Administra el catálogo, los precios y la publicación en la web." action={<button className="button button--primary" onClick={onAdd}><Plus size={16} /> Nueva promoción</button>} />
+    <div className="permission-notice"><Package size={17} /><p>Al desactivar una promoción deja de ofrecerse en las reservas nuevas. El historial de reservas conserva su nombre y precio originales.</p></div>
+    <section className="panel table-panel">
+      <div className="table-toolbar"><div><h2>Catálogo de experiencias</h2><span>{promotions.filter((item) => item.activo).length} activas · {promotions.length} total</span></div><label className="search-box"><Search size={16} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar promoción" /></label></div>
+      <div className="table-scroll"><table><thead><tr><th>Promoción</th><th>Categoría</th><th>Precio por persona</th><th>Estado en la web</th><th /></tr></thead><tbody>
+        {visible.map((item) => <tr key={item.id}><td><div className="table-product"><div><strong>{item.nombre}</strong><small>{item.descripcion || item.slug}</small></div></div></td><td>{item.categoria}</td><td className="table-strong">{money(item.precio)}</td><td><span className={`status status--${item.activo ? 'activo' : 'inactivo'}`}>{item.activo ? 'Activa' : 'Inactiva'}</span></td><td><button className="button button--quiet" onClick={() => onSave(item, true)}>Editar</button></td></tr>)}
+      </tbody></table>{visible.length === 0 && <p className="empty-state">No hay promociones que coincidan.</p>}</div>
+    </section>
+  </>
 }
 
 function EmployeeModal({ onClose, onSave }) {
-  const [form, setForm] = useState({ name: '', email: '', role: 'Editor' })
+  const [form, setForm] = useState({ nombre: '', email: '', password: '', rol: 'registrador' })
   const [error, setError] = useState('')
-  function submit(event) {
+  async function submit(event) {
     event.preventDefault()
-    if (!form.name.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      setError('Ingresa un nombre y un correo electrónico válido.')
-      return
+    try {
+      await onSave(form)
+      onClose()
+    } catch (saveError) {
+      setError(saveError.message)
     }
-    onSave(form)
   }
   return <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}><form className="modal" onSubmit={submit}>
-    <div className="modal-heading"><div><span className="eyebrow">Administración</span><h2>Invitar empleado</h2></div><button type="button" className="icon-button" onClick={onClose} aria-label="Cerrar"><X size={18} /></button></div>
-    <p className="modal-description">Crea una invitación de demostración y asigna su nivel de acceso.</p>
-    <label className="field-label">Nombre completo<input autoFocus value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} placeholder="Nombre y apellido" /></label>
-    <label className="field-label">Correo electrónico<input type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} placeholder="nombre@icaturismo.com" /></label>
-    <label className="field-label">Permisos<select value={form.role} onChange={(event) => setForm({ ...form, role: event.target.value })}><option>Editor</option><option>Soporte</option><option>Administrador</option></select></label>
-    {form.role === 'Administrador' && <div className="admin-warning"><ShieldCheck size={16} /> Tendrá acceso administrativo completo (solo vista previa local).</div>}
+    <div className="modal-heading"><div><span className="eyebrow">Administración</span><h2>Registrar empleado</h2></div><button type="button" className="icon-button" onClick={onClose} aria-label="Cerrar"><X size={18} /></button></div>
+    <p className="modal-description">La cuenta se guarda en PostgreSQL. Comparte la contraseña inicial de forma segura con el empleado.</p>
+    <label className="field-label">Nombre completo<input required maxLength="120" value={form.nombre} onChange={(event) => setForm({ ...form, nombre: event.target.value })} /></label>
+    <label className="field-label">Correo<input required type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} /></label>
+    <label className="field-label">Contraseña inicial<input required minLength="8" type="password" autoComplete="new-password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} /></label>
+    <label className="field-label">Rol<select value={form.rol} onChange={(event) => setForm({ ...form, rol: event.target.value })}><option value="registrador">Registrador</option><option value="soporte">Soporte</option><option value="editor">Editor</option><option value="admin">Administrador</option></select></label>
     {error && <p className="form-error" role="alert">{error}</p>}
-    <div className="modal-actions"><button type="button" className="button button--quiet" onClick={onClose}>Cancelar</button><button className="button button--primary" type="submit"><Plus size={16} /> Crear invitación</button></div>
+    <div className="modal-actions"><button className="button button--quiet" type="button" onClick={onClose}>Cancelar</button><button className="button button--primary" type="submit">Crear cuenta</button></div>
   </form></div>
 }
 
+function EmployeesPage({ employees, onAdd, onUpdate }) {
+  return <>
+    <Heading title="Equipo y permisos" description="Cuentas de empleados, rol asignado y acceso al panel." action={<button className="button button--primary" onClick={onAdd}><Plus size={16} /> Registrar empleado</button>} />
+    <div className="permission-notice"><ShieldCheck size={17} /><p>El rol y el estado se verifican en la API en cada solicitud. Al desactivar una cuenta, sus sesiones dejan de funcionar inmediatamente.</p></div>
+    <section className="panel table-panel"><div className="table-toolbar"><div><h2>Empleados</h2><span>{employees.length} cuentas de personal</span></div></div>
+      <div className="table-scroll"><table><thead><tr><th>Empleado</th><th>Rol</th><th>Estado de acceso</th><th>Último acceso</th></tr></thead><tbody>
+        {employees.map((employee) => <tr key={employee.id}><td><div className="table-person"><span className="avatar">{initials(employee.nombre)}</span><div><strong>{employee.nombre}</strong><small>{employee.email}</small></div></div></td><td><select className="role-select" value={employee.rol} onChange={(event) => onUpdate(employee, { rol: event.target.value })}>{Object.entries(roleLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></td><td><select className="role-select" value={employee.estado_cuenta} onChange={(event) => onUpdate(employee, { estado_cuenta: event.target.value })}><option value="activo">Activo</option><option value="inactivo">Inactivo</option></select></td><td>{date(employee.ultimo_acceso)}</td></tr>)}
+      </tbody></table>{employees.length === 0 && <p className="empty-state">Todavía no hay empleados registrados.</p>}</div>
+    </section>
+  </>
+}
+
 export default function App({ user }) {
-  const [activePage, setActivePage] = useState('dashboard')
-  const [products, setProducts] = useState(() => readSaved('icat_admin_products', seedProducts))
-  const [employees, setEmployees] = useState(() => readSaved('icat_admin_employees', seedEmployees))
-  const [productModal, setProductModal] = useState(null)
-  const [employeeModal, setEmployeeModal] = useState(false)
-  const [period, setPeriod] = useState('30')
+  const [dark, setDark] = useState(readTheme)
+  const [activePage, setActivePage] = useState(user?.rol === 'editor' ? 'productos' : 'dashboard')
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [mobileNav, setMobileNav] = useState(false)
-  const [dark, setDark] = useState(() => readSaved('icat_admin_theme', true))
-  const currentNav = navGroups.flatMap((group) => group.items).find((item) => item.id === activePage)
-  const PageIcon = currentNav?.icon || LayoutDashboard
+  const [reloadKey, setReloadKey] = useState(0)
+  const [promotionModal, setPromotionModal] = useState(null)
+  const [employeeModal, setEmployeeModal] = useState(false)
+  const role = user?.rol
+  const pages = rolePages[role] || rolePages.soporte
+  const availableNavigation = navigation.filter((item) => pages.includes(item.id))
+  const visiblePage = pages.includes(activePage) ? activePage : pages[0]
+  const currentPage = availableNavigation.find((item) => item.id === visiblePage) || availableNavigation[0]
+
+  useEffect(() => {
+    let cancelled = false
+    async function loadPage() {
+      setLoading(true)
+      setError('')
+      setData(null)
+      try {
+        const endpoints = {
+          dashboard: '/admin/summary',
+          pedidos: '/admin/reservas',
+          clientes: '/admin/clientes',
+          productos: '/admin/promociones',
+          equipo: '/admin/empleados',
+        }
+        let result = await api(endpoints[visiblePage])
+        if (visiblePage === 'pedidos') {
+          const promotions = await api('/promociones')
+          result = { ...result, promotions: promotions.promotions }
+        }
+        if (!cancelled) setData(result)
+      } catch (loadError) {
+        if (!cancelled) setError(loadError.message)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    loadPage()
+    return () => { cancelled = true }
+  }, [visiblePage, reloadKey])
 
   useEffect(() => {
     if (!notice) return undefined
-    const timeout = window.setTimeout(() => setNotice(''), 3600)
+    const timeout = window.setTimeout(() => setNotice(''), 4000)
     return () => window.clearTimeout(timeout)
   }, [notice])
 
-  const pageContent = useMemo(() => {
-    const changePage = (page) => { setActivePage(page); setMobileNav(false) }
-    if (activePage === 'productos') return <ProductsPage products={products} onAdd={() => setProductModal({ mode: 'add' })} onEdit={(product) => setProductModal({ mode: 'edit', product })} onDelete={(id) => { const updated = products.filter((item) => item.id !== id); setProducts(updated); setNotice(saveSaved('icat_admin_products', updated) ? 'Producto eliminado de la vista previa.' : 'No se pudo guardar el catálogo en este navegador.') }} />
-    if (activePage === 'pedidos') return <OrdersPage />
-    if (activePage === 'clientes') return <CustomersPage onNavigate={changePage} />
-    if (activePage === 'equipo') return <EmployeesPage employees={employees} onAdd={() => setEmployeeModal(true)} onRoleChange={(id, role) => { const updated = employees.map((employee) => employee.id === id ? { ...employee, role } : employee); setEmployees(updated); setNotice(saveSaved('icat_admin_employees', updated) ? 'Permiso actualizado en esta vista previa.' : 'No se pudo guardar el equipo en este navegador.') }} />
-    if (activePage === 'puntos') return <PointsPage />
-    return <DashboardHome user={user} products={products} onNavigate={changePage} period={period} setPeriod={setPeriod} />
-  }, [activePage, employees, period, products, user])
-
-  function saveProduct(product) {
-    const updated = productModal.mode === 'edit' ? products.map((item) => item.id === product.id ? product : item) : [product, ...products]
-    setProducts(updated)
-    setProductModal(null)
-    const message = productModal.mode === 'edit' ? 'Producto actualizado.' : 'Producto agregado al catálogo.'
-    setNotice(saveSaved('icat_admin_products', updated) ? message : 'No se pudo guardar el catálogo en este navegador.')
+  function reload() {
+    setReloadKey((key) => key + 1)
   }
 
-  function saveEmployee(data) {
-    const nameParts = data.name.trim().split(/\s+/)
-    const initials = nameParts.length > 1 ? `${nameParts[0][0]}${nameParts.at(-1)[0]}` : nameParts[0].slice(0, 2)
-    const updated = [{ id: `EMP-${Date.now().toString().slice(-4)}`, name: data.name.trim(), email: data.email.trim(), role: data.role, status: 'Invitación', initials: initials.toUpperCase(), tone: 'blue' }, ...employees]
-    setEmployees(updated)
-    setEmployeeModal(false)
-    setNotice(saveSaved('icat_admin_employees', updated) ? 'Invitación de demostración creada. Aún no se envió ningún correo.' : 'No se pudo guardar el equipo en este navegador.')
+  function toggleTheme() {
+    const next = !dark
+    setDark(next)
+    try {
+      localStorage.setItem('icat_admin_theme', String(next))
+    } catch (storageError) {
+      console.error('No se pudo guardar el tema del panel.', storageError)
+      setNotice('No se pudo guardar la preferencia de tema.')
+    }
   }
+
+  async function updateReservation(id, estado) {
+    try {
+      await api(`/admin/reservas/${id}`, { method: 'PATCH', body: JSON.stringify({ estado }) })
+      setNotice('Estado de reserva actualizado.')
+      reload()
+    } catch (actionError) {
+      setNotice(actionError.message)
+    }
+  }
+
+  async function createLocalReservation(form) {
+    await api('/admin/reservas', { method: 'POST', body: JSON.stringify(form) })
+    setNotice('Reserva presencial registrada con pago pendiente.')
+    reload()
+  }
+
+  async function updateCustomer(id, estado_cuenta) {
+    try {
+      await api(`/admin/clientes/${id}`, { method: 'PATCH', body: JSON.stringify({ estado_cuenta }) })
+      setNotice(`Cuenta del cliente ${estado_cuenta}.`)
+      reload()
+    } catch (actionError) {
+      setNotice(actionError.message)
+    }
+  }
+
+  async function savePromotion(form, id) {
+    await api(id ? `/admin/promociones/${id}` : '/admin/promociones', {
+      method: id ? 'PATCH' : 'POST',
+      body: JSON.stringify(form),
+    })
+    setNotice(id ? 'Promoción actualizada.' : 'Promoción agregada al catálogo.')
+    reload()
+  }
+
+  async function createEmployee(form) {
+    await api('/admin/empleados', { method: 'POST', body: JSON.stringify(form) })
+    setNotice('Empleado registrado y activo.')
+    reload()
+  }
+
+  async function updateEmployee(employee, changes) {
+    try {
+      const update = {
+        rol: changes.rol || employee.rol,
+        estado_cuenta: changes.estado_cuenta || employee.estado_cuenta,
+      }
+      await api(`/admin/empleados/${employee.id}`, { method: 'PATCH', body: JSON.stringify(update) })
+      setNotice('Permisos del empleado actualizados.')
+      reload()
+    } catch (actionError) {
+      setNotice(actionError.message)
+      reload()
+    }
+  }
+
+  let content = null
+  if (visiblePage === 'dashboard') content = <SummaryPage summary={data?.summary} onNavigate={setActivePage} />
+  if (visiblePage === 'pedidos') content = <OrdersPage reservations={data?.reservations || []} promotions={data?.promotions || []} canCreate={role === 'admin' || role === 'registrador'} onStatusChange={updateReservation} onCreate={createLocalReservation} />
+  if (visiblePage === 'clientes') content = <CustomersPage customers={data?.customers || []} canEdit={role === 'admin'} onStatusChange={updateCustomer} />
+  if (visiblePage === 'productos') content = <PromotionsPage promotions={data?.promotions || []} onAdd={() => setPromotionModal({ mode: 'add' })} onSave={(item) => setPromotionModal({ mode: 'edit', item })} />
+  if (visiblePage === 'equipo') content = <EmployeesPage employees={data?.employees || []} onAdd={() => setEmployeeModal(true)} onUpdate={updateEmployee} />
 
   return <div className={`admin-island ${dark ? 'admin-island--dark' : 'admin-island--light'}`}>
     <aside className={`sidebar ${mobileNav ? 'sidebar--open' : ''}`}>
-      <a className="sidebar-brand" href="../index.html"><span className="brand-mark"><Compass size={21} /></span><span>Ica<span className="brand-accent">Turismo</span><small>ADMINISTRACIÓN</small></span></a>
-      <div className="workspace-switch"><span className="workspace-avatar">I</span><span><strong>IcaTurismo</strong><small>Panel de control</small></span><ChevronDown size={15} /></div>
-      <nav className="side-nav" aria-label="Navegación del panel">
-        {navGroups.map((group) => <div className="nav-group" key={group.label}><span className="nav-group__label">{group.label}</span>{group.items.map(({ id, label, icon: Icon, count }) => <button className={`nav-link ${activePage === id ? 'nav-link--active' : ''}`} key={id} onClick={() => { setActivePage(id); setMobileNav(false) }}><Icon size={17} strokeWidth={1.8} /><span>{label}</span>{count && <span className="nav-count">{count}</span>}</button>)}</div>)}
-      </nav>
-      <div className="sidebar-bottom"><div className="sidebar-promo"><Sparkles size={17} /><span><strong>Un programa de puntos</strong><small>Fideliza a tus viajeros.</small></span><button onClick={() => setActivePage('puntos')} aria-label="Ver programa de puntos"><ArrowRight size={16} /></button></div><button className="nav-link sidebar-help"><CircleHelp size={17} /><span>Centro de ayuda</span></button><div className="sidebar-user"><Avatar initials={user?.nombre?.split(' ').map((part) => part[0]).slice(0, 2).join('') || 'AD'} tone="mint" /><span><strong>{user?.nombre || 'Administrador'}</strong><small>Administrador</small></span><button className="icon-button" title="Cerrar sesión" onClick={() => window.Auth?.logout()}><LogOut size={16} /></button></div></div>
+      <a className="sidebar-brand" href="../index.html"><img src={logoUrl} alt="" /><span>IcaTurismo<small>ADMINISTRACIÓN</small></span></a>
+      <div className="workspace-switch"><span className="workspace-avatar">I</span><span><strong>IcaTurismo</strong><small>Panel de control</small></span></div>
+      <nav className="side-nav" aria-label="Navegación del panel">{availableNavigation.map(({ id, label, icon: Icon }) => <button className={`nav-link ${visiblePage === id ? 'nav-link--active' : ''}`} key={id} onClick={() => { setActivePage(id); setMobileNav(false) }}><Icon size={17} /><span>{label}</span></button>)}</nav>
+      <div className="sidebar-bottom"><div className="sidebar-user"><span className="avatar">{initials(user?.nombre)}</span><span><strong>{user?.nombre}</strong><small>{roleLabels[role] || 'Personal'}</small></span><button className="icon-button" title="Cerrar sesión" onClick={() => window.Auth?.logout()}><LogOut size={16} /></button></div></div>
     </aside>
     {mobileNav && <button className="mobile-scrim" onClick={() => setMobileNav(false)} aria-label="Cerrar menú" />}
     <main className="admin-content">
-      <header className="topbar"><div className="topbar-left"><button className="mobile-menu icon-button" onClick={() => setMobileNav(true)} aria-label="Abrir menú"><Menu size={19} /></button><span className="breadcrumb"><span>Panel</span><ChevronRight size={14} /><PageIcon size={15} />{currentNav?.label || 'Resumen'}</span></div><div className="topbar-actions"><label className="global-search"><Search size={16} /><input placeholder="Buscar..." aria-label="Buscar" /><kbd>⌘ K</kbd></label><button className="icon-button theme-button" onClick={() => { const next = !dark; setDark(next); setNotice(saveSaved('icat_admin_theme', next) ? '' : 'No se pudo guardar el tema en este navegador.') }} aria-label={dark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}>{dark ? <Sparkles size={17} /> : <Activity size={17} />}</button><button className="icon-button notification-button" aria-label="Notificaciones"><Bell size={17} /><i /></button><span className="topbar-divider" /><Avatar initials={user?.nombre?.split(' ').map((part) => part[0]).slice(0, 2).join('') || 'AD'} tone="mint" /></div></header>
-      <div className="page-content" key={activePage}>{pageContent}</div>
-      <footer className="dashboard-footer"><span>© 2026 IcaTurismo · Panel de administración</span><span><span className="online-dot" /> Todos los sistemas operativos</span></footer>
+      <header className="topbar"><div className="topbar-left"><button className="mobile-menu icon-button" onClick={() => setMobileNav(true)} aria-label="Abrir menú"><Menu size={19} /></button><span className="breadcrumb"><span>Panel</span><span>/</span>{currentPage?.label}</span></div><div className="topbar-actions"><button className="button button--quiet theme-button" onClick={toggleTheme}>{dark ? 'Modo claro' : 'Modo oscuro'}</button><span className="topbar-divider" /><span className="avatar">{initials(user?.nombre)}</span></div></header>
+      <div className="page-content" key={visiblePage}><LoadingState loading={loading} error={error} onRetry={reload} />{!loading && !error && content}</div>
+      <footer className="dashboard-footer"><span>© 2026 IcaTurismo · Panel de administración</span><span>Sesión de {roleLabels[role] || 'personal'}</span></footer>
     </main>
-    {productModal && <ProductModal product={productModal.product} onClose={() => setProductModal(null)} onSave={saveProduct} />}
-    {employeeModal && <EmployeeModal onClose={() => setEmployeeModal(false)} onSave={saveEmployee} />}
-    {notice && <div className="toast" role="status"><Check size={16} />{notice}<button onClick={() => setNotice('')} aria-label="Cerrar notificación"><X size={15} /></button></div>}
+    {promotionModal && <PromotionModal item={promotionModal.item} onClose={() => setPromotionModal(null)} onSave={savePromotion} />}
+    {employeeModal && <EmployeeModal onClose={() => setEmployeeModal(false)} onSave={createEmployee} />}
+    {notice && <div className="toast" role="status">{notice}<button onClick={() => setNotice('')} aria-label="Cerrar notificación"><X size={15} /></button></div>}
   </div>
 }

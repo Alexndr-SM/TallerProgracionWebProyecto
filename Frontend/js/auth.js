@@ -38,6 +38,11 @@
     return Boolean(user && user.rol === 'admin');
   }
 
+  function isStaff() {
+    const user = getUser();
+    return Boolean(user && ['admin', 'registrador', 'soporte', 'editor'].includes(user.rol));
+  }
+
   async function login(email, password) {
     let res;
     try {
@@ -104,5 +109,6 @@
     getUser,
     isLoggedIn,
     isAdmin,
+    isStaff,
   };
 })();
