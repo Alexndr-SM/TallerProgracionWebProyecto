@@ -10,16 +10,17 @@
     <link rel="stylesheet" href="../css/admin.css">
     <link rel="stylesheet" href="../admin-dashboard/dist/admin-dashboard.css">
     <script src="../js/theme.js"></script>
-    <script src="../js/config.js"></script>
-    <script src="../js/auth.js"></script>
-    <script type="module" src="../admin-dashboard/dist/admin-dashboard.js" onerror="document.getElementById('adminStatus').textContent = 'No se cargó el dashboard. Verifica que Render compile Frontend/admin-dashboard y publique la carpeta Frontend.'"></script>
 </head>
 <body class="admin-page">
     <main class="admin-main" id="adminContent" hidden>
         <div data-admin-dashboard data-admin-authorized="false"></div>
     </main>
-    <p class="admin-status" id="adminStatus" role="status" aria-live="polite">Verificando acceso...</p>
+    <p class="admin-status" id="adminStatus" role="status" aria-live="polite">Iniciando panel administrativo...</p>
     <button class="admin-retry" id="adminRetry" type="button" hidden>Reintentar conexión</button>
+
+    <script src="../js/config.js" onerror="document.getElementById('adminStatus').textContent = 'No se pudo cargar la configuración de la API.'"></script>
+    <script src="../js/auth.js" onerror="document.getElementById('adminStatus').textContent = 'No se pudo cargar el módulo de sesión.'"></script>
+    <script type="module" src="../admin-dashboard/dist/admin-dashboard.js" onerror="document.getElementById('adminStatus').textContent = 'No se cargó el dashboard. Verifica que Render compile Frontend/admin-dashboard y publique la carpeta Frontend.'"></script>
 
     <script>
         (async function () {
@@ -34,20 +35,9 @@
                 content.hidden = false;
             });
 
-            if (!Auth.isLoggedIn()) {
-                window.location.replace(loginUrl);
-                return;
-            }
-
-            if (!Auth.isAdmin()) {
-                alert('Esta página es exclusiva para administradores.');
-                window.location.replace('../index.html');
-                return;
-            }
-
             async function verifyAccess() {
                 retryButton.hidden = true;
-                status.textContent = 'Verificando acceso...';
+                status.textContent = 'Comprobando la sesión guardada...';
 
                 const controller = new AbortController();
                 const slowConnectionMessage = window.setTimeout(function () {
@@ -58,10 +48,31 @@
                 }, 60000);
 
                 try {
+                    if (!window.Auth) {
+                        throw new Error('No se cargó el módulo de sesión (../js/auth.js). Comprueba la pestaña Red del navegador.');
+                    }
+
+                    if (!Auth.isLoggedIn()) {
+                        window.location.replace(loginUrl);
+                        return;
+                    }
+
+                    if (!Auth.isAdmin()) {
+                        alert('Esta página es exclusiva para administradores.');
+                        window.location.replace('../index.html');
+                        return;
+                    }
+
+                    if (!window.API_URL) {
+                        throw new Error('No se cargó la dirección de la API (../js/config.js). Comprueba la pestaña Red del navegador.');
+                    }
+
+                    status.textContent = 'Conectando con el servidor para validar permisos...';
                     const response = await fetch((window.API_URL || '').replace(/\/$/, '') + '/api/auth/admin/dashboard', {
                         headers: { Authorization: 'Bearer ' + Auth.getToken() },
                         signal: controller.signal,
                     });
+                    status.textContent = 'Respuesta recibida. Validando permisos...';
                     const data = await response.json().catch(() => ({}));
 
                     if (response.status === 401) {
@@ -79,6 +90,7 @@
 
                     dashboard.dataset.adminUser = JSON.stringify(data.user);
                     dashboard.dataset.adminAuthorized = 'true';
+                    status.textContent = 'Acceso confirmado. Cargando el panel...';
                     dashboard.dispatchEvent(new Event('admin:authorized'));
                 } catch (error) {
                     if (error.name === 'AbortError') {
@@ -94,7 +106,21 @@
             }
 
             retryButton.addEventListener('click', verifyAccess);
-            verifyAccess();
+            window.addEventListener('error', function (event) {
+                if (!content.hidden) return;
+                status.textContent = 'Error del navegador al cargar el panel: ' + (event.message || 'revisa la consola del navegador.');
+                retryButton.hidden = false;
+            });
+            window.addEventListener('unhandledrejection', function (event) {
+                if (!content.hidden) return;
+                status.textContent = 'Error inesperado al iniciar el panel: ' + (event.reason?.message || 'revisa la consola del navegador.');
+                retryButton.hidden = false;
+            });
+
+            verifyAccess().catch(function (error) {
+                status.textContent = error.message || 'No se pudo iniciar la validación de acceso.';
+                retryButton.hidden = false;
+            });
         })();
     </script>
 </body>
