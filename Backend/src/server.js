@@ -17,6 +17,7 @@ const authRoutes = require('./routes/auth.routes');
 const commentRoutes = require('./routes/comment.routes');
 const reservationRoutes = require('./routes/reservation.routes');
 const adminRoutes = require('./routes/admin.routes');
+const promotionRoutes = require('./routes/promotion.routes');
 const { pool } = require('./config/database');
 
 const app = express();
@@ -55,6 +56,7 @@ app.get('/api/health', async (_req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/comentarios', commentRoutes);
 app.use('/api/reservas', reservationRoutes);
+app.use('/api/promociones', promotionRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Crear tabla usuarios al arrancar (si no existe)
