@@ -1671,21 +1671,104 @@ footer {
 }
 
 /* FORMULARIO DE RESERVAS*/
+    .reserva-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0fr);
+      gap: 0;
+      width: min(1080px, calc(100% - 2rem));
+      margin: 3rem auto;
+      align-items: start;
+      transition: grid-template-columns 650ms cubic-bezier(.2,.75,.25,1), gap 650ms ease;
+    }
     .formulario-contenedor {
       background-color: var(--menu-bg);
       padding: 30px;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
       margin: 0 auto;
+      transition: max-width 650ms ease, transform 650ms cubic-bezier(.2,.75,.25,1);
     }
-    .formulario-contenedor h2 {
+    .formulario-contenedor h1 {
       margin-top: 0;
       color: var(--font-display);
       text-align: center;
       margin-bottom: 20px;
       font-weight: 1000;
+    }
+    .reserva-layout.mostrar-pago {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2rem;
+    }
+    .reserva-layout.mostrar-pago .formulario-contenedor {
+      max-width: none;
+      transform: translateX(-0.35rem);
+    }
+    .panel-pago {
+      min-width: 0;
+      overflow: hidden;
+      padding: 30px;
+      color: var(--font-body);
+      background: var(--menu-bg);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      animation: panel-pago-entrada 560ms cubic-bezier(.16,.8,.25,1) both;
+    }
+    .pago-metodo[hidden], .panel-pago[hidden] { display: none; }
+    .pago-metodo h2 {
+      margin: 0 0 1.5rem;
+      color: var(--font-display);
+      font-size: 1.55rem;
+    }
+    .pago-etiqueta {
+      margin: 0 0 .5rem;
+      color: var(--verdeBoton);
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .pago-campos-dobles { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .pago-descripcion { line-height: 1.65; }
+    .pago-marca {
+      display: grid;
+      min-height: 130px;
+      margin: 1.5rem 0;
+      place-items: center;
+      border-radius: 6px;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    .pago-marca--paypal { color: #123b70; background: #eaf2fb; }
+    .pago-marca--yape { color: #421477; background: #f2eaf9; }
+    .pago-marca--yape span { color: #3c7d65; }
+    .btn-volver {
+      padding: .75rem 1rem;
+      border: 1px solid currentColor;
+      border-radius: 5px;
+      color: var(--font-body);
+      background: transparent;
+      font: inherit;
+      cursor: pointer;
+    }
+    .pago-metodo[data-metodo="tarjeta"] { animation: pago-tarjeta-entrada 620ms cubic-bezier(.2,.75,.25,1) both; }
+    .pago-metodo[data-metodo="paypal"] { animation: pago-paypal-entrada 620ms cubic-bezier(.2,.75,.25,1) both; }
+    .pago-metodo[data-metodo="yape"] { animation: pago-yape-entrada 620ms cubic-bezier(.2,.75,.25,1) both; }
+    @keyframes panel-pago-entrada {
+      from { opacity: 0; clip-path: inset(0 100% 0 0); }
+      to { opacity: 1; clip-path: inset(0 0 0 0); }
+    }
+    @keyframes pago-tarjeta-entrada {
+      from { opacity: 0; transform: translateY(22px) rotateX(-5deg); }
+      to { opacity: 1; transform: translateY(0) rotateX(0); }
+    }
+    @keyframes pago-paypal-entrada {
+      from { opacity: 0; transform: translateX(28px) scale(.97); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    @keyframes pago-yape-entrada {
+      from { opacity: 0; transform: translateY(-18px) scale(.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
     .grupo-input {
       margin-bottom: 15px;
@@ -1726,4 +1809,14 @@ footer {
     }
     .btn-pagar:hover {
       background-color: rgb(33, 136, 56);
+    }
+    @media (max-width: 760px) {
+      .reserva-layout, .reserva-layout.mostrar-pago {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem;
+        width: min(520px, calc(100% - 1.5rem));
+        margin: 1.5rem auto;
+      }
+      .reserva-layout.mostrar-pago .formulario-contenedor { transform: none; }
+      .formulario-contenedor, .panel-pago { padding: 1.25rem; }
     }

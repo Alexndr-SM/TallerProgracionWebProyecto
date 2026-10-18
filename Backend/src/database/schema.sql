@@ -29,6 +29,27 @@ COMMENT ON COLUMN usuarios.rol IS 'Rol del usuario para control de acceso: admin
 COMMENT ON COLUMN usuarios.foto_perfil_url IS 'URL segura de la foto de perfil alojada en Cloudinary';
 COMMENT ON COLUMN usuarios.foto_perfil_public_id IS 'Identificador de la foto de perfil para reemplazarla en Cloudinary';
 
+-- Reservas del formulario de compra, incluidas las realizadas como invitado
+CREATE TABLE IF NOT EXISTS reservas (
+  id              SERIAL PRIMARY KEY,
+  usuario_id      INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
+  nombre          VARCHAR(120) NOT NULL,
+  email           VARCHAR(180) NOT NULL,
+  fecha_tour      DATE NOT NULL,
+  asistentes      SMALLINT NOT NULL CHECK (asistentes BETWEEN 1 AND 15),
+  metodo_pago     VARCHAR(20) NOT NULL CHECK (metodo_pago IN ('tarjeta', 'paypal', 'yape')),
+  estado          VARCHAR(20) NOT NULL DEFAULT 'pendiente'
+                  CHECK (estado IN ('pendiente', 'confirmada', 'cancelada')),
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_reservas_fecha_tour
+  ON reservas (fecha_tour);
+CREATE INDEX IF NOT EXISTS idx_reservas_email
+  ON reservas (email);
+
+COMMENT ON TABLE reservas IS 'Reservas de tours ingresadas por clientes registrados o invitados';
+
 -- Opiniones publicadas por usuarios autenticados
 CREATE TABLE IF NOT EXISTS comentarios (
   id            SERIAL PRIMARY KEY,

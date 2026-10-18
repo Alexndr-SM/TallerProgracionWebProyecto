@@ -1,26 +1,33 @@
-document
-  .getElementById("form-reserva")
-  .addEventListener("submit", function (event) {
-    // Evita el envío tradicional del formulario
-    event.preventDefault();
+const formReserva = document.getElementById("form-reserva");
+const reservaLayout = document.querySelector(".reserva-layout");
+const panelPago = document.getElementById("panel-pago");
+const metodosPago = document.querySelectorAll(".pago-metodo");
+const selectorPago = document.getElementById("pago");
 
-    // Obtiene el valor del método de pago seleccionado
-    const metodoSeleccionado = document.getElementById("pago").value;
+formReserva.addEventListener("submit", (event) => {
+  event.preventDefault();
 
-    // Redirige según la opción
-    switch (metodoSeleccionado) {
-      case "tarjeta":
-        window.location.href = "metodosPago/pagoTarjeta.html";
-        break;
-      case "paypal":
-        window.location.href = "metodosPago/pagoPaypal.html";
-        break;
-      case "yape":
-        window.location.href = "metodosPago/pagoYape.html";
-        break;
-      default:
-        alert("Por favor, selecciona un método de pago válido.");
-    }
+  const metodoSeleccionado = selectorPago.value;
+  const metodoActivo = [...metodosPago].find((metodo) => metodo.dataset.metodo === metodoSeleccionado);
+
+  if (!metodoActivo) {
+    selectorPago.focus();
+    return;
+  }
+
+  metodosPago.forEach((metodo) => {
+    metodo.hidden = metodo !== metodoActivo;
   });
-/*Reservas desde fecha actual*/
-document.getElementById('fecha').min = new Date().toISOString().split('T')[0];
+  panelPago.hidden = false;
+  reservaLayout.classList.add("mostrar-pago");
+  panelPago.setAttribute("aria-label", `Método de pago: ${metodoActivo.querySelector("h2").textContent}`);
+});
+
+document.getElementById("volver-reserva").addEventListener("click", () => {
+  reservaLayout.classList.remove("mostrar-pago");
+  panelPago.hidden = true;
+  selectorPago.focus();
+});
+
+/* Reservas desde la fecha actual. */
+document.getElementById("fecha").min = new Date().toISOString().split("T")[0];
