@@ -165,19 +165,16 @@ async function start() {
     console.error('Falta JWT_SECRET en las variables de entorno.');
     process.exit(1);
   }
-
   try {
     await ensureTable();
   } catch (err) {
     console.error('No se pudo preparar la BD:', err.message);
     process.exit(1);
   }
-
   app.listen(PORT, () => {
     console.log(`API escuchando en puerto ${PORT}`);
   });
 }
-
 start();ONFLICT (slug) DO NOTHING;
   `);
   await pool.query(`
