@@ -110,7 +110,7 @@ async function createLocalReservation(req, res) {
 async function listCustomers(_req, res) {
   try {
     const result = await query(
-      `SELECT u.id, u.nombre, u.email, u.estado_cuenta, u.created_at, u.ultimo_acceso,
+      `SELECT u.id, u.nombre, u.email, u.estado_cuenta, u.puntos, u.created_at, u.ultimo_acceso,
               COUNT(r.id)::int AS reservas
        FROM usuarios u LEFT JOIN reservas r ON r.usuario_id = u.id
        WHERE u.rol = 'cliente'
@@ -140,6 +140,25 @@ async function updateCustomerStatus(req, res) {
   } catch (error) {
     console.error('updateCustomerStatus:', error.message);
     return res.status(500).json({ ok: false, message: 'No se pudo cambiar el estado del cliente.' });
+  }
+}
+
+async function updateCustomerPoints(req, res) {
+  const id = Number(req.params.id);
+  const points = Number(req.body.puntos);
+  if (!Number.isInteger(id) || id < 1 || !Number.isInteger(points) || points < 0 || points > 2147483647) {
+    return res.status(400).json({ ok: false, message: 'El cliente o los puntos no son válidos.' });
+  }
+  try {
+    const result = await query(
+      "UPDATE usuarios SET puntos = $1 WHERE id = $2 AND rol = 'cliente' RETURNING id, puntos",
+      [points, id]
+    );
+    if (!result.rowCount) return res.status(404).json({ ok: false, message: 'No se encontró el cliente.' });
+    return res.json({ ok: true, customer: result.rows[0] });
+  } catch (error) {
+    console.error('updateCustomerPoints:', error.message);
+    return res.status(500).json({ ok: false, message: 'No se pudieron actualizar los puntos.' });
   }
 }
 
@@ -324,6 +343,7 @@ module.exports = {
   updateReservation,
   listCustomers,
   updateCustomerStatus,
+  updateCustomerPoints,
   listEmployees,
   createEmployee,
   updateEmployee,

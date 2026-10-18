@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
   password_hash VARCHAR(255)  NOT NULL,
   rol           VARCHAR(20)   NOT NULL DEFAULT 'cliente',
   estado_cuenta VARCHAR(20)  NOT NULL DEFAULT 'activo',
+  puntos        INTEGER      NOT NULL DEFAULT 0 CHECK (puntos >= 0),
   ultimo_acceso TIMESTAMPTZ,
   foto_perfil_url TEXT,
   foto_perfil_public_id VARCHAR(255),
@@ -18,6 +19,7 @@ ALTER TABLE usuarios
   ADD COLUMN IF NOT EXISTS rol VARCHAR(20) NOT NULL DEFAULT 'cliente';
 ALTER TABLE usuarios
   ADD COLUMN IF NOT EXISTS estado_cuenta VARCHAR(20) NOT NULL DEFAULT 'activo',
+  ADD COLUMN IF NOT EXISTS puntos INTEGER NOT NULL DEFAULT 0,
   ADD COLUMN IF NOT EXISTS ultimo_acceso TIMESTAMPTZ;
 ALTER TABLE usuarios
   ADD COLUMN IF NOT EXISTS foto_perfil_url TEXT,
@@ -32,6 +34,7 @@ COMMENT ON TABLE  usuarios IS 'Usuarios registrados para iniciar sesión';
 COMMENT ON COLUMN usuarios.password_hash IS 'Hash bcrypt; nunca guardar la contraseña en texto plano';
 COMMENT ON COLUMN usuarios.rol IS 'Rol de acceso: admin, registrador, soporte, editor o cliente';
 COMMENT ON COLUMN usuarios.estado_cuenta IS 'Estado de acceso de la cuenta: activo o inactivo';
+COMMENT ON COLUMN usuarios.puntos IS 'Saldo de puntos de fidelización del cliente';
 UPDATE usuarios SET rol = 'cliente'
 WHERE rol NOT IN ('admin', 'registrador', 'soporte', 'editor', 'cliente');
 UPDATE usuarios SET estado_cuenta = 'activo'
@@ -47,6 +50,9 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'usuarios_estado_cuenta_check' AND conrelid = 'usuarios'::regclass) THEN
     ALTER TABLE usuarios ADD CONSTRAINT usuarios_estado_cuenta_check
       CHECK (estado_cuenta IN ('activo', 'inactivo'));
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'usuarios_puntos_check' AND conrelid = 'usuarios'::regclass) THEN
+    ALTER TABLE usuarios ADD CONSTRAINT usuarios_puntos_check CHECK (puntos >= 0);
   END IF;
 END $$;
 

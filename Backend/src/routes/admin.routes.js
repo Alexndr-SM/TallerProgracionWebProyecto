@@ -11,6 +11,7 @@ router.post('/reservas', requireRole('admin', 'registrador'), controller.createL
 router.patch('/reservas/:id', requireRole('admin', 'registrador'), controller.updateReservation);
 router.get('/clientes', requireRole('admin', 'registrador', 'soporte'), controller.listCustomers);
 router.patch('/clientes/:id', requireRole('admin'), controller.updateCustomerStatus);
+router.patch('/clientes/:id/puntos', requireRole('admin'), controller.updateCustomerPoints);
 router.get('/empleados', requireRole('admin'), controller.listEmployees);
 router.post('/empleados', requireRole('admin'), controller.createEmployee);
 router.patch('/empleados/:id', requireRole('admin'), controller.updateEmployee);

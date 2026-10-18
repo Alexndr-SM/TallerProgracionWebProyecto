@@ -27,34 +27,12 @@ import {
 } from 'lucide-react'
 import './App.css'
 
-const seedProducts = [
-  { id: 'P-1042', name: 'Aventura en las dunas', category: 'Aventura', price: 145, stock: 28, sold: 86, status: 'Activo', color: 'sand' },
-  { id: 'P-1038', name: 'Ruta de bodegas de Ica', category: 'Cultura', price: 95, stock: 34, sold: 72, status: 'Activo', color: 'wine' },
-  { id: 'P-1024', name: 'Islas Ballestas + Paracas', category: 'Naturaleza', price: 180, stock: 19, sold: 64, status: 'Activo', color: 'sea' },
-  { id: 'P-1019', name: 'Museo Regional de Ica', category: 'Cultura', price: 38, stock: 42, sold: 51, status: 'Activo', color: 'clay' },
-  { id: 'P-1008', name: 'Sandboard al atardecer', category: 'Aventura', price: 120, stock: 6, sold: 43, status: 'Poco stock', color: 'sunset' },
-]
-
-const seedEmployees = [
-  { id: 'EMP-01', name: 'Mariana Torres', email: 'mariana@icaturismo.com', role: 'Administrador', status: 'Activo', initials: 'MT', tone: 'mint' },
-  { id: 'EMP-02', name: 'Diego Ramírez', email: 'diego@icaturismo.com', role: 'Editor', status: 'Activo', initials: 'DR', tone: 'peach' },
-  { id: 'EMP-03', name: 'Lucía Salas', email: 'lucia@icaturismo.com', role: 'Soporte', status: 'Activo', initials: 'LS', tone: 'lilac' },
-]
-
-const customers = [
-  { name: 'Camila Mendoza', email: 'camila.m@email.com', since: '18 oct, 2026', orders: 8, points: 1240, initials: 'CM', tone: 'mint' },
-  { name: 'Andrés Flores', email: 'andres.f@email.com', since: '17 oct, 2026', orders: 5, points: 860, initials: 'AF', tone: 'peach' },
-  { name: 'Valeria Rojas', email: 'valeria.r@email.com', since: '16 oct, 2026', orders: 12, points: 2100, initials: 'VR', tone: 'lilac' },
-  { name: 'Mateo Castillo', email: 'mateo.c@email.com', since: '15 oct, 2026', orders: 3, points: 420, initials: 'MC', tone: 'blue' },
-  { name: 'Sofía Herrera', email: 'sofia.h@email.com', since: '14 oct, 2026', orders: 6, points: 980, initials: 'SH', tone: 'rose' },
-]
-
 const navGroups = [
   {
     label: 'Principal',
     items: [
       { id: 'dashboard', label: 'Resumen', icon: LayoutDashboard },
-      { id: 'pedidos', label: 'Pedidos', icon: ShoppingBag, count: '12' },
+      { id: 'pedidos', label: 'Pedidos', icon: ShoppingBag },
       { id: 'clientes', label: 'Clientes', icon: Users },
       { id: 'productos', label: 'Productos', icon: Package },
     ],
@@ -99,6 +77,21 @@ async function loadAdminResource(path) {
   })
   const result = await response.json().catch(() => ({}))
   if (!response.ok || !result.ok) throw new Error(result.message || 'No se pudieron cargar las métricas.')
+  return result
+}
+
+async function updateAdminResource(path, body, method = 'PATCH') {
+  const base = (window.API_URL || '').replace(/\/$/, '')
+  const response = await fetch(`${base}/api/admin${path}`, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${window.Auth?.getToken() || ''}`,
+    },
+    body: JSON.stringify(body),
+  })
+  const result = await response.json().catch(() => ({}))
+  if (!response.ok || !result.ok) throw new Error(result.message || 'No se pudo guardar el cambio.')
   return result
 }
 
@@ -148,7 +141,16 @@ function SectionHeading({ eyebrow, title, description, action }) {
 
 function DashboardHome({ user, products, onNavigate, period, setPeriod, summary, reservations, loading, error }) {
   const firstName = user?.nombre?.split(' ')[0] || 'Admin'
-  const bestSellers = [...products].sort((a, b) => b.sold - a.sold).slice(0, 3)
+  const productsWithReservations = products.map((product) => ({
+    ...product,
+    reservationsCount: reservations.filter((reservation) => Number(reservation.promocion_id) === Number(product.id)).length,
+  }))
+  const bestSellers = [...productsWithReservations].sort((a, b) => b.reservationsCount - a.reservationsCount).slice(0, 3)
+  const today = new Date().toISOString().slice(0, 10)
+  const upcomingReservations = reservations
+    .filter((reservation) => String(reservation.fecha_tour).slice(0, 10) >= today && reservation.estado !== 'cancelada')
+    .sort((a, b) => String(a.fecha_tour).localeCompare(String(b.fecha_tour)))
+    .slice(0, 3)
   const methodLabels = { tarjeta: 'Tarjeta', paypal: 'PayPal', yape: 'Yape / Plin' }
   const series = reservationSeries(reservations, period)
   const methodCounts = ['tarjeta', 'paypal', 'yape'].map((method) => ({
@@ -201,6 +203,11 @@ function DashboardHome({ user, products, onNavigate, period, setPeriod, summary,
           <div className="stat-card__bottom">Cuentas habilitadas</div>
         </article>
         <article className="stat-card">
+          <div className="stat-card__top"><span>Equipo activo</span><span className="stat-icon"><ShieldCheck size={17} /></span></div>
+          <strong>{loading ? '—' : Number(summary?.employees?.total || 0).toLocaleString('es-PE')}</strong>
+          <div className="stat-card__bottom">Cuentas de personal</div>
+        </article>
+        <article className="stat-card">
           <div className="stat-card__top"><span>Ingresos pagados</span><span className="stat-icon"><CreditCard size={17} /></span></div>
           <strong>{loading ? '—' : money(summary?.paid_sales || 0)}</strong>
           <div className="stat-card__bottom">Solo pagos confirmados</div>
@@ -244,7 +251,8 @@ function DashboardHome({ user, products, onNavigate, period, setPeriod, summary,
         <section className="panel best-panel">
           <div className="panel-heading"><div><h2>Productos estrella</h2><p>Los favoritos de este mes</p></div><button className="text-link" onClick={() => onNavigate('productos')}>Ver catálogo <ArrowRight size={15} /></button></div>
           <div className="best-list">
-            {bestSellers.map((product, index) => <div className="best-item" key={product.id}><span className={`product-thumb product-thumb--${product.color}`}><Compass size={18} /></span><div className="best-item__name"><strong>{product.name}</strong><span>{product.sold} reservas</span></div><span className="best-item__rank"><Star size={13} fill="currentColor" /> #{index + 1}</span></div>)}
+            {bestSellers.map((product, index) => <div className="best-item" key={product.id}><span className="product-thumb product-thumb--sea"><Compass size={18} /></span><div className="best-item__name"><strong>{product.name}</strong><span>{product.reservationsCount} reservas</span></div><span className="best-item__rank"><Star size={13} fill="currentColor" /> #{index + 1}</span></div>)}
+            {bestSellers.length === 0 && <p className="empty-state">No hay productos registrados.</p>}
           </div>
         </section>
       </div>
@@ -252,9 +260,8 @@ function DashboardHome({ user, products, onNavigate, period, setPeriod, summary,
       <div className="dashboard-grid dashboard-grid--lower">
         <section className="panel renewals-panel">
           <div className="panel-heading"><div><h2>Próximos eventos</h2><p>Salidas y experiencias programadas</p></div><button className="text-link" onClick={() => onNavigate('pedidos')}>Calendario <ArrowRight size={15} /></button></div>
-          <div className="event-row"><span className="event-date"><b>19</b><small>OCT</small></span><div><strong>Atardecer en Huacachina</strong><span>12 viajeros · 4:30 p. m.</span></div><span className="event-status">Mañana</span></div>
-          <div className="event-row"><span className="event-date"><b>21</b><small>OCT</small></span><div><strong>Ruta de bodegas tradicionales</strong><span>8 viajeros · 9:00 a. m.</span></div><span className="event-status event-status--muted">En 3 días</span></div>
-          <div className="event-row"><span className="event-date"><b>23</b><small>OCT</small></span><div><strong>Paracas y las Islas Ballestas</strong><span>16 viajeros · 7:00 a. m.</span></div><span className="event-status event-status--muted">En 5 días</span></div>
+          {upcomingReservations.map((reservation) => <div className="event-row" key={reservation.id}><span className="event-date"><b>{String(reservation.fecha_tour).slice(8, 10)}</b><small>{new Date(`${String(reservation.fecha_tour).slice(0, 10)}T00:00:00`).toLocaleDateString('es-PE', { month: 'short' }).toUpperCase()}</small></span><div><strong>{reservation.promocion_nombre || 'Reserva de tour'}</strong><span>{reservation.asistentes} viajeros · {reservation.nombre}</span></div><span className="event-status">{new Date(`${String(reservation.fecha_tour).slice(0, 10)}T00:00:00`).toLocaleDateString('es-PE', { day: 'numeric', month: 'short' })}</span></div>)}
+          {upcomingReservations.length === 0 && <p className="empty-state">No hay próximas salidas reservadas.</p>}
         </section>
         <section className="panel loyalty-preview">
           <div className="loyalty-preview__icon"><Sparkles size={20} /></div>
@@ -275,44 +282,63 @@ function OrderList({ items, compact = false }) {
   </div>
 }
 
-function ProductsPage({ products, onAdd, onEdit, onDelete }) {
+function ProductsPage({ products, reservations, onAdd, onEdit, onToggle }) {
   const [query, setQuery] = useState('')
   const filtered = products.filter((product) => `${product.name} ${product.category} ${product.id}`.toLowerCase().includes(query.toLowerCase()))
+  const reservationCount = (productId) => reservations.filter((reservation) => Number(reservation.promocion_id) === Number(productId)).length
   return <>
     <SectionHeading eyebrow="Catálogo" title="Productos y experiencias" description="Administra tus experiencias, precios y disponibilidad." action={<button className="button button--primary" onClick={() => onAdd()}><Plus size={16} /> Nuevo producto</button>} />
     <div className="catalog-summary">
-      <div><span>Productos activos</span><strong>{products.length}</strong></div><div><span>Reservas este mes</span><strong>316</strong></div><div><span>Stock por revisar</span><strong>{products.filter((product) => product.stock < 10).length}</strong></div>
+      <div><span>Productos registrados</span><strong>{products.length}</strong></div><div><span>Productos activos</span><strong>{products.filter((product) => product.active).length}</strong></div><div><span>Reservas asociadas</span><strong>{reservations.length}</strong></div>
     </div>
     <section className="panel table-panel">
       <div className="table-toolbar"><div><h2>Todos los productos</h2><span>{filtered.length} experiencias</span></div><label className="search-box"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar producto..." /></label></div>
-      <div className="table-scroll"><table><thead><tr><th>Experiencia</th><th>Categoría</th><th>Precio</th><th>Reservas</th><th>Disponibilidad</th><th>Estado</th><th /></tr></thead><tbody>
-        {filtered.map((product) => <tr key={product.id}><td><div className="table-product"><span className={`product-thumb product-thumb--${product.color}`}><Compass size={17} /></span><div><strong>{product.name}</strong><small>{product.id}</small></div></div></td><td>{product.category}</td><td className="table-strong">{money(product.price)}</td><td>{product.sold}</td><td><div className="stock-cell"><span>{product.stock} cupos</span><span className="stock-track"><i style={{ width: `${Math.min(product.stock * 2, 100)}%` }} /></span></div></td><td><span className={`status ${product.status === 'Activo' ? 'status--confirmado' : 'status--pendiente'}`}>{product.status}</span></td><td><div className="row-actions"><button className="icon-button" onClick={() => onEdit(product)} aria-label={`Editar ${product.name}`}><Settings size={15} /></button><button className="icon-button icon-button--danger" onClick={() => onDelete(product.id)} aria-label={`Eliminar ${product.name}`}><X size={15} /></button></div></td></tr>)}
-      </tbody></table>{filtered.length === 0 && <p className="empty-state">No encontramos productos con esa búsqueda.</p>}</div>
+      <div className="table-scroll"><table><thead><tr><th>Experiencia</th><th>Categoría</th><th>Precio</th><th>Reservas</th><th>Estado</th><th /></tr></thead><tbody>
+        {filtered.map((product) => <tr key={product.id}><td><div className="table-product"><span className="product-thumb product-thumb--sea"><Compass size={17} /></span><div><strong>{product.name}</strong><small>{product.description || `Producto #${product.id}`}</small></div></div></td><td>{product.category}</td><td className="table-strong">{money(product.price)}</td><td>{reservationCount(product.id)}</td><td><span className={`status ${product.active ? 'status--confirmado' : 'status--inactivo'}`}>{product.active ? 'Activo' : 'Inactivo'}</span></td><td><div className="row-actions"><button className="icon-button" onClick={() => onEdit(product)} aria-label={`Editar ${product.name}`}><Settings size={15} /></button><button className="icon-button" onClick={() => onToggle(product)} aria-label={`${product.active ? 'Desactivar' : 'Activar'} ${product.name}`} title={product.active ? 'Desactivar' : 'Activar'}>{product.active ? <X size={15} /> : <Check size={15} />}</button></div></td></tr>)}
+      </tbody></table>{filtered.length === 0 && <p className="empty-state">{query ? 'No encontramos productos con esa búsqueda.' : 'Todavía no hay productos registrados.'}</p>}</div>
     </section>
   </>
 }
 
-function EmployeesPage({ employees, onAdd, onRoleChange }) {
+function EmployeesPage({ employees, onAdd, onUpdate, currentUserId, loading }) {
+  const roleLabels = { admin: 'Administrador', registrador: 'Registrador', soporte: 'Soporte', editor: 'Editor' }
   return <>
     <SectionHeading eyebrow="Administración" title="Equipo y permisos" description="Invita a tu equipo y define qué puede hacer cada persona." action={<button className="button button--primary" onClick={onAdd}><Plus size={16} /> Nuevo empleado</button>} />
-    <div className="permission-notice"><ShieldCheck size={18} /><p><strong>Administración segura.</strong> El acceso real se valida en el servidor. Estas invitaciones y permisos son una vista previa local hasta conectar la gestión de usuarios.</p></div>
-    <div className="catalog-summary"><div><span>Miembros del equipo</span><strong>{employees.length}</strong></div><div><span>Administradores</span><strong>{employees.filter((employee) => employee.role === 'Administrador').length}</strong></div><div><span>Invitaciones pendientes</span><strong>{employees.filter((employee) => employee.status === 'Invitación').length}</strong></div></div>
+    <div className="permission-notice"><ShieldCheck size={18} /><p><strong>Administración segura.</strong> Los roles y estados se guardan en la base de datos y se validan en el servidor.</p></div>
+    <div className="catalog-summary"><div><span>Miembros del equipo</span><strong>{loading ? '—' : employees.length}</strong></div><div><span>Administradores activos</span><strong>{employees.filter((employee) => employee.rol === 'admin' && employee.estado_cuenta === 'activo').length}</strong></div><div><span>Cuentas inactivas</span><strong>{employees.filter((employee) => employee.estado_cuenta === 'inactivo').length}</strong></div></div>
     <section className="panel table-panel">
-      <div className="table-toolbar"><div><h2>Mi equipo</h2><span>Miembros y nivel de acceso</span></div><span className="secure-label"><ShieldCheck size={15} /> Acceso protegido</span></div>
-      <div className="table-scroll"><table><thead><tr><th>Empleado</th><th>Permiso</th><th>Estado</th><th>Última actividad</th><th /></tr></thead><tbody>
-        {employees.map((employee) => <tr key={employee.id}><td><div className="table-person"><Avatar initials={employee.initials} tone={employee.tone} /><div><strong>{employee.name}</strong><small>{employee.email}</small></div></div></td><td><select className="role-select" value={employee.role} onChange={(event) => onRoleChange(employee.id, event.target.value)} aria-label={`Permiso para ${employee.name}`}><option>Administrador</option><option>Editor</option><option>Soporte</option></select></td><td><span className={`status ${employee.status === 'Activo' ? 'status--confirmado' : 'status--pendiente'}`}>{employee.status}</span></td><td className="muted-cell">Hoy, 9:24 a. m.</td><td><button className="icon-button" aria-label={`Más opciones para ${employee.name}`}><Ellipsis size={17} /></button></td></tr>)}
-      </tbody></table></div>
+      <div className="table-toolbar"><div><h2>Mi equipo</h2><span>{employees.length} cuentas de personal</span></div><span className="secure-label"><ShieldCheck size={15} /> Acceso protegido</span></div>
+      <div className="table-scroll"><table><thead><tr><th>Empleado</th><th>Permiso</th><th>Estado</th><th>Última actividad</th></tr></thead><tbody>
+        {employees.map((employee) => <tr key={employee.id}><td><div className="table-person"><Avatar initials={employee.nombre.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()} tone="mint" /><div><strong>{employee.nombre}</strong><small>{employee.email}</small></div></div></td><td><select className="role-select" value={employee.rol} onChange={(event) => onUpdate(employee, event.target.value, employee.estado_cuenta)} aria-label={`Permiso para ${employee.nombre}`}><option value="admin">Administrador</option><option value="registrador">Registrador</option><option value="soporte">Soporte</option><option value="editor">Editor</option></select></td><td><select className="role-select" value={employee.estado_cuenta} onChange={(event) => onUpdate(employee, employee.rol, event.target.value)} aria-label={`Estado de ${employee.nombre}`} disabled={Number(employee.id) === Number(currentUserId)}><option value="activo">Activo</option><option value="inactivo">Inactivo</option></select></td><td className="muted-cell">{employee.ultimo_acceso ? new Date(employee.ultimo_acceso).toLocaleString('es-PE') : 'Sin actividad'}</td></tr>)}
+      </tbody></table>{!loading && employees.length === 0 && <p className="empty-state">Todavía no hay cuentas de personal registradas.</p>}</div>
     </section>
   </>
 }
 
-function CustomersPage({ onNavigate }) {
+function CustomerPointsControl({ customer, onSave }) {
+  const [points, setPoints] = useState(String(customer.puntos || 0))
+  useEffect(() => setPoints(String(customer.puntos || 0)), [customer.puntos])
+  return <form className="customer-points-control" onSubmit={(event) => { event.preventDefault(); onSave(customer.id, Number(points)) }}>
+    <input aria-label={`Puntos de ${customer.nombre}`} type="number" min="0" step="1" value={points} onChange={(event) => setPoints(event.target.value)} />
+    <button className="icon-button" type="submit" aria-label={`Guardar puntos de ${customer.nombre}`}><Check size={15} /></button>
+  </form>
+}
+
+function CustomersPage({ customers, onNavigate, onStatusChange, onPointsChange, canManage, loading }) {
+  const [search, setSearch] = useState('')
+  const filtered = customers.filter((customer) => `${customer.nombre} ${customer.email}`.toLowerCase().includes(search.trim().toLowerCase()))
+  const currentMonth = new Date()
+  const newThisMonth = customers.filter((customer) => {
+    const created = new Date(customer.created_at)
+    return created.getMonth() === currentMonth.getMonth() && created.getFullYear() === currentMonth.getFullYear()
+  }).length
+  const frequent = customers.filter((customer) => Number(customer.reservas) >= 2).length
   return <>
     <SectionHeading eyebrow="Comunidad" title="Clientes" description="Conoce a las personas que viajan con nosotros." action={<button className="button button--quiet" onClick={() => onNavigate('puntos')}><Sparkles size={16} /> Programa de puntos</button>} />
-    <div className="catalog-summary"><div><span>Clientes totales</span><strong>1,284</strong></div><div><span>Nuevos este mes</span><strong>86</strong></div><div><span>Clientes frecuentes</span><strong>312</strong></div></div>
-    <section className="panel table-panel"><div className="table-toolbar"><div><h2>Clientes recientes</h2><span>Últimas personas en unirse</span></div><label className="search-box"><Search size={16} /><input placeholder="Buscar cliente..." /></label></div><div className="table-scroll"><table><thead><tr><th>Cliente</th><th>Se unió</th><th>Pedidos</th><th>Puntos acumulados</th><th>Actividad</th></tr></thead><tbody>
-      {customers.map((customer) => <tr key={customer.email}><td><div className="table-person"><Avatar initials={customer.initials} tone={customer.tone} /><div><strong>{customer.name}</strong><small>{customer.email}</small></div></div></td><td>{customer.since}</td><td>{customer.orders} pedidos</td><td className="table-strong">{customer.points.toLocaleString('es-PE')} pts</td><td><span className="activity-label"><span /> Activo</span></td></tr>)}
-    </tbody></table></div></section>
+    <div className="catalog-summary"><div><span>Clientes registrados</span><strong>{loading ? '—' : customers.length}</strong></div><div><span>Nuevos este mes</span><strong>{loading ? '—' : newThisMonth}</strong></div><div><span>Clientes frecuentes</span><strong>{loading ? '—' : frequent}</strong></div></div>
+    <section className="panel table-panel"><div className="table-toolbar"><div><h2>Clientes registrados</h2><span>{filtered.length} de {customers.length} cuentas</span></div><label className="search-box"><Search size={16} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar cliente..." /></label></div><div className="table-scroll"><table><thead><tr><th>Cliente</th><th>Se unió</th><th>Reservas</th><th>Puntos</th><th>Estado</th></tr></thead><tbody>
+      {filtered.map((customer) => <tr key={customer.id}><td><div className="table-person"><Avatar initials={customer.nombre.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()} tone="mint" /><div><strong>{customer.nombre}</strong><small>{customer.email}</small></div></div></td><td>{new Date(customer.created_at).toLocaleDateString('es-PE')}</td><td>{customer.reservas}</td><td>{canManage ? <CustomerPointsControl customer={customer} onSave={onPointsChange} /> : <span className="table-strong">{Number(customer.puntos || 0).toLocaleString('es-PE')}</span>}</td><td>{canManage ? <select className="role-select" value={customer.estado_cuenta} onChange={(event) => onStatusChange(customer.id, event.target.value)} aria-label={`Estado de ${customer.nombre}`}><option value="activo">Activo</option><option value="inactivo">Inactivo</option></select> : <span className={`status status--${customer.estado_cuenta}`}>{customer.estado_cuenta}</span>}</td></tr>)}
+    </tbody></table>{!loading && filtered.length === 0 && <p className="empty-state">{search ? 'No hay clientes que coincidan con la búsqueda.' : 'Todavía no hay clientes registrados.'}</p>}</div></section>
     <div className="coming-note"><Sparkles size={18} /><div><strong>Fidelización en camino</strong><span>Pronto podrás recompensar las compras y reservas de tus clientes con puntos.</span></div><button className="text-link" onClick={() => onNavigate('puntos')}>Ver detalles <ArrowRight size={15} /></button></div>
   </>
 }
@@ -323,37 +349,39 @@ function OrdersPage({ reservations }) {
   return <>
     <SectionHeading eyebrow="Actividad" title="Reservas" description="Consulta las reservas registradas y su estado." action={<button className="button button--quiet" onClick={() => window.location.reload()}><Download size={16} /> Actualizar</button>} />
     <div className="catalog-summary"><div><span>Reservas registradas</span><strong>{reservations.length}</strong></div><div><span>Por atender</span><strong>{reservations.filter((reservation) => reservation.estado === 'pendiente').length}</strong></div><div><span>Ingresos pagados</span><strong>{money(reservations.filter((reservation) => reservation.estado_pago === 'pagado').reduce((sum, reservation) => sum + Number(reservation.total || 0), 0))}</strong></div></div>
-    <section className="panel table-panel"><div className="table-toolbar"><div><h2>Reservas recientes</h2><span>{filtered.length} registros</span></div><label className="search-box"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar reserva o cliente..." /></label></div><div className="table-scroll"><table><thead><tr><th>Reserva</th><th>Cliente</th><th>Experiencia</th><th>Fecha del tour</th><th>Total</th><th>Estado</th><th>Pago</th></tr></thead><tbody>{filtered.map((reservation) => <tr key={reservation.id}><td className="table-strong">#{reservation.id}</td><td><div className="table-person"><strong>{reservation.nombre}</strong><small>{reservation.email}</small></div></td><td>{reservation.promocion_nombre || 'Reserva de tour'}</td><td>{new Date(`${reservation.fecha_tour}T00:00:00`).toLocaleDateString('es-PE')}</td><td className="table-strong">{money(reservation.total)}</td><td><span className={`status status--${reservation.estado}`}>{reservation.estado}</span></td><td><span className={`status status--${reservation.estado_pago}`}>{reservation.estado_pago}</span></td></tr>)}</tbody></table>{filtered.length === 0 && <p className="empty-state">No hay reservas que coincidan.</p>}</div></section>
+    <section className="panel table-panel"><div className="table-toolbar"><div><h2>Reservas recientes</h2><span>{filtered.length} registros</span></div><label className="search-box"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar reserva o cliente..." /></label></div><div className="table-scroll"><table><thead><tr><th>Reserva</th><th>Cliente</th><th>Experiencia</th><th>Fecha del tour</th><th>Total</th><th>Estado</th><th>Pago</th></tr></thead><tbody>{filtered.map((reservation) => <tr key={reservation.id}><td className="table-strong">#{reservation.id}</td><td><div className="table-person"><strong>{reservation.nombre}</strong><small>{reservation.email}</small></div></td><td>{reservation.promocion_nombre || 'Reserva de tour'}</td><td>{new Date(`${String(reservation.fecha_tour).slice(0, 10)}T00:00:00`).toLocaleDateString('es-PE')}</td><td className="table-strong">{money(reservation.total)}</td><td><span className={`status status--${reservation.estado}`}>{reservation.estado}</span></td><td><span className={`status status--${reservation.estado_pago}`}>{reservation.estado_pago}</span></td></tr>)}</tbody></table>{filtered.length === 0 && <p className="empty-state">No hay reservas que coincidan.</p>}</div></section>
   </>
 }
 
-function PointsPage() {
+function PointsPage({ customers }) {
+  const totalPoints = customers.reduce((sum, customer) => sum + Number(customer.puntos || 0), 0)
+  const topCustomer = [...customers].sort((a, b) => Number(b.puntos || 0) - Number(a.puntos || 0))[0]
   return <>
-    <SectionHeading eyebrow="Fidelización" title="Puntos y beneficios" description="Una nueva forma de agradecer cada viaje. Estamos preparando esta experiencia." />
-    <section className="points-hero panel"><div className="points-hero__content"><span className="points-chip"><Sparkles size={14} /> PRÓXIMAMENTE</span><h2>Cada aventura<br />merece una recompensa.</h2><p>Un programa de puntos para que tus clientes sumen en cada compra y los canjeen por nuevas experiencias en Ica.</p><div className="points-steps"><span><b>01</b> Compra una experiencia</span><span><b>02</b> Acumula puntos</span><span><b>03</b> Canjea un viaje</span></div></div><div className="points-card"><span className="points-card__brand"><Compass size={18} /> ICA CLUB</span><Sparkles className="points-card__sparkle" size={27} /><strong>1,240</strong><span>puntos disponibles</span><div className="points-progress"><i /></div><small>Te faltan 260 pts para tu recompensa</small></div></section>
-    <div className="catalog-summary points-stats"><div><span>Clientes que participarían</span><strong>1,284</strong></div><div><span>Puntos estimados en circulación</span><strong>248 mil</strong></div><div><span>Recompensa más popular</span><strong className="stat-text">Tour a Huacachina</strong></div></div>
-    <section className="panel points-note"><div className="points-note__icon"><CircleHelp size={18} /></div><div><h2>¿Qué sigue?</h2><p>Esta pantalla es una propuesta visual. La asignación y el canje de puntos requerirán definir reglas de negocio y conectarse a la base de datos en una siguiente etapa.</p></div></section>
+    <SectionHeading eyebrow="Fidelización" title="Puntos y beneficios" description="Saldos registrados en las cuentas de clientes." />
+    <section className="points-hero panel"><div className="points-hero__content"><span className="points-chip"><Sparkles size={14} /> SALDOS REALES</span><h2>Puntos de la comunidad</h2><p>Consulta los puntos asignados a clientes. Puedes ajustar el saldo directamente desde la tabla de clientes.</p><div className="points-steps"><span><b>01</b> Clientes registrados: {customers.length}</span><span><b>02</b> Saldo acumulado: {totalPoints.toLocaleString('es-PE')} pts</span></div></div><div className="points-card"><span className="points-card__brand"><Compass size={18} /> ICA CLUB</span><Sparkles className="points-card__sparkle" size={27} /><strong>{Number(topCustomer?.puntos || 0).toLocaleString('es-PE')}</strong><span>{topCustomer?.nombre || 'Sin clientes'}</span><div className="points-progress"><i style={{ width: `${totalPoints ? Math.max(4, (Number(topCustomer?.puntos || 0) / totalPoints) * 100) : 0}%` }} /></div><small>Mayor saldo individual</small></div></section>
+    <div className="catalog-summary points-stats"><div><span>Clientes con puntos</span><strong>{customers.filter((customer) => Number(customer.puntos || 0) > 0).length}</strong></div><div><span>Puntos asignados</span><strong>{totalPoints.toLocaleString('es-PE')}</strong></div><div><span>Saldo mayor</span><strong className="stat-text">{topCustomer?.nombre || 'Sin datos'}</strong></div></div>
   </>
 }
 
 function ProductModal({ product, onClose, onSave }) {
-  const [form, setForm] = useState(product || { name: '', category: 'Aventura', price: '', stock: '', sold: 0, status: 'Activo', color: 'sand' })
+  const [form, setForm] = useState(product || { name: '', description: '', category: 'Aventura', price: '' })
   const update = (key, value) => setForm((current) => ({ ...current, [key]: value }))
   function submit(event) {
     event.preventDefault()
-    if (!form.name.trim() || Number(form.price) <= 0 || Number(form.stock) < 0) return
-    onSave({ ...form, id: product?.id || `P-${Date.now().toString().slice(-5)}`, price: Number(form.price), stock: Number(form.stock), sold: Number(form.sold) || 0 })
+    if (!form.name.trim() || Number(form.price) <= 0) return
+    onSave({ ...form, id: product?.id, name: form.name.trim(), description: form.description.trim(), price: Number(form.price) })
   }
   return <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}><form className="modal" onSubmit={submit}>
     <div className="modal-heading"><div><span className="eyebrow">{product ? 'Catálogo' : 'Nueva experiencia'}</span><h2>{product ? 'Editar producto' : 'Agregar producto'}</h2></div><button type="button" className="icon-button" onClick={onClose} aria-label="Cerrar"><X size={18} /></button></div>
     <label className="field-label">Nombre de la experiencia<input required autoFocus value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="Ej. Tour al oasis de Huacachina" /></label>
-    <div className="form-grid"><label className="field-label">Categoría<select value={form.category} onChange={(event) => update('category', event.target.value)}><option>Aventura</option><option>Cultura</option><option>Naturaleza</option><option>Gastronomía</option></select></label><label className="field-label">Precio (S/)<input required min="1" type="number" step="0.01" value={form.price} onChange={(event) => update('price', event.target.value)} placeholder="120.00" /></label><label className="field-label">Cupos disponibles<input required min="0" type="number" value={form.stock} onChange={(event) => update('stock', event.target.value)} placeholder="20" /></label><label className="field-label">Estado<select value={form.status} onChange={(event) => update('status', event.target.value)}><option>Activo</option><option>Poco stock</option></select></label></div>
+    <label className="field-label">Descripción<textarea rows="3" maxLength="2000" value={form.description} onChange={(event) => update('description', event.target.value)} placeholder="Describe la experiencia" /></label>
+    <div className="form-grid"><label className="field-label">Categoría<select value={form.category} onChange={(event) => update('category', event.target.value)}><option>Aventura</option><option>Cultura</option><option>Naturaleza</option><option>Gastronomía</option></select></label><label className="field-label">Precio (S/)<input required min="0.01" max="99999999.99" type="number" step="0.01" value={form.price} onChange={(event) => update('price', event.target.value)} placeholder="120.00" /></label></div>
     <div className="modal-actions"><button type="button" className="button button--quiet" onClick={onClose}>Cancelar</button><button className="button button--primary" type="submit"><Check size={16} /> {product ? 'Guardar cambios' : 'Crear producto'}</button></div>
   </form></div>
 }
 
 function EmployeeModal({ onClose, onSave }) {
-  const [form, setForm] = useState({ name: '', email: '', role: 'Editor' })
+  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'editor' })
   const [error, setError] = useState('')
   function submit(event) {
     event.preventDefault()
@@ -361,15 +389,20 @@ function EmployeeModal({ onClose, onSave }) {
       setError('Ingresa un nombre y un correo electrónico válido.')
       return
     }
+    if (form.password.length < 8) {
+      setError('La contraseña inicial debe tener al menos 8 caracteres.')
+      return
+    }
     onSave(form)
   }
   return <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}><form className="modal" onSubmit={submit}>
     <div className="modal-heading"><div><span className="eyebrow">Administración</span><h2>Invitar empleado</h2></div><button type="button" className="icon-button" onClick={onClose} aria-label="Cerrar"><X size={18} /></button></div>
-    <p className="modal-description">Crea una invitación de demostración y asigna su nivel de acceso.</p>
+    <p className="modal-description">Crea una cuenta de personal con acceso al panel.</p>
     <label className="field-label">Nombre completo<input autoFocus value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} placeholder="Nombre y apellido" /></label>
     <label className="field-label">Correo electrónico<input type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} placeholder="nombre@icaturismo.com" /></label>
-    <label className="field-label">Permisos<select value={form.role} onChange={(event) => setForm({ ...form, role: event.target.value })}><option>Editor</option><option>Soporte</option><option>Administrador</option></select></label>
-    {form.role === 'Administrador' && <div className="admin-warning"><ShieldCheck size={16} /> Tendrá acceso administrativo completo (solo vista previa local).</div>}
+    <label className="field-label">Contraseña inicial<input required minLength="8" type="password" autoComplete="new-password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} /></label>
+    <label className="field-label">Permisos<select value={form.role} onChange={(event) => setForm({ ...form, role: event.target.value })}><option value="editor">Editor</option><option value="soporte">Soporte</option><option value="registrador">Registrador</option><option value="admin">Administrador</option></select></label>
+    {form.role === 'admin' && <div className="admin-warning"><ShieldCheck size={16} /> Tendrá acceso administrativo completo.</div>}
     {error && <p className="form-error" role="alert">{error}</p>}
     <div className="modal-actions"><button type="button" className="button button--quiet" onClick={onClose}>Cancelar</button><button className="button button--primary" type="submit"><Plus size={16} /> Crear invitación</button></div>
   </form></div>
@@ -377,8 +410,9 @@ function EmployeeModal({ onClose, onSave }) {
 
 export default function App({ user }) {
   const [activePage, setActivePage] = useState('dashboard')
-  const [products, setProducts] = useState(() => readSaved('icat_admin_products', seedProducts))
-  const [employees, setEmployees] = useState(() => readSaved('icat_admin_employees', seedEmployees))
+  const [products, setProducts] = useState([])
+  const [employees, setEmployees] = useState([])
+  const [customers, setCustomers] = useState([])
   const [productModal, setProductModal] = useState(null)
   const [employeeModal, setEmployeeModal] = useState(false)
   const [period, setPeriod] = useState('30')
@@ -389,6 +423,8 @@ export default function App({ user }) {
   const [reservations, setReservations] = useState([])
   const [dashboardLoading, setDashboardLoading] = useState(true)
   const [dashboardError, setDashboardError] = useState('')
+  const isAdmin = user?.rol === 'admin'
+  const canManageCatalog = isAdmin || user?.rol === 'editor'
   const currentNav = navGroups.flatMap((group) => group.items).find((item) => item.id === activePage)
   const PageIcon = currentNav?.icon || LayoutDashboard
 
@@ -400,11 +436,27 @@ export default function App({ user }) {
 
   useEffect(() => {
     let current = true
-    Promise.all([loadAdminResource('/summary'), loadAdminResource('/reservas')])
-      .then(([summaryResult, reservationResult]) => {
+    Promise.all([
+      loadAdminResource('/summary'),
+      loadAdminResource('/reservas'),
+      loadAdminResource('/clientes'),
+      isAdmin ? loadAdminResource('/empleados') : Promise.resolve({ employees: [] }),
+      canManageCatalog ? loadAdminResource('/promociones') : Promise.resolve({ promotions: [] }),
+    ])
+      .then(([summaryResult, reservationResult, customerResult, employeeResult, productResult]) => {
         if (!current) return
         setSummary(summaryResult.summary)
         setReservations(reservationResult.reservations || [])
+        setCustomers(customerResult.customers || [])
+        setEmployees(employeeResult.employees || [])
+        setProducts((productResult.promotions || []).map((product) => ({
+          id: product.id,
+          name: product.nombre,
+          description: product.descripcion,
+          category: product.categoria,
+          price: Number(product.precio),
+          active: product.activo,
+        })))
         setDashboardError('')
       })
       .catch((error) => {
@@ -414,33 +466,94 @@ export default function App({ user }) {
         if (current) setDashboardLoading(false)
       })
     return () => { current = false }
-  }, [])
+  }, [canManageCatalog, isAdmin])
+
+  async function changeCustomerStatus(id, estado_cuenta) {
+    try {
+      await updateAdminResource(`/clientes/${id}`, { estado_cuenta })
+      setCustomers((current) => current.map((customer) => customer.id === id ? { ...customer, estado_cuenta } : customer))
+      setNotice('Estado del cliente actualizado.')
+    } catch (error) {
+      setNotice(error.message)
+    }
+  }
+
+  async function changeCustomerPoints(id, puntos) {
+    try {
+      const result = await updateAdminResource(`/clientes/${id}/puntos`, { puntos })
+      setCustomers((current) => current.map((customer) => customer.id === id ? { ...customer, puntos: result.customer.puntos } : customer))
+      setNotice('Puntos actualizados.')
+    } catch (error) {
+      setNotice(error.message)
+    }
+  }
+
+  async function changeEmployee(employee, rol, estado_cuenta) {
+    try {
+      const result = await updateAdminResource(`/empleados/${employee.id}`, { rol, estado_cuenta })
+      setEmployees((current) => current.map((item) => item.id === employee.id ? result.employee : item))
+      setNotice('Cuenta del equipo actualizada.')
+    } catch (error) {
+      setNotice(error.message)
+    }
+  }
+
+  async function toggleProduct(product) {
+    try {
+      const result = await updateAdminResource(`/promociones/${product.id}`, {
+        nombre: product.name,
+        descripcion: product.description || '',
+        categoria: product.category,
+        precio: product.price,
+        activo: !product.active,
+      })
+      const updated = { ...product, active: result.promotion.activo }
+      setProducts((current) => current.map((item) => item.id === product.id ? updated : item))
+      setNotice(updated.active ? 'Producto activado.' : 'Producto desactivado.')
+    } catch (error) {
+      setNotice(error.message)
+    }
+  }
 
   const pageContent = useMemo(() => {
     const changePage = (page) => { setActivePage(page); setMobileNav(false) }
-    if (activePage === 'productos') return <ProductsPage products={products} onAdd={() => setProductModal({ mode: 'add' })} onEdit={(product) => setProductModal({ mode: 'edit', product })} onDelete={(id) => { const updated = products.filter((item) => item.id !== id); setProducts(updated); setNotice(saveSaved('icat_admin_products', updated) ? 'Producto eliminado de la vista previa.' : 'No se pudo guardar el catálogo en este navegador.') }} />
+    if (activePage === 'productos') return <ProductsPage products={products} reservations={reservations} onAdd={() => setProductModal({ mode: 'add' })} onEdit={(product) => setProductModal({ mode: 'edit', product })} onToggle={toggleProduct} />
     if (activePage === 'pedidos') return <OrdersPage reservations={reservations} />
-    if (activePage === 'clientes') return <CustomersPage onNavigate={changePage} />
-    if (activePage === 'equipo') return <EmployeesPage employees={employees} onAdd={() => setEmployeeModal(true)} onRoleChange={(id, role) => { const updated = employees.map((employee) => employee.id === id ? { ...employee, role } : employee); setEmployees(updated); setNotice(saveSaved('icat_admin_employees', updated) ? 'Permiso actualizado en esta vista previa.' : 'No se pudo guardar el equipo en este navegador.') }} />
-    if (activePage === 'puntos') return <PointsPage />
+    if (activePage === 'clientes') return <CustomersPage customers={customers} onNavigate={changePage} onStatusChange={changeCustomerStatus} onPointsChange={changeCustomerPoints} canManage={isAdmin} loading={dashboardLoading} />
+    if (activePage === 'equipo') return <EmployeesPage employees={employees} onAdd={() => setEmployeeModal(true)} onUpdate={changeEmployee} currentUserId={user?.id} loading={dashboardLoading} />
+    if (activePage === 'puntos') return <PointsPage customers={customers} />
     return <DashboardHome user={user} products={products} onNavigate={changePage} period={period} setPeriod={setPeriod} summary={summary} reservations={reservations} loading={dashboardLoading} error={dashboardError} />
-  }, [activePage, dashboardError, dashboardLoading, employees, period, products, reservations, summary, user])
+  }, [activePage, customers, dashboardError, dashboardLoading, employees, isAdmin, period, products, reservations, summary, user])
 
-  function saveProduct(product) {
-    const updated = productModal.mode === 'edit' ? products.map((item) => item.id === product.id ? product : item) : [product, ...products]
-    setProducts(updated)
-    setProductModal(null)
-    const message = productModal.mode === 'edit' ? 'Producto actualizado.' : 'Producto agregado al catálogo.'
-    setNotice(saveSaved('icat_admin_products', updated) ? message : 'No se pudo guardar el catálogo en este navegador.')
+  async function saveProduct(product) {
+    try {
+      const editing = Boolean(product.id)
+      const result = await updateAdminResource(editing ? `/promociones/${product.id}` : '/promociones', {
+        nombre: product.name,
+        descripcion: product.description,
+        categoria: product.category,
+        precio: product.price,
+        activo: product.active ?? true,
+      }, editing ? 'PATCH' : 'POST')
+      const record = result.promotion
+      const saved = { id: record.id, name: record.nombre, description: record.descripcion, category: record.categoria, price: Number(record.precio), active: record.activo }
+      setProducts((current) => editing ? current.map((item) => item.id === saved.id ? saved : item) : [saved, ...current])
+      setProductModal(null)
+      setNotice(editing ? 'Producto actualizado.' : 'Producto creado.')
+    } catch (error) {
+      setNotice(error.message)
+    }
   }
 
-  function saveEmployee(data) {
-    const nameParts = data.name.trim().split(/\s+/)
-    const initials = nameParts.length > 1 ? `${nameParts[0][0]}${nameParts.at(-1)[0]}` : nameParts[0].slice(0, 2)
-    const updated = [{ id: `EMP-${Date.now().toString().slice(-4)}`, name: data.name.trim(), email: data.email.trim(), role: data.role, status: 'Invitación', initials: initials.toUpperCase(), tone: 'blue' }, ...employees]
-    setEmployees(updated)
-    setEmployeeModal(false)
-    setNotice(saveSaved('icat_admin_employees', updated) ? 'Invitación de demostración creada. Aún no se envió ningún correo.' : 'No se pudo guardar el equipo en este navegador.')
+  async function saveEmployee(data) {
+    try {
+      const result = await updateAdminResource('/empleados', { nombre: data.name, email: data.email, password: data.password, rol: data.role }, 'POST')
+      setEmployees((current) => [result.employee, ...current])
+      setEmployeeModal(false)
+      setNotice('Cuenta de personal creada.')
+    } catch (error) {
+      setNotice(error.message)
+    }
   }
 
   return <div className={`admin-island ${dark ? 'admin-island--dark' : 'admin-island--light'}`}>
