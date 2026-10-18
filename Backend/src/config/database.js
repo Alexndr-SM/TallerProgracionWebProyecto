@@ -1,6 +1,6 @@
 /**
- * Conexión a PostgreSQL usando variables de Render:
- * DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE
+ * Conexión PostgreSQL mediante DATABASE_URL o DB_HOST, DB_PORT,
+ * DB_USER, DB_PASSWORD y DB_DATABASE.
  */
 const { Pool } = require('pg');
 require('dotenv').config();
@@ -10,19 +10,18 @@ const port = (process.env.DB_PORT || '5432').trim();
 const user = (process.env.DB_USER || '').trim();
 const password = (process.env.DB_PASSWORD || '').trim();
 const database = (process.env.DB_DATABASE || '').trim();
+const connectionString = (process.env.DATABASE_URL || '').trim();
 
-if (!host || !user || !password || !database) {
+if (!connectionString && (!host || !user || !password || !database)) {
   console.error('Faltan variables de BD. Se necesitan:');
-  console.error('DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE');
+  console.error('DATABASE_URL o DB_HOST, DB_PORT, DB_USER, DB_PASSWORD y DB_DATABASE');
   process.exit(1);
 }
 
 const pool = new Pool({
-  host,
-  port: Number(port),
-  user,
-  password,
-  database,
+  ...(connectionString
+    ? { connectionString }
+    : { host, port: Number(port), user, password, database }),
   ssl: process.env.NODE_ENV === 'production'
     ? { rejectUnauthorized: false }
     : false,
