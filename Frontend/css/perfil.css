@@ -611,6 +611,13 @@
   animation: fadeIn 0.2s ease;
 }
 
+.modal-overlay[hidden],
+.perfil-app[hidden],
+.perfil-tab[hidden],
+[hidden] {
+  display: none !important;
+}
+
 .modal-box {
   background: var(--glass-strong);
   border: 1px solid var(--line);

@@ -20,27 +20,50 @@
   <!-- ===================== HEADER ===================== -->
   <header>
     <div class="header-inner wrap">
-      <a href="../../index.html" class="logo" aria-label="Ir a inicio">
-        <img src="../assets/logoIcaTurismo.png" alt="IcaTurismo" class="logo-img" />
+      <div class="logo">
+        <a href="../index.html"><img src="../assets/logoIcaTurismo.png" alt="IcaTurismo" class="logo-img" /></a>
         <h1 class="logo-name">IcaTurismo<span>Descubre Ica</span></h1>
-      </a>
+      </div>
 
       <nav class="site-nav" aria-label="Navegación principal">
         <ul class="nav-links" id="navLinks">
-          <li><a href="../../index.html#servicios">Servicios</a></li>
-          <li><a href="../../index.html#destinos">Destinos</a></li>
-          <li><a href="../../index.html#nosotros">Nosotros</a></li>
+          <li><a href="../index.html#servicios">Servicios</a></li>
+          <li><a href="../index.html#destinos">Destinos</a></li>
+          <li><a href="../index.html#nosotros">Nosotros</a></li>
           <li><a href="contacto.html">Contacto</a></li>
         </ul>
       </nav>
 
       <div class="header-actions">
-        <!-- Menú de usuario — Script.js lo inyecta aquí -->
-        <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema" title="Cambiar tema">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-        </button>
         <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
           <span></span><span></span><span></span>
+        </button>
+        <div class="nav-user" id="navUser">
+          <div id="guestArea">
+            <button type="button" class="user-btn" id="userBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true">
+              <img src="../assets/Person.png" alt="">
+              <span>Cuenta</span>
+              <span class="chevron" aria-hidden="true">▾</span>
+            </button>
+            <div class="user-dropdown" id="userDropdown">
+              <a href="login.html">Iniciar sesión</a>
+              <a href="registro.html">Registrarse</a>
+            </div>
+          </div>
+          <div id="userArea" class="is-hidden" hidden>
+            <button type="button" class="user-btn" id="userProfileBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true">
+              <img src="../assets/Person.png" alt="">
+              <span id="userNameDisplay">Usuario</span>
+              <span class="chevron" aria-hidden="true">▾</span>
+            </button>
+            <div class="user-dropdown" id="userProfileDropdown">
+              <a href="perfil.html" id="miPerfilLink">Mi Perfil</a>
+              <a href="#" id="logoutAction">Cerrar sesión</a>
+            </div>
+          </div>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema" title="Cambiar tema">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         </button>
       </div>
     </div>

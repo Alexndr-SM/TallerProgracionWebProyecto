@@ -87,8 +87,12 @@
     titleEl.textContent = titulo;
     msgEl.textContent = mensaje;
     overlay.hidden = false;
+    overlay.style.display = 'flex';
 
-    const close = () => { overlay.hidden = true; };
+    const close = () => {
+      overlay.hidden = true;
+      overlay.style.display = 'none';
+    };
 
     // Limpiar listeners previos clonando los botones
     const newConfirm = btnConfirm.cloneNode(true);
@@ -382,6 +386,9 @@
       window.location.href = 'login.html?redirect=perfil.html';
       return;
     }
+
+    const modal = document.getElementById('modalConfirm');
+    if (modal) modal.style.display = 'none';
 
     const app = document.getElementById('perfilApp');
     const cargando = document.getElementById('perfilCargando');

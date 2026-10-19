@@ -232,6 +232,27 @@ document.addEventListener('DOMContentLoaded', () => {
       if (user && userNameDisplay) {
         userNameDisplay.textContent = user.nombre || 'Mi cuenta';
       }
+
+      // Asegurar que el enlace a "Mi Perfil" esté presente arriba de "Cerrar sesión"
+      const profileDropdown = document.getElementById('userProfileDropdown');
+      if (profileDropdown && !document.getElementById('miPerfilLink')) {
+        const scriptEl = document.querySelector('script[src*="Script.js"]');
+        const perfilHref = scriptEl ? new URL('../html/perfil.html', scriptEl.src).href : 'html/perfil.html';
+        const perfilLink = document.createElement('a');
+        perfilLink.id = 'miPerfilLink';
+        perfilLink.href = perfilHref;
+        perfilLink.textContent = 'Mi Perfil';
+        perfilLink.addEventListener('click', () => {
+          if (navUser) navUser.classList.remove('open');
+        });
+
+        if (logoutAction && logoutAction.parentNode === profileDropdown) {
+          profileDropdown.insertBefore(perfilLink, logoutAction);
+        } else {
+          profileDropdown.prepend(perfilLink);
+        }
+      }
+
       // Si hay sesión, cerrar dropdown por si quedó abierto
       if (navUser) navUser.classList.remove('open');
     } else {
