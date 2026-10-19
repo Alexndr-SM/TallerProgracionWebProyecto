@@ -18,6 +18,7 @@ const commentRoutes = require('./routes/comment.routes');
 const reservationRoutes = require('./routes/reservation.routes');
 const adminRoutes = require('./routes/admin.routes');
 const promotionRoutes = require('./routes/promotion.routes');
+const perfilRoutes = require('./routes/perfil.routes');
 const { pool } = require('./config/database');
 
 const app = express();
@@ -52,12 +53,12 @@ app.get('/api/health', async (_req, res) => {
   }
 });
 
-// Rutas de autenticación
 app.use('/api/auth', authRoutes);
 app.use('/api/comentarios', commentRoutes);
 app.use('/api/reservas', reservationRoutes);
 app.use('/api/promociones', promotionRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/perfil', perfilRoutes);
 
 // Crear tabla usuarios al arrancar (si no existe)
 async function ensureTable() {
@@ -159,7 +160,23 @@ async function ensureTable() {
     CREATE INDEX IF NOT EXISTS idx_comentarios_created_at
     ON comentarios (created_at DESC);
   `);
-  console.log('Tablas usuarios, promociones, reservas y comentarios verificadas.');
+  // Tabla de historial de puntos de fidelización
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS puntos_historial (
+      id          SERIAL PRIMARY KEY,
+      usuario_id  INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+      reserva_id  INTEGER REFERENCES reservas(id) ON DELETE SET NULL,
+      tipo        VARCHAR(20) NOT NULL CHECK (tipo IN ('ganado', 'cancelado', 'canjeado', 'ajuste')),
+      puntos      INTEGER NOT NULL CHECK (puntos > 0),
+      descripcion VARCHAR(255) NOT NULL DEFAULT '',
+      created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS idx_puntos_historial_usuario
+    ON puntos_historial (usuario_id, created_at DESC);
+  `);
+  console.log('Tablas usuarios, promociones, reservas, comentarios y puntos_historial verificadas.');
 }
 
 async function start() {

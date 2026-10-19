@@ -140,3 +140,21 @@ CREATE INDEX IF NOT EXISTS idx_comentarios_created_at
   ON comentarios (created_at DESC);
 
 COMMENT ON TABLE comentarios IS 'Opiniones públicas asociadas a usuarios registrados';
+
+-- Sistema de fidelización: historial de movimientos de puntos
+CREATE TABLE IF NOT EXISTS puntos_historial (
+  id          SERIAL PRIMARY KEY,
+  usuario_id  INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+  reserva_id  INTEGER REFERENCES reservas(id) ON DELETE SET NULL,
+  tipo        VARCHAR(20) NOT NULL
+              CHECK (tipo IN ('ganado', 'cancelado', 'canjeado', 'ajuste')),
+  puntos      INTEGER NOT NULL CHECK (puntos > 0),
+  descripcion VARCHAR(255) NOT NULL DEFAULT '',
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_puntos_historial_usuario
+  ON puntos_historial (usuario_id, created_at DESC);
+
+COMMENT ON TABLE puntos_historial IS 'Registro de cada movimiento de puntos de fidelización por cliente';
+COMMENT ON COLUMN puntos_historial.tipo IS 'ganado=reserva confirmada, cancelado=reserva cancelada, canjeado=redención, ajuste=corrección manual';

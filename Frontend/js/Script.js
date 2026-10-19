@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <span id="userNameDisplay">Usuario</span><span class="chevron" aria-hidden="true">▾</span>
       </button>
       <div class="user-dropdown" id="userProfileDropdown">
+        <a href="${accountUrl('perfil.html')}" id="miPerfilLink">Mi Perfil</a>
         <a href="#" id="logoutAction">Cerrar sesión</a>
       </div>`;
 

@@ -1,4 +1,5 @@
-const { query } = require('../config/database');
+const { pool, query } = require('../config/database');
+const { calcularPuntos } = require('./perfilController');
 
 async function createReservation(req, res) {
   const fechaTour = typeof req.body.fecha_tour === 'string' ? req.body.fecha_tour : '';
@@ -22,28 +23,34 @@ async function createReservation(req, res) {
     return res.status(400).json({ ok: false, message: 'Selecciona una promoción disponible.' });
   }
 
+  const client = await pool.connect();
   try {
-    const account = await query(
+    await client.query('BEGIN');
+
+    const account = await client.query(
       'SELECT id, nombre, email FROM usuarios WHERE id = $1',
       [req.user.id]
     );
 
     if (!account.rows.length) {
+      await client.query('ROLLBACK');
       return res.status(401).json({ ok: false, message: 'La cuenta ya no está registrada. Inicia sesión nuevamente.' });
     }
 
     const user = account.rows[0];
-    const promotionResult = await query(
+    const promotionResult = await client.query(
       'SELECT id, nombre, precio FROM promociones WHERE id = $1 AND activo = TRUE',
       [promocionId]
     );
     if (!promotionResult.rowCount) {
+      await client.query('ROLLBACK');
       return res.status(400).json({ ok: false, message: 'La promoción ya no está disponible. Actualiza la página y selecciona otra.' });
     }
     const promotion = promotionResult.rows[0];
     const unitPrice = Math.round(Number(promotion.precio) * 100) / 100;
     const total = (Math.round(unitPrice * 100) * asistentes) / 100;
-    const reservation = await query(
+
+    const reservation = await client.query(
       `INSERT INTO reservas
          (usuario_id, nombre, email, fecha_tour, asistentes, metodo_pago, promocion_id,
           promocion_nombre, precio_unitario, total, estado_pago)
@@ -54,10 +61,35 @@ async function createReservation(req, res) {
         promotion.nombre, unitPrice, total]
     );
 
-    return res.status(201).json({ ok: true, reserva: reservation.rows[0] });
+    const reserva = reservation.rows[0];
+
+    // Asignar puntos de fidelización: 1 punto por cada S/10 gastados
+    const puntosGanados = calcularPuntos(total);
+    if (puntosGanados > 0) {
+      await client.query(
+        'UPDATE usuarios SET puntos = puntos + $1 WHERE id = $2',
+        [puntosGanados, user.id]
+      );
+      await client.query(
+        `INSERT INTO puntos_historial (usuario_id, reserva_id, tipo, puntos, descripcion)
+         VALUES ($1, $2, 'ganado', $3, $4)`,
+        [user.id, reserva.id, puntosGanados, `Reserva: ${promotion.nombre}`]
+      );
+    }
+
+    await client.query('COMMIT');
+
+    return res.status(201).json({
+      ok: true,
+      reserva,
+      puntos_ganados: puntosGanados,
+    });
   } catch (error) {
+    try { await client.query('ROLLBACK'); } catch (_) {}
     console.error('createReservation:', error.message);
     return res.status(500).json({ ok: false, message: 'No se pudo registrar la reserva.' });
+  } finally {
+    client.release();
   }
 }
 
