@@ -355,6 +355,21 @@
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.reserva-card-header > div:first-child {
+  min-width: 0;
+  flex: 1 1 220px;
+}
+
+.reserva-card-header > div:last-child {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  margin-left: auto;
 }
 
 .reserva-promo-nombre {
@@ -378,12 +393,14 @@
   align-items: center;
   gap: 0.3rem;
   border-radius: 999px;
-  padding: 0.3rem 0.75rem;
+  padding: 0.35rem 0.85rem;
   font-size: 0.68rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 500;
   flex-shrink: 0;
+  white-space: nowrap;
+  line-height: 1;
 }
 
 .badge-pendiente  { background: rgba(230, 185, 150, 0.18); color: var(--peach); border: 1px solid rgba(230, 185, 150, 0.35); }
