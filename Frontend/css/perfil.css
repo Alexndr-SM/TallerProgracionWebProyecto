@@ -363,13 +363,22 @@
   flex: 1 1 220px;
 }
 
-.reserva-card-header > div:last-child {
+.reserva-estados {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  flex-wrap: wrap;
   justify-content: flex-end;
   align-items: center;
   margin-left: auto;
+}
+
+.reserva-estados .badge {
+  position: static;
+  top: auto;
+  left: auto;
+  transform: none;
+  letter-spacing: 0.12em;
+  text-shadow: none;
 }
 
 .reserva-promo-nombre {
@@ -807,4 +816,3 @@
   .toast-container { left: 1rem; right: 1rem; align-items: stretch; }
   .toast { min-width: unset; }
 }
-

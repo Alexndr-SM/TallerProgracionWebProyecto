@@ -162,7 +162,7 @@
                 ? `<span class="reserva-categoria">${r.promocion_categoria}</span>`
                 : ''}
             </div>
-            <div style="display:flex;gap:0.4rem;flex-wrap:wrap;justify-content:flex-end">
+            <div class="reserva-estados">
               ${badgeEstado(r.estado)}
               ${badgePago(r.estado_pago)}
             </div>
@@ -416,4 +416,3 @@
 
   document.addEventListener('DOMContentLoaded', init);
 })();
-
