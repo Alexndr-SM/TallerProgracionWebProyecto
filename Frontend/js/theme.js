@@ -48,7 +48,7 @@
   // --- Mantiene los botones (aria + etiqueta) en sincronía con el tema
   function syncButtons(theme) {
     var isDark = theme === 'dark';
-    var buttons = document.querySelectorAll('[data-theme-toggle]');
+    var buttons = document.querySelectorAll('[data-theme-toggle], .theme-toggle');
     for (var i = 0; i < buttons.length; i++) {
       buttons[i].setAttribute('aria-pressed', isDark ? 'true' : 'false');
       buttons[i].setAttribute('aria-label', isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
@@ -72,11 +72,17 @@
   // 1) Aplicar de inmediato (antes del primer pintado)
   apply(getStored() || systemTheme());
 
-  // 2) Conectar botones cuando el DOM esté listo
+  // 2) Conectar botones cuando el DOM esté listo y delegación de eventos
   document.addEventListener('DOMContentLoaded', function () {
-    var buttons = document.querySelectorAll('[data-theme-toggle]');
-    for (var i = 0; i < buttons.length; i++) buttons[i].addEventListener('click', toggle);
     syncButtons(currentTheme());
+  });
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('[data-theme-toggle], .theme-toggle');
+    if (btn) {
+      e.preventDefault();
+      toggle();
+    }
   });
 
   // 3) Si no hay preferencia guardada, seguir los cambios del sistema

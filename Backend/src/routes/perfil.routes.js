@@ -6,6 +6,8 @@ const {
   cancelarReserva,
   confirmarPagoReserva,
   reembolsarReserva,
+  actualizarPerfil,
+  cambiarPassword,
 } = require('../controllers/perfilController');
 const { requireAuth } = require('../middleware/auth.middleware');
 
@@ -15,6 +17,8 @@ const router = express.Router();
 router.use(requireAuth);
 
 router.get('/', getPerfil);
+router.patch('/', actualizarPerfil);
+router.patch('/password', cambiarPassword);
 router.get('/reservas', getMisReservas);
 router.get('/puntos', getMisPuntos);
 router.patch('/reservas/:id/confirmar-pago', confirmarPagoReserva);

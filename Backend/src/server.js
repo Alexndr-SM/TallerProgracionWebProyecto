@@ -71,6 +71,8 @@ async function ensureTable() {
       rol VARCHAR(20) NOT NULL DEFAULT 'cliente',
       estado_cuenta VARCHAR(20) NOT NULL DEFAULT 'activo',
       puntos INTEGER NOT NULL DEFAULT 0 CHECK (puntos >= 0),
+      telefono VARCHAR(20),
+      dni VARCHAR(20),
       ultimo_acceso TIMESTAMPTZ,
       foto_perfil_url TEXT,
       foto_perfil_public_id VARCHAR(255),
@@ -82,6 +84,8 @@ async function ensureTable() {
     ADD COLUMN IF NOT EXISTS rol VARCHAR(20) NOT NULL DEFAULT 'cliente',
     ADD COLUMN IF NOT EXISTS estado_cuenta VARCHAR(20) NOT NULL DEFAULT 'activo',
     ADD COLUMN IF NOT EXISTS puntos INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS telefono VARCHAR(20),
+    ADD COLUMN IF NOT EXISTS dni VARCHAR(20),
     ADD COLUMN IF NOT EXISTS ultimo_acceso TIMESTAMPTZ;
   `);
   await pool.query(`

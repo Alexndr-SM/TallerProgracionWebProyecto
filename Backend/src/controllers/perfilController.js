@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const { pool, query } = require('../config/database');
 
 // Puntos ganados por cada S/ 10 gastados
@@ -11,11 +12,11 @@ function calcularPuntos(total) {
   return Math.floor(Number(total) / 10) * PUNTOS_POR_DECENA;
 }
 
-/** GET /api/perfil — datos no sensibles del cliente autenticado */
+/** GET /api/perfil — datos del cliente autenticado */
 async function getPerfil(req, res) {
   try {
     const result = await query(
-      `SELECT id, nombre, email, puntos, foto_perfil_url, created_at, ultimo_acceso
+      `SELECT id, nombre, email, telefono, dni, puntos, foto_perfil_url, created_at, ultimo_acceso
        FROM usuarios WHERE id = $1`,
       [req.user.id]
     );
@@ -29,6 +30,8 @@ async function getPerfil(req, res) {
         id: u.id,
         nombre: u.nombre,
         email: u.email,
+        telefono: u.telefono || '',
+        dni: u.dni || '',
         puntos: u.puntos,
         foto_perfil_url: u.foto_perfil_url,
         miembro_desde: u.created_at,
@@ -349,6 +352,115 @@ async function reembolsarReserva(req, res) {
   }
 }
 
+/** PATCH /api/perfil — actualiza nombre, telefono y dni */
+async function actualizarPerfil(req, res) {
+  const nombre = typeof req.body.nombre === 'string' ? req.body.nombre.trim() : '';
+  const telefono = typeof req.body.telefono === 'string' ? req.body.telefono.trim() : null;
+  const dni = typeof req.body.dni === 'string' ? req.body.dni.trim() : null;
+
+  if (!nombre || nombre.length < 2 || nombre.length > 120) {
+    return res.status(400).json({ ok: false, message: 'El nombre debe tener entre 2 y 120 caracteres.' });
+  }
+
+  if (telefono && (telefono.length < 6 || telefono.length > 20)) {
+    return res.status(400).json({ ok: false, message: 'El teléfono debe tener entre 6 y 20 caracteres.' });
+  }
+
+  if (dni && (dni.length < 6 || dni.length > 20)) {
+    return res.status(400).json({ ok: false, message: 'El DNI o documento debe tener entre 6 y 20 caracteres.' });
+  }
+
+  try {
+    const result = await query(
+      `UPDATE usuarios
+       SET nombre = $1,
+           telefono = $2,
+           dni = $3
+       WHERE id = $4
+       RETURNING id, nombre, email, telefono, dni, puntos, foto_perfil_url, created_at, ultimo_acceso`,
+      [nombre, telefono || null, dni || null, req.user.id]
+    );
+
+    if (!result.rows.length) {
+      return res.status(404).json({ ok: false, message: 'Usuario no encontrado.' });
+    }
+
+    const u = result.rows[0];
+    return res.json({
+      ok: true,
+      message: 'Perfil actualizado correctamente.',
+      perfil: {
+        id: u.id,
+        nombre: u.nombre,
+        email: u.email,
+        telefono: u.telefono || '',
+        dni: u.dni || '',
+        puntos: u.puntos,
+        foto_perfil_url: u.foto_perfil_url,
+        miembro_desde: u.created_at,
+        ultimo_acceso: u.ultimo_acceso,
+      },
+    });
+  } catch (err) {
+    console.error('actualizarPerfil:', err.message);
+    return res.status(500).json({ ok: false, message: 'No se pudo actualizar el perfil.' });
+  }
+}
+
+/** PATCH /api/perfil/password — cambia la contraseña verificando la actual */
+async function cambiarPassword(req, res) {
+  const passActual = typeof req.body.password_actual === 'string' ? req.body.password_actual : '';
+  const passNueva = typeof req.body.password_nueva === 'string' ? req.body.password_nueva : '';
+  const passConfirmar = typeof req.body.password_confirmar === 'string' ? req.body.password_confirmar : '';
+
+  if (!passActual || !passNueva || !passConfirmar) {
+    return res.status(400).json({ ok: false, message: 'Todos los campos de contraseña son obligatorios.' });
+  }
+
+  if (passNueva.length < 8) {
+    return res.status(400).json({ ok: false, message: 'La nueva contraseña debe tener al menos 8 caracteres.' });
+  }
+
+  if (passNueva !== passConfirmar) {
+    return res.status(400).json({ ok: false, message: 'La nueva contraseña y su confirmación no coinciden.' });
+  }
+
+  if (passActual === passNueva) {
+    return res.status(400).json({ ok: false, message: 'La nueva contraseña no puede ser idéntica a la actual.' });
+  }
+
+  try {
+    const userResult = await query(
+      'SELECT id, password_hash FROM usuarios WHERE id = $1',
+      [req.user.id]
+    );
+
+    if (!userResult.rows.length) {
+      return res.status(404).json({ ok: false, message: 'Usuario no encontrado.' });
+    }
+
+    const user = userResult.rows[0];
+    const passwordValida = await bcrypt.compare(passActual, user.password_hash);
+    if (!passwordValida) {
+      return res.status(400).json({ ok: false, message: 'La contraseña actual es incorrecta.' });
+    }
+
+    const nuevoHash = await bcrypt.hash(passNueva, 10);
+    await query(
+      'UPDATE usuarios SET password_hash = $1 WHERE id = $2',
+      [nuevoHash, req.user.id]
+    );
+
+    return res.json({
+      ok: true,
+      message: '¡Contraseña actualizada con éxito!',
+    });
+  } catch (err) {
+    console.error('cambiarPassword:', err.message);
+    return res.status(500).json({ ok: false, message: 'No se pudo actualizar la contraseña.' });
+  }
+}
+
 module.exports = {
   getPerfil,
   getMisReservas,
@@ -356,6 +468,8 @@ module.exports = {
   cancelarReserva,
   confirmarPagoReserva,
   reembolsarReserva,
+  actualizarPerfil,
+  cambiarPassword,
   calcularPuntos,
 };
 
