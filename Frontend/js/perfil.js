@@ -41,9 +41,19 @@
 
   function formatFechaTour(dateStr) {
     if (!dateStr) return '—';
-    const [y, m, d] = dateStr.split('-');
-    const date = new Date(Number(y), Number(m) - 1, Number(d));
-    return date.toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const clean = String(dateStr).slice(0, 10);
+    const parts = clean.split('-');
+    if (parts.length === 3) {
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10);
+      const d = parseInt(parts[2], 10);
+      if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+        const date = new Date(y, m - 1, d);
+        return date.toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      }
+    }
+    const fallback = new Date(dateStr);
+    return isNaN(fallback.getTime()) ? '—' : fallback.toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   }
 
   function formatMoneda(val) {
@@ -77,7 +87,7 @@
   }
 
   // ── Modal de confirmación ─────────────────────────────────
-  function abrirModal({ titulo, mensaje, onConfirm }) {
+  function abrirModal({ titulo, mensaje, textoBoton = 'Confirmar', claseBoton = '', onConfirm }) {
     const overlay = document.getElementById('modalConfirm');
     const titleEl = document.getElementById('modalTitle');
     const msgEl = document.getElementById('modalMsg');
@@ -97,11 +107,14 @@
     // Limpiar listeners previos clonando los botones
     const newConfirm = btnConfirm.cloneNode(true);
     const newCancel = btnCancel.cloneNode(true);
+    newConfirm.textContent = textoBoton;
+    newConfirm.className = `btn-modal-confirm ${claseBoton}`.trim();
     btnConfirm.replaceWith(newConfirm);
     btnCancel.replaceWith(newCancel);
 
     document.getElementById('modalConfirmBtn').addEventListener('click', async () => {
-      document.getElementById('modalConfirmBtn').disabled = true;
+      const btn = document.getElementById('modalConfirmBtn');
+      if (btn) btn.disabled = true;
       try {
         await onConfirm();
       } finally {
@@ -149,9 +162,12 @@
     }
 
     container.innerHTML = lista.map((r, idx) => {
-      const esCancelable = ['pendiente', 'confirmada'].includes(r.estado);
-      const esReembolsable = r.estado === 'cancelada' && r.estado_pago === 'pagado';
-      const estaCancelada = r.estado === 'cancelada';
+      const noEstaCancelada = r.estado !== 'cancelada';
+      const esCancelable = noEstaCancelada && r.estado_pago === 'pendiente';
+      const esPagable = noEstaCancelada && r.estado_pago === 'pendiente';
+      const esReembolsable = noEstaCancelada && r.estado_pago === 'pagado';
+      // Si la reserva está cancelada y no fue pagada, no mostrar "Pago pendiente"
+      const mostrarBadgePago = !(r.estado === 'cancelada' && r.estado_pago === 'pendiente');
 
       return `
         <article class="reserva-card" style="animation-delay:${idx * 0.04}s" data-id="${r.id}">
@@ -164,7 +180,7 @@
             </div>
             <div class="reserva-estados">
               ${badgeEstado(r.estado)}
-              ${badgePago(r.estado_pago)}
+              ${mostrarBadgePago ? badgePago(r.estado_pago) : ''}
             </div>
           </div>
 
@@ -195,15 +211,19 @@
             </div>
           </div>
 
-          ${(esCancelable || esReembolsable) && !estaCancelada || esReembolsable ? `
+          ${(esCancelable || esPagable || esReembolsable) ? `
           <div class="reserva-acciones">
-            ${esCancelable && !estaCancelada ? `
+            ${esCancelable ? `
               <button class="btn-accion btn-cancelar" data-action="cancelar" data-id="${r.id}" data-promo="${r.promocion_nombre || 'este tour'}">
                 ✕ Cancelar reserva
               </button>` : ''}
+            ${esPagable ? `
+              <button class="btn-accion btn-confirmar-pago" data-action="confirmar-pago" data-id="${r.id}" data-promo="${r.promocion_nombre || 'este tour'}" data-total="${r.total}" data-metodo="${r.metodo_pago}">
+                💳 Confirmar pago
+              </button>` : ''}
             ${esReembolsable ? `
-              <button class="btn-accion btn-reembolsar" data-action="reembolsar" data-id="${r.id}" data-promo="${r.promocion_nombre || 'este tour'}">
-                ↩ Solicitar reembolso
+              <button class="btn-accion btn-reembolsar" data-action="reembolsar" data-id="${r.id}" data-promo="${r.promocion_nombre || 'este tour'}" data-total="${r.total}">
+                ↩ Reembolso (90%)
               </button>` : ''}
           </div>` : ''}
         </article>`;
@@ -212,9 +232,10 @@
     // Eventos de acciones
     container.querySelectorAll('[data-action]').forEach(btn => {
       btn.addEventListener('click', () => {
-        const { action, id, promo } = btn.dataset;
+        const { action, id, promo, total, metodo } = btn.dataset;
         if (action === 'cancelar') confirmarCancelar(Number(id), promo);
-        if (action === 'reembolsar') confirmarReembolso(Number(id), promo);
+        if (action === 'confirmar-pago') confirmarPago(Number(id), promo, total, metodo);
+        if (action === 'reembolsar') confirmarReembolso(Number(id), promo, total);
       });
     });
   }
@@ -230,7 +251,9 @@
   function confirmarCancelar(id, promo) {
     abrirModal({
       titulo: 'Cancelar reserva',
-      mensaje: `¿Seguro que deseas cancelar tu reserva de "${promo}"? Los puntos ganados por esta reserva serán revertidos. Esta acción no se puede deshacer.`,
+      mensaje: `¿Seguro que deseas cancelar tu reserva de "${promo}"?\n\nLos puntos ganados por esta reserva serán revertidos. Esta acción no se puede deshacer.`,
+      textoBoton: 'Confirmar Cancelación',
+      claseBoton: 'btn-modal-cancelar',
       onConfirm: async () => {
         try {
           const data = await apiFetch(`/api/perfil/reservas/${id}/cancelar`, { method: 'PATCH' });
@@ -244,15 +267,47 @@
     });
   }
 
-  function confirmarReembolso(id, promo) {
+  function confirmarPago(id, promo, total, metodo) {
     abrirModal({
-      titulo: 'Solicitar reembolso',
-      mensaje: `¿Deseas solicitar el reembolso de tu reserva de "${promo}"? Un agente procesará la solicitud en 3–5 días hábiles.`,
+      titulo: 'Confirmar pago de reserva',
+      mensaje: `¿Deseas confirmar el pago de tu reserva para "${promo}"?\n\n• Monto total a confirmar: ${formatMoneda(total)}\n• Método de pago seleccionado: ${capitalize(metodo)}\n\nAl confirmar, la reserva cambiará a estado "Confirmada" y el pago figurará como "Pagado".`,
+      textoBoton: 'Confirmar Pago',
+      claseBoton: 'btn-modal-pago',
+      onConfirm: async () => {
+        try {
+          const data = await apiFetch(`/api/perfil/reservas/${id}/confirmar-pago`, { method: 'PATCH' });
+          toast(data.message || '¡Pago confirmado exitosamente!', 'success');
+          await cargarReservas();
+          await cargarPerfil();
+        } catch (err) {
+          toast(err.message, 'error');
+        }
+      },
+    });
+  }
+
+  function confirmarReembolso(id, promo, total) {
+    const totalNum = Number(total) || 0;
+    const montoReembolso = Math.round(totalNum * 0.90 * 100) / 100;
+    const montoRetencion = Math.round((totalNum - montoReembolso) * 100) / 100;
+    const puntosTotales = Math.floor(totalNum / 10);
+    const puntosADescontar = Math.round(puntosTotales * 0.90);
+
+    abrirModal({
+      titulo: 'Aviso de Confirmación de Reembolso',
+      mensaje: `Estás solicitando el reembolso de tu reserva para "${promo}". Por favor, revisa las condiciones antes de continuar:\n\n• Devolución del 90%: ${formatMoneda(montoReembolso)} serán devueltos a tu medio de pago.\n• Retención del 10%: ${formatMoneda(montoRetencion)} por gastos operativos y penalidad de anulación.\n• Ajuste de puntos: Se descontará el 90% de los puntos obtenidos (-${puntosADescontar} pts).\n• Estado final: La reserva quedará cancelada.\n\n¿Estás seguro de que deseas confirmar el reembolso?`,
+      textoBoton: 'Confirmar Reembolso',
+      claseBoton: 'btn-modal-reembolso',
       onConfirm: async () => {
         try {
           const data = await apiFetch(`/api/perfil/reservas/${id}/reembolsar`, { method: 'PATCH' });
-          toast(data.message, 'success');
+          toast(data.message || 'Reembolso procesado correctamente.', 'info');
           await cargarReservas();
+          if (data.puntos_actuales !== undefined) {
+            actualizarPuntosSidebar(data.puntos_actuales);
+          } else {
+            await cargarPerfil();
+          }
         } catch (err) {
           toast(err.message, 'error');
         }

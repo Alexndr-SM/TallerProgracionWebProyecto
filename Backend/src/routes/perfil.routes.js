@@ -4,6 +4,7 @@ const {
   getMisReservas,
   getMisPuntos,
   cancelarReserva,
+  confirmarPagoReserva,
   reembolsarReserva,
 } = require('../controllers/perfilController');
 const { requireAuth } = require('../middleware/auth.middleware');
@@ -16,6 +17,7 @@ router.use(requireAuth);
 router.get('/', getPerfil);
 router.get('/reservas', getMisReservas);
 router.get('/puntos', getMisPuntos);
+router.patch('/reservas/:id/confirmar-pago', confirmarPagoReserva);
 router.patch('/reservas/:id/cancelar', cancelarReserva);
 router.patch('/reservas/:id/reembolsar', reembolsarReserva);
 

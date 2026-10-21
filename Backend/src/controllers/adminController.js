@@ -45,14 +45,40 @@ async function listReservations(_req, res) {
 async function updateReservation(req, res) {
   const id = Number(req.params.id);
   const state = req.body.estado;
-  if (!Number.isInteger(id) || id < 1 || !RESERVATION_STATES.includes(state)) {
-    return res.status(400).json({ ok: false, message: 'El identificador o estado de reserva no es válido.' });
+  const paymentState = req.body.estado_pago;
+  const validPaymentStates = ['pendiente', 'pagado', 'reembolsado'];
+
+  if (!Number.isInteger(id) || id < 1) {
+    return res.status(400).json({ ok: false, message: 'El identificador de reserva no es válido.' });
   }
+  if (state && !RESERVATION_STATES.includes(state)) {
+    return res.status(400).json({ ok: false, message: 'El estado de reserva no es válido.' });
+  }
+  if (paymentState && !validPaymentStates.includes(paymentState)) {
+    return res.status(400).json({ ok: false, message: 'El estado de pago no es válido.' });
+  }
+  if (!state && !paymentState) {
+    return res.status(400).json({ ok: false, message: 'Debes indicar el estado o el estado de pago.' });
+  }
+
   try {
-    const result = await query(
-      'UPDATE reservas SET estado = $1 WHERE id = $2 RETURNING id, estado',
-      [state, id]
-    );
+    let result;
+    if (state && paymentState) {
+      result = await query(
+        'UPDATE reservas SET estado = $1, estado_pago = $2 WHERE id = $3 RETURNING id, estado, estado_pago',
+        [state, paymentState, id]
+      );
+    } else if (state) {
+      result = await query(
+        'UPDATE reservas SET estado = $1 WHERE id = $2 RETURNING id, estado, estado_pago',
+        [state, id]
+      );
+    } else {
+      result = await query(
+        'UPDATE reservas SET estado_pago = $1 WHERE id = $2 RETURNING id, estado, estado_pago',
+        [paymentState, id]
+      );
+    }
     if (!result.rowCount) return res.status(404).json({ ok: false, message: 'No se encontró la reserva.' });
     return res.json({ ok: true, reservation: result.rows[0] });
   } catch (error) {

@@ -495,6 +495,18 @@
   border-color: rgba(220, 60, 60, 0.7);
 }
 
+.btn-confirmar-pago {
+  border-color: rgba(40, 167, 69, 0.45);
+  color: #7ef19a;
+  background: rgba(40, 167, 69, 0.08);
+}
+
+.btn-confirmar-pago:hover {
+  background: rgba(40, 167, 69, 0.22);
+  color: #a6ffbc;
+  border-color: rgba(40, 167, 69, 0.8);
+}
+
 .btn-reembolsar {
   border-color: rgba(144, 144, 238, 0.4);
   color: #b4b4ff;
@@ -690,6 +702,7 @@
   line-height: 1.6;
   margin: 0 0 1.5rem;
   max-width: none;
+  white-space: pre-line;
 }
 
 .modal-actions {
@@ -731,6 +744,27 @@
 
 .btn-modal-confirm:hover { background: #e74c3c; transform: translateY(-1px); }
 .btn-modal-confirm:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.btn-modal-confirm.btn-modal-pago {
+  background: #27ae60;
+}
+.btn-modal-confirm.btn-modal-pago:hover {
+  background: #2ecc71;
+}
+
+.btn-modal-confirm.btn-modal-reembolso {
+  background: #d35400;
+}
+.btn-modal-confirm.btn-modal-reembolso:hover {
+  background: #e67e22;
+}
+
+.btn-modal-confirm.btn-modal-cancelar {
+  background: #c0392b;
+}
+.btn-modal-confirm.btn-modal-cancelar:hover {
+  background: #e74c3c;
+}
 
 /* ---------------------------------------------------------
    TOAST DE NOTIFICACIONES

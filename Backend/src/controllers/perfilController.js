@@ -122,6 +122,12 @@ async function cancelarReserva(req, res) {
       return res.status(400).json({ ok: false, message: 'La reserva ya está cancelada.' });
     }
 
+    // Si la reserva ya está pagada, debe solicitar reembolso
+    if (reserva.estado_pago === 'pagado') {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ ok: false, message: 'Esta reserva ya tiene el pago confirmado. Utiliza la opción de Reembolso.' });
+    }
+
     // El cliente solo puede cancelar si está pendiente o confirmada
     if (!['pendiente', 'confirmada'].includes(reserva.estado)) {
       await client.query('ROLLBACK');
@@ -181,51 +187,165 @@ async function cancelarReserva(req, res) {
   }
 }
 
-/** PATCH /api/perfil/reservas/:id/reembolsar — cliente solicita reembolso */
+/** PATCH /api/perfil/reservas/:id/confirmar-pago — cliente confirma el pago de su reserva */
+async function confirmarPagoReserva(req, res) {
+  const reservaId = Number(req.params.id);
+  if (!Number.isInteger(reservaId) || reservaId < 1) {
+    return res.status(400).json({ ok: false, message: 'ID de reserva no válido.' });
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    const resResult = await client.query(
+      `SELECT id, estado, estado_pago, total, promocion_nombre
+       FROM reservas
+       WHERE id = $1 AND usuario_id = $2
+       FOR UPDATE`,
+      [reservaId, req.user.id]
+    );
+
+    if (!resResult.rows.length) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ ok: false, message: 'Reserva no encontrada.' });
+    }
+
+    const reserva = resResult.rows[0];
+
+    if (reserva.estado === 'cancelada') {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ ok: false, message: 'No se puede confirmar el pago de una reserva cancelada.' });
+    }
+
+    if (reserva.estado_pago === 'pagado') {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ ok: false, message: 'Esta reserva ya tiene el pago confirmado.' });
+    }
+
+    const updated = await client.query(
+      `UPDATE reservas
+       SET estado_pago = 'pagado',
+           estado = 'confirmada'
+       WHERE id = $1
+       RETURNING id, fecha_tour, asistentes, metodo_pago, estado, promocion_nombre,
+                 precio_unitario, total, estado_pago, created_at`,
+      [reservaId]
+    );
+
+    await client.query('COMMIT');
+
+    return res.json({
+      ok: true,
+      message: '¡Pago confirmado con éxito! Tu reserva ahora figura como confirmada y pagada.',
+      reserva: updated.rows[0],
+    });
+  } catch (err) {
+    try { await client.query('ROLLBACK'); } catch (_) {}
+    console.error('confirmarPagoReserva:', err.message);
+    return res.status(500).json({ ok: false, message: 'No se pudo confirmar el pago de la reserva.' });
+  } finally {
+    client.release();
+  }
+}
+
+/** PATCH /api/perfil/reservas/:id/reembolsar — cliente solicita reembolso (devuelve el 90% del costo total y descuenta el 90% de los puntos) */
 async function reembolsarReserva(req, res) {
   const reservaId = Number(req.params.id);
   if (!Number.isInteger(reservaId) || reservaId < 1) {
     return res.status(400).json({ ok: false, message: 'ID de reserva no válido.' });
   }
 
+  const client = await pool.connect();
   try {
-    // Solo se puede reembolsar si está cancelada y el pago fue procesado
-    const resResult = await query(
-      `SELECT id, estado, estado_pago FROM reservas
-       WHERE id = $1 AND usuario_id = $2`,
+    await client.query('BEGIN');
+
+    const resResult = await client.query(
+      `SELECT id, estado, estado_pago, total, promocion_nombre
+       FROM reservas
+       WHERE id = $1 AND usuario_id = $2
+       FOR UPDATE`,
       [reservaId, req.user.id]
     );
 
     if (!resResult.rows.length) {
+      await client.query('ROLLBACK');
       return res.status(404).json({ ok: false, message: 'Reserva no encontrada.' });
     }
 
     const reserva = resResult.rows[0];
 
     if (reserva.estado_pago === 'reembolsado') {
+      await client.query('ROLLBACK');
       return res.status(400).json({ ok: false, message: 'Esta reserva ya tiene un reembolso aplicado.' });
     }
+
     if (reserva.estado_pago !== 'pagado') {
+      await client.query('ROLLBACK');
       return res.status(400).json({ ok: false, message: 'Solo se puede solicitar reembolso de reservas con pago confirmado.' });
     }
-    if (reserva.estado !== 'cancelada') {
-      return res.status(400).json({ ok: false, message: 'Primero debes cancelar la reserva para solicitar un reembolso.' });
-    }
 
-    const result = await query(
-      `UPDATE reservas SET estado_pago = 'reembolsado'
-       WHERE id = $1 RETURNING id, estado, estado_pago`,
+    const total = Number(reserva.total);
+    const montoReembolso = Math.round(total * 0.90 * 100) / 100;
+    const montoRetenido = Math.round((total - montoReembolso) * 100) / 100;
+
+    // Calcular el 90% de los puntos correspondientes a esta reserva para revertirlos
+    const puntosTotales = calcularPuntos(total);
+    const puntosARevertir = Math.round(puntosTotales * 0.90);
+
+    // Cancelar la reserva y marcar estado_pago como reembolsado
+    const updated = await client.query(
+      `UPDATE reservas
+       SET estado = 'cancelada', estado_pago = 'reembolsado'
+       WHERE id = $1
+       RETURNING id, fecha_tour, asistentes, metodo_pago, estado, promocion_nombre,
+                 precio_unitario, total, estado_pago, created_at`,
       [reservaId]
     );
 
+    // Revertir el 90% de los puntos
+    if (puntosARevertir > 0) {
+      await client.query(
+        `UPDATE usuarios
+         SET puntos = GREATEST(0, puntos - $1)
+         WHERE id = $2`,
+        [puntosARevertir, req.user.id]
+      );
+
+      await client.query(
+        `INSERT INTO puntos_historial (usuario_id, reserva_id, tipo, puntos, descripcion)
+         VALUES ($1, $2, 'cancelado', $3, $4)`,
+        [
+          req.user.id,
+          reservaId,
+          puntosARevertir,
+          `Reembolso (90%) de reserva: ${reserva.promocion_nombre || 'Tour'}`,
+        ]
+      );
+    }
+
+    const puntosResult = await client.query(
+      'SELECT puntos FROM usuarios WHERE id = $1',
+      [req.user.id]
+    );
+
+    await client.query('COMMIT');
+
     return res.json({
       ok: true,
-      message: 'Solicitud de reembolso registrada. Un agente la procesará en 3–5 días hábiles.',
-      reserva: result.rows[0],
+      message: `Reembolso procesado con éxito. Se devolverá el 90% (S/ ${montoReembolso.toFixed(2)}) con retención del 10% (S/ ${montoRetenido.toFixed(2)}). Se descontaron ${puntosARevertir} puntos.`,
+      monto_reembolsado: montoReembolso,
+      monto_retenido: montoRetenido,
+      puntos_revertidos: puntosARevertir,
+      puntos_actuales: puntosResult.rows[0]?.puntos ?? 0,
+      reserva: updated.rows[0],
     });
   } catch (err) {
+    try { await client.query('ROLLBACK'); } catch (_) {}
     console.error('reembolsarReserva:', err.message);
-    return res.status(500).json({ ok: false, message: 'No se pudo solicitar el reembolso.' });
+    return res.status(500).json({ ok: false, message: 'No se pudo procesar el reembolso.' });
+  } finally {
+    client.release();
   }
 }
 
@@ -234,6 +354,7 @@ module.exports = {
   getMisReservas,
   getMisPuntos,
   cancelarReserva,
+  confirmarPagoReserva,
   reembolsarReserva,
   calcularPuntos,
 };
