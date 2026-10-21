@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mi Perfil — IcaTurismo</title>
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0a2c33">
+
+  <!-- Tema claro/oscuro: se carga en head para evitar parpadeos -->
+  <script src="../js/theme.js"></script>
 
   <!-- Fuentes -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -62,8 +67,9 @@
             </div>
           </div>
         </div>
-        <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema" title="Cambiar tema">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Cambiar a modo oscuro" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
       </div>
     </div>
@@ -85,6 +91,8 @@
           <div class="perfil-info">
             <h2 id="perfilNombre" class="perfil-nombre">Cargando…</h2>
             <p id="perfilEmail" class="perfil-email"></p>
+            <p class="perfil-meta">DNI: <span id="perfilDni">—</span></p>
+            <p class="perfil-meta">Teléfono: <span id="perfilTelefono">—</span></p>
             <p class="perfil-meta">Miembro desde <span id="perfilDesde">—</span></p>
             <p class="perfil-meta">Último acceso <span id="perfilUltimo">—</span></p>
           </div>
@@ -109,6 +117,14 @@
             <button class="perfil-nav-btn" data-tab="puntos">
               <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               Historial de Puntos
+            </button>
+            <button class="perfil-nav-btn" data-tab="editar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Editar Perfil
+            </button>
+            <button class="perfil-nav-btn" data-tab="editar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Editar Perfil
             </button>
           </nav>
         </aside>
@@ -170,7 +186,136 @@
             </div>
           </div>
 
-        </section>
+          <!-- ── TAB: Editar Perfil ── -->
+          <div id="tabEditar" class="perfil-tab" hidden>
+            <div class="perfil-tab-header">
+              <h3 class="perfil-tab-titulo">Editar Perfil</h3>
+            </div>
+
+            <div class="perfil-edit-grid">
+              <!-- Tarjeta 1: Información Personal -->
+              <section class="perfil-card-form">
+                <div class="perfil-card-form-header">
+                  <h4 class="form-title">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Información Personal
+                  </h4>
+                  <p class="form-subtitle">Actualiza tus datos de contacto y documentación para tus reservas.</p>
+                </div>
+
+                <form id="formPerfilDatos" class="perfil-form" novalidate>
+                  <div class="form-group">
+                    <label for="editNombre" class="form-label">Nombre completo *</label>
+                    <input type="text" id="editNombre" name="nombre" class="form-input" required maxlength="120" placeholder="Tu nombre completo" autocomplete="name" />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="editEmail" class="form-label">Correo electrónico</label>
+                    <input type="email" id="editEmail" name="email" class="form-input form-input-disabled" disabled readonly title="El correo no se puede modificar" />
+                    <span class="form-help">El correo electrónico está vinculado a tu cuenta y no se puede modificar.</span>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="editTelefono" class="form-label">Número de teléfono</label>
+                      <input type="tel" id="editTelefono" name="telefono" class="form-input" maxlength="20" placeholder="Ej. 987654321" autocomplete="tel" />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="editDni" class="form-label">DNI / Documento de identidad</label>
+                      <input type="text" id="editDni" name="dni" class="form-input" maxlength="20" placeholder="Ej. 72345678" />
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" id="btnGuardarDatos" class="btn-guardar">
+                      Guardar información
+                    </button>
+                  </div>
+                </form>
+              </section>
+
+              <!-- Tarjeta 2: Cambiar Contraseña -->
+              <section class="perfil-card-form">
+                <div class="perfil-card-form-header">
+                  <h4 class="form-title">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Seguridad y Contraseña
+                  </h4>
+                  <p class="form-subtitle">Para proteger tu cuenta, utiliza una contraseña segura de al menos 8 caracteres.</p>
+                </div>
+
+                <form id="formPerfilPassword" class="perfil-form" novalidate>
+                  <div class="form-group">
+                    <label for="passActual" class="form-label">Contraseña actual *</label>
+                    <input type="password" id="passActual" name="password_actual" class="form-input" required placeholder="Tu contraseña actual" autocomplete="current-password" />
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="passNueva" class="form-label">Nueva contraseña *</label>
+                      <input type="password" id="passNueva" name="password_nueva" class="form-input" required minlength="8" placeholder="Mínimo 8 caracteres" autocomplete="new-password" />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="passConfirmar" class="form-label">Confirmar nueva contraseña *</label>
+                      <input type="password" id="passConfirmar" name="password_confirmar" class="form-input" required minlength="8" placeholder="Repite la nueva contraseña" autocomplete="new-password" />
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" id="btnGuardarPass" class="btn-guardar btn-guardar-pass">
+                      Actualizar contraseña
+                    </button>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+
+          <!-- ── TAB: Editar Perfil ── -->
+          <div id="tabEditar" class="perfil-tab" hidden>
+            <div class="perfil-tab-header">
+              <h3 class="perfil-tab-titulo">Editar Perfil</h3>
+            </div>
+
+            <form id="formEditarPerfil" class="editar-perfil-form" novalidate>
+              <div class="campo-grupo">
+                <label for="editNombre">Nombre completo</label>
+                <input type="text" id="editNombre" name="nombre" required minlength="2" maxlength="120" />
+              </div>
+              <div class="campo-grupo">
+                <label for="editDni">DNI / Documento</label>
+                <input type="text" id="editDni" name="dni" maxlength="20" />
+              </div>
+              <div class="campo-grupo">
+                <label for="editTelefono">Teléfono</label>
+                <input type="tel" id="editTelefono" name="telefono" maxlength="20" />
+              </div>
+              <div class="campo-grupo">
+                <label for="editEmail">Correo electrónico</label>
+                <input type="email" id="editEmail" name="email" disabled />
+              </div>
+              <button type="submit" class="btn-nueva-reserva" style="align-self:flex-start">Guardar cambios</button>
+            </form>
+
+            <h3 class="perfil-tab-titulo" style="margin-top:2rem">Cambiar contraseña</h3>
+            <form id="formCambiarPassword" class="editar-perfil-form" novalidate>
+              <div class="campo-grupo">
+                <label for="passActual">Contraseña actual</label>
+                <input type="password" id="passActual" name="password_actual" required />
+              </div>
+              <div class="campo-grupo">
+                <label for="passNueva">Nueva contraseña</label>
+                <input type="password" id="passNueva" name="password_nueva" required minlength="8" />
+              </div>
+              <div class="campo-grupo">
+                <label for="passConfirmar">Confirmar nueva contraseña</label>
+                <input type="password" id="passConfirmar" name="password_confirmar" required minlength="8" />
+              </div>
+              <button type="submit" class="btn-nueva-reserva" style="align-self:flex-start">Actualizar contraseña</button>
+            </form>
+          </div>
       </div>
 
       <!-- Pantalla de carga inicial -->

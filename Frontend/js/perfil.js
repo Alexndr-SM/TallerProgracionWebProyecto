@@ -322,10 +322,31 @@
 
     setEl('perfilNombre', p.nombre);
     setEl('perfilEmail', p.email);
+    setEl('perfilDni', p.dni || 'Sin registrar');
+    setEl('perfilTelefono', p.telefono || 'Sin registrar');
     setEl('perfilPuntos', p.puntos.toLocaleString());
     setEl('puntosActualesTab', `${p.puntos.toLocaleString()} pts`);
     setEl('perfilDesde', formatFecha(p.miembro_desde));
     setEl('perfilUltimo', p.ultimo_acceso ? formatFecha(p.ultimo_acceso) : 'Primera sesión');
+
+    const editNombre = document.getElementById('editNombre');
+    if (editNombre) editNombre.value = p.nombre || '';
+    const editDni = document.getElementById('editDni');
+    if (editDni) editDni.value = p.dni || '';
+    const editTelefono = document.getElementById('editTelefono');
+    if (editTelefono) editTelefono.value = p.telefono || '';
+    const editEmail = document.getElementById('editEmail');
+    if (editEmail) editEmail.value = p.email || '';
+
+    // Pre-llenar campos de edición de perfil
+    const inpNombre = document.getElementById('editNombre');
+    const inpEmail = document.getElementById('editEmail');
+    const inpTel = document.getElementById('editTelefono');
+    const inpDni = document.getElementById('editDni');
+    if (inpNombre) inpNombre.value = p.nombre || '';
+    if (inpEmail) inpEmail.value = p.email || '';
+    if (inpTel) inpTel.value = p.telefono || '';
+    if (inpDni) inpDni.value = p.dni || '';
 
     const equiv = Math.floor(p.puntos / PUNTOS_POR_SOL);
     setEl('puntosEquiv', `Equivale a S/ ${equiv.toFixed(2)} en descuentos`);
@@ -422,6 +443,53 @@
     });
   }
 
+  // ── Editar perfil ────────────────────────────────────────
+  function initEditar() {
+    const formPerfil = document.getElementById('formEditarPerfil');
+    if (formPerfil) {
+      formPerfil.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nombre = document.getElementById('editNombre').value.trim();
+        const dni = document.getElementById('editDni').value.trim();
+        const telefono = document.getElementById('editTelefono').value.trim();
+        try {
+          const data = await apiFetch('/api/perfil', {
+            method: 'PATCH',
+            body: JSON.stringify({ nombre, dni, telefono }),
+          });
+          toast(data.message || 'Perfil actualizado', 'success');
+          if (data.perfil) {
+            setEl('perfilNombre', data.perfil.nombre);
+            const editNombre = document.getElementById('editNombre');
+            if (editNombre) editNombre.value = data.perfil.nombre || '';
+          }
+        } catch (err) {
+          toast(err.message, 'error');
+        }
+      });
+    }
+
+    const formPass = document.getElementById('formCambiarPassword');
+    if (formPass) {
+      formPass.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const password_actual = document.getElementById('passActual').value;
+        const password_nueva = document.getElementById('passNueva').value;
+        const password_confirmar = document.getElementById('passConfirmar').value;
+        try {
+          const data = await apiFetch('/api/perfil/password', {
+            method: 'PATCH',
+            body: JSON.stringify({ password_actual, password_nueva, password_confirmar }),
+          });
+          toast(data.message || 'Contraseña actualizada', 'success');
+          formPass.reset();
+        } catch (err) {
+          toast(err.message, 'error');
+        }
+      });
+    }
+  }
+
   // ── Filtros de reservas ──────────────────────────────────
   function initFiltros() {
     document.querySelectorAll('.filtro-btn').forEach(btn => {
@@ -432,6 +500,109 @@
         filtrarYRenderizar();
       });
     });
+  }
+
+  // ── Edición de perfil y cambio de contraseña ─────────────
+  function initEditarPerfil() {
+    const formDatos = document.getElementById('formPerfilDatos');
+    const formPass = document.getElementById('formPerfilPassword');
+
+    if (formDatos) {
+      formDatos.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btnGuardarDatos');
+        const nombre = (document.getElementById('editNombre')?.value || '').trim();
+        const telefono = (document.getElementById('editTelefono')?.value || '').trim();
+        const dni = (document.getElementById('editDni')?.value || '').trim();
+
+        if (!nombre || nombre.length < 2) {
+          toast('Por favor, ingresa un nombre válido (mínimo 2 caracteres).', 'error');
+          return;
+        }
+
+        if (btn) { btn.disabled = true; btn.textContent = 'Guardando…'; }
+
+        try {
+          const data = await apiFetch('/api/perfil', {
+            method: 'PATCH',
+            body: JSON.stringify({ nombre, telefono, dni }),
+          });
+
+          toast(data.message || 'Datos actualizados con éxito.', 'success');
+
+          // Actualizar datos en sidebar
+          const p = data.perfil;
+          setEl('perfilNombre', p.nombre);
+          setEl('perfilTelefono', p.telefono || 'Sin registrar');
+          setEl('perfilDni', p.dni || 'Sin registrar');
+
+          // Actualizar nombre en el header de usuario
+          const userDisplay = document.getElementById('userNameDisplay');
+          if (userDisplay) userDisplay.textContent = p.nombre;
+
+          try {
+            const stored = JSON.parse(localStorage.getItem('icat_user') || '{}');
+            stored.nombre = p.nombre;
+            localStorage.setItem('icat_user', JSON.stringify(stored));
+          } catch (_) {}
+
+        } catch (err) {
+          toast(err.message || 'No se pudieron actualizar los datos.', 'error');
+        } finally {
+          if (btn) { btn.disabled = false; btn.textContent = 'Guardar información'; }
+        }
+      });
+    }
+
+    if (formPass) {
+      formPass.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btnGuardarPass');
+        const passActual = document.getElementById('passActual')?.value || '';
+        const passNueva = document.getElementById('passNueva')?.value || '';
+        const passConfirmar = document.getElementById('passConfirmar')?.value || '';
+
+        if (!passActual || !passNueva || !passConfirmar) {
+          toast('Todos los campos de contraseña son requeridos.', 'error');
+          return;
+        }
+
+        if (passNueva.length < 8) {
+          toast('La nueva contraseña debe tener al menos 8 caracteres.', 'error');
+          return;
+        }
+
+        if (passNueva !== passConfirmar) {
+          toast('La nueva contraseña y su confirmación no coinciden.', 'error');
+          return;
+        }
+
+        if (passActual === passNueva) {
+          toast('La nueva contraseña debe ser diferente a la actual.', 'error');
+          return;
+        }
+
+        if (btn) { btn.disabled = true; btn.textContent = 'Actualizando…'; }
+
+        try {
+          const data = await apiFetch('/api/perfil/password', {
+            method: 'PATCH',
+            body: JSON.stringify({
+              password_actual: passActual,
+              password_nueva: passNueva,
+              password_confirmar: passConfirmar,
+            }),
+          });
+
+          toast(data.message || '¡Contraseña actualizada con éxito!', 'success');
+          formPass.reset();
+        } catch (err) {
+          toast(err.message || 'No se pudo actualizar la contraseña.', 'error');
+        } finally {
+          if (btn) { btn.disabled = false; btn.textContent = 'Actualizar contraseña'; }
+        }
+      });
+    }
   }
 
   // ── Entrada principal ────────────────────────────────────
@@ -452,8 +623,10 @@
       await cargarPerfil();
       await cargarReservas();
 
-      initTabs();
-      initFiltros();
+       initTabs();
+       initFiltros();
+       initEditar();
+      initEditarPerfil();
 
       if (cargando) cargando.hidden = true;
       if (app) app.hidden = false;
