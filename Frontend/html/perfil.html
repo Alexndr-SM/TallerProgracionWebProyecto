@@ -122,10 +122,6 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               Editar Perfil
             </button>
-            <button class="perfil-nav-btn" data-tab="editar">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              Editar Perfil
-            </button>
           </nav>
         </aside>
 
@@ -273,49 +269,6 @@
             </div>
           </div>
 
-          <!-- ── TAB: Editar Perfil ── -->
-          <div id="tabEditar" class="perfil-tab" hidden>
-            <div class="perfil-tab-header">
-              <h3 class="perfil-tab-titulo">Editar Perfil</h3>
-            </div>
-
-            <form id="formEditarPerfil" class="editar-perfil-form" novalidate>
-              <div class="campo-grupo">
-                <label for="editNombre">Nombre completo</label>
-                <input type="text" id="editNombre" name="nombre" required minlength="2" maxlength="120" />
-              </div>
-              <div class="campo-grupo">
-                <label for="editDni">DNI / Documento</label>
-                <input type="text" id="editDni" name="dni" maxlength="20" />
-              </div>
-              <div class="campo-grupo">
-                <label for="editTelefono">Teléfono</label>
-                <input type="tel" id="editTelefono" name="telefono" maxlength="20" />
-              </div>
-              <div class="campo-grupo">
-                <label for="editEmail">Correo electrónico</label>
-                <input type="email" id="editEmail" name="email" disabled />
-              </div>
-              <button type="submit" class="btn-nueva-reserva" style="align-self:flex-start">Guardar cambios</button>
-            </form>
-
-            <h3 class="perfil-tab-titulo" style="margin-top:2rem">Cambiar contraseña</h3>
-            <form id="formCambiarPassword" class="editar-perfil-form" novalidate>
-              <div class="campo-grupo">
-                <label for="passActual">Contraseña actual</label>
-                <input type="password" id="passActual" name="password_actual" required />
-              </div>
-              <div class="campo-grupo">
-                <label for="passNueva">Nueva contraseña</label>
-                <input type="password" id="passNueva" name="password_nueva" required minlength="8" />
-              </div>
-              <div class="campo-grupo">
-                <label for="passConfirmar">Confirmar nueva contraseña</label>
-                <input type="password" id="passConfirmar" name="password_confirmar" required minlength="8" />
-              </div>
-              <button type="submit" class="btn-nueva-reserva" style="align-self:flex-start">Actualizar contraseña</button>
-            </form>
-          </div>
       </div>
 
       <!-- Pantalla de carga inicial -->

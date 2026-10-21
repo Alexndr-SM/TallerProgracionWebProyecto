@@ -625,7 +625,7 @@
 
        initTabs();
        initFiltros();
-       initEditar();
+       // initEditar removed (duplicate)
       initEditarPerfil();
 
       if (cargando) cargando.hidden = true;
