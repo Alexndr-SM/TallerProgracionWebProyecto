@@ -1073,3 +1073,223 @@
   .toast-container { left: 1rem; right: 1rem; align-items: stretch; }
   .toast { min-width: unset; }
 }
+/* ==========================================
+   ESTILOS PARA EL BOTÓN Y MODAL DE LA BOLETA
+   ================================---------- */
+
+/* Estilo del botón GENERAR BOLETA al lado de Reembolso */
+.btn-generar-boleta {
+  background-color: transparent;
+  color: #4ade80;
+  border: 1px solid #4ade80;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-generar-boleta:hover {
+  background-color: #4ade80;
+  color: #0d1f2d;
+}
+
+/* Fondo oscuro translúcido (Overlay del Modal) */
+.boleta-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+/* Tarjeta contenedora de la Boleta */
+.boleta-card {
+  background: #ffffff;
+  color: #1a202c;
+  width: 90%;
+  max-width: 520px;
+  padding: 28px;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  position: relative;
+  font-family: system-ui, -apple-system, sans-serif;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Botón de cerrar (X) */
+.boleta-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #718096;
+}
+
+.boleta-close-btn:hover {
+  color: #0f172a;
+}
+
+/* Encabezado de la boleta */
+.boleta-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.boleta-empresa h2 {
+  font-size: 1.2rem;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.boleta-empresa p {
+  margin: 2px 0;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.boleta-box {
+  border: 2px solid #0f172a;
+  padding: 8px 14px;
+  text-align: center;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.boleta-box h3 { margin: 0; font-size: 0.85rem; color: #0f172a; }
+.boleta-box p { margin: 2px 0; font-size: 0.75rem; color: #475569; }
+.boleta-box span { font-weight: bold; color: #0284c7; font-size: 0.9rem; }
+
+/* Línea divisoria */
+.boleta-divider {
+  border-top: 2px dashed #cbd5e1;
+  margin: 16px 0;
+}
+
+/* Datos del cliente */
+.boleta-datos-cliente p {
+  margin: 4px 0;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+/* Tabla de detalles */
+.boleta-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.85rem;
+}
+
+.boleta-tabla th {
+  background: #f1f5f9;
+  color: #334155;
+  text-align: left;
+  padding: 8px;
+}
+
+.boleta-tabla td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1e293b;
+}
+
+/* Sección de totales (IGV y Op. Gravada) */
+.boleta-totales {
+  text-align: right;
+  font-size: 0.85rem;
+}
+
+.boleta-totales p { margin: 3px 0; color: #475569; }
+
+.boleta-monto-total {
+  font-size: 1.1rem;
+  color: #0f172a;
+  margin-top: 8px;
+}
+
+/* Botones inferiores del modal */
+.boleta-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-imprimir {
+  background: #0284c7;
+  color: white;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-imprimir:hover {
+  background: #0369a1;
+}
+
+.btn-cancelar {
+  background: #64748b;
+  color: white;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-cancelar:hover {
+  background: #475569;
+}
+/* Estilos limpios para impresión y exportación a PDF */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  #modalBoleta, #modalBoleta * {
+    visibility: visible !important;
+  }
+  #modalBoleta {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: #ffffff !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    z-index: 999999 !important;
+  }
+  .boleta-card {
+    box-shadow: none !important;
+    border: none !important;
+    width: 100% !important;
+    max-width: 500px !important;
+    padding: 20px !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .boleta-footer-actions, 
+  .boleta-close-btn {
+    display: none !important;
+  }
+}

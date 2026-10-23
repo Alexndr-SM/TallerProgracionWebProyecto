@@ -94,6 +94,8 @@
     const btnConfirm = document.getElementById('modalConfirmBtn');
     const btnCancel = document.getElementById('modalCancel');
 
+    if (!overlay || !titleEl || !msgEl || !btnConfirm || !btnCancel) return;
+
     titleEl.textContent = titulo;
     msgEl.textContent = mensaje;
     overlay.hidden = false;
@@ -104,7 +106,6 @@
       overlay.style.display = 'none';
     };
 
-    // Limpiar listeners previos clonando los botones
     const newConfirm = btnConfirm.cloneNode(true);
     const newCancel = btnCancel.cloneNode(true);
     newConfirm.textContent = textoBoton;
@@ -161,12 +162,14 @@
       return;
     }
 
+    const nombreUsuario = document.getElementById('perfilNombre')?.textContent.trim() || 'Cliente';
+
     container.innerHTML = lista.map((r, idx) => {
       const noEstaCancelada = r.estado !== 'cancelada';
       const esCancelable = noEstaCancelada && r.estado_pago === 'pendiente';
       const esPagable = noEstaCancelada && r.estado_pago === 'pendiente';
       const esReembolsable = noEstaCancelada && r.estado_pago === 'pagado';
-      // Si la reserva está cancelada y no fue pagada, no mostrar "Pago pendiente"
+      const esGenerarBoleta = noEstaCancelada && (r.estado_pago === 'pagado' || r.estado === 'confirmada');
       const mostrarBadgePago = !(r.estado === 'cancelada' && r.estado_pago === 'pendiente');
 
       return `
@@ -174,9 +177,7 @@
           <div class="reserva-card-header">
             <div>
               <h4 class="reserva-promo-nombre">${r.promocion_nombre || 'Tour'}</h4>
-              ${r.promocion_categoria
-                ? `<span class="reserva-categoria">${r.promocion_categoria}</span>`
-                : ''}
+              ${r.promocion_categoria ? `<span class="reserva-categoria">${r.promocion_categoria}</span>` : ''}
             </div>
             <div class="reserva-estados">
               ${badgeEstado(r.estado)}
@@ -211,8 +212,8 @@
             </div>
           </div>
 
-          ${(esCancelable || esPagable || esReembolsable) ? `
-          <div class="reserva-acciones">
+          ${(esCancelable || esPagable || esReembolsable || esGenerarBoleta) ? `
+          <div class="reserva-acciones" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
             ${esCancelable ? `
               <button class="btn-accion btn-cancelar" data-action="cancelar" data-id="${r.id}" data-promo="${r.promocion_nombre || 'este tour'}">
                 ✕ Cancelar reserva
@@ -225,11 +226,14 @@
               <button class="btn-accion btn-reembolsar" data-action="reembolsar" data-id="${r.id}" data-promo="${r.promocion_nombre || 'este tour'}" data-total="${r.total}">
                 ↩ Reembolso (90%)
               </button>` : ''}
+            ${esGenerarBoleta ? `
+              <button type="button" class="btn-generar-boleta" onclick="window.abrirBoleta('${nombreUsuario}', '${r.promocion_nombre || 'Tour'}', '${r.asistentes} persona(s)', '${r.precio_unitario}', '${r.total}', '${formatFechaTour(r.fecha_tour)}', 'B001-000${r.id}')">
+                📄 GENERAR BOLETA
+              </button>` : ''}
           </div>` : ''}
         </article>`;
     }).join('');
 
-    // Eventos de acciones
     container.querySelectorAll('[data-action]').forEach(btn => {
       btn.addEventListener('click', () => {
         const { action, id, promo, total, metodo } = btn.dataset;
@@ -270,7 +274,7 @@
   function confirmarPago(id, promo, total, metodo) {
     abrirModal({
       titulo: 'Confirmar pago de reserva',
-      mensaje: `¿Deseas confirmar el pago de tu reserva para "${promo}"?\n\n• Monto total a confirmar: ${formatMoneda(total)}\n• Método de pago seleccionado: ${capitalize(metodo)}\n\nAl confirmar, la reserva cambiará a estado "Confirmada" y el pago figurará como "Pagado".`,
+      mensaje: `¿Deseas confirmar el pago de tu reserva para "${promo}"?\n\nMonto total a confirmar: ${formatMoneda(total)}\nMétodo de pago seleccionado: ${capitalize(metodo)}\n\nAl confirmar, la reserva cambiará a estado "Confirmada" y el pago figurará como "Pagado".`,
       textoBoton: 'Confirmar Pago',
       claseBoton: 'btn-modal-pago',
       onConfirm: async () => {
@@ -295,7 +299,7 @@
 
     abrirModal({
       titulo: 'Aviso de Confirmación de Reembolso',
-      mensaje: `Estás solicitando el reembolso de tu reserva para "${promo}". Por favor, revisa las condiciones antes de continuar:\n\n• Devolución del 90%: ${formatMoneda(montoReembolso)} serán devueltos a tu medio de pago.\n• Retención del 10%: ${formatMoneda(montoRetencion)} por gastos operativos y penalidad de anulación.\n• Ajuste de puntos: Se descontará el 90% de los puntos obtenidos (-${puntosADescontar} pts).\n• Estado final: La reserva quedará cancelada.\n\n¿Estás seguro de que deseas confirmar el reembolso?`,
+      mensaje: `Estás solicitando el reembolso de tu reserva para "${promo}". Por favor, revisa las condiciones antes de continuar:\n\nDevolución del 90%: ${formatMoneda(montoReembolso)} serán devueltos a tu medio de pago.\nRetención del 10%: ${formatMoneda(montoRetencion)} por gastos operativos y penalidad de anulación.\nAjuste de puntos: Se descontará el 90% de los puntos obtenidos (-${puntosADescontar} pts).\nEstado final: La reserva quedará cancelada.\n\n¿Estás seguro de que deseas confirmar el reembolso?`,
       textoBoton: 'Confirmar Reembolso',
       claseBoton: 'btn-modal-reembolso',
       onConfirm: async () => {
@@ -329,6 +333,7 @@
     setEl('perfilDesde', formatFecha(p.miembro_desde));
     setEl('perfilUltimo', p.ultimo_acceso ? formatFecha(p.ultimo_acceso) : 'Primera sesión');
 
+    // Pre-llenar campos del formulario de edición de perfil si existen
     const editNombre = document.getElementById('editNombre');
     if (editNombre) editNombre.value = p.nombre || '';
     const editDni = document.getElementById('editDni');
@@ -337,16 +342,6 @@
     if (editTelefono) editTelefono.value = p.telefono || '';
     const editEmail = document.getElementById('editEmail');
     if (editEmail) editEmail.value = p.email || '';
-
-    // Pre-llenar campos de edición de perfil
-    const inpNombre = document.getElementById('editNombre');
-    const inpEmail = document.getElementById('editEmail');
-    const inpTel = document.getElementById('editTelefono');
-    const inpDni = document.getElementById('editDni');
-    if (inpNombre) inpNombre.value = p.nombre || '';
-    if (inpEmail) inpEmail.value = p.email || '';
-    if (inpTel) inpTel.value = p.telefono || '';
-    if (inpDni) inpDni.value = p.dni || '';
 
     const equiv = Math.floor(p.puntos / PUNTOS_POR_SOL);
     setEl('puntosEquiv', `Equivale a S/ ${equiv.toFixed(2)} en descuentos`);
@@ -403,7 +398,6 @@
       </div>`).join('');
   }
 
-  // ── Actualización de sidebar sin recargar ────────────────
   function actualizarPuntosSidebar(puntos) {
     setEl('perfilPuntos', puntos.toLocaleString());
     setEl('puntosActualesTab', `${puntos.toLocaleString()} pts`);
@@ -411,13 +405,11 @@
     setEl('puntosEquiv', `Equivale a S/ ${equiv.toFixed(2)} en descuentos`);
   }
 
-  // ── Utilidad setEl ───────────────────────────────────────
   function setEl(id, val) {
     const el = document.getElementById(id);
     if (el) el.textContent = val;
   }
 
-  // ── Tabs ─────────────────────────────────────────────────
   function initTabs() {
     const btns = document.querySelectorAll('.perfil-nav-btn');
     btns.forEach(btn => {
@@ -437,60 +429,11 @@
           tabEl.classList.add('active');
         }
 
-        // Cargar puntos solo cuando se abre esa pestaña
         if (tab === 'puntos') cargarPuntos();
       });
     });
   }
 
-  // ── Editar perfil ────────────────────────────────────────
-  function initEditar() {
-    const formPerfil = document.getElementById('formEditarPerfil');
-    if (formPerfil) {
-      formPerfil.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const nombre = document.getElementById('editNombre').value.trim();
-        const dni = document.getElementById('editDni').value.trim();
-        const telefono = document.getElementById('editTelefono').value.trim();
-        try {
-          const data = await apiFetch('/api/perfil', {
-            method: 'PATCH',
-            body: JSON.stringify({ nombre, dni, telefono }),
-          });
-          toast(data.message || 'Perfil actualizado', 'success');
-          if (data.perfil) {
-            setEl('perfilNombre', data.perfil.nombre);
-            const editNombre = document.getElementById('editNombre');
-            if (editNombre) editNombre.value = data.perfil.nombre || '';
-          }
-        } catch (err) {
-          toast(err.message, 'error');
-        }
-      });
-    }
-
-    const formPass = document.getElementById('formCambiarPassword');
-    if (formPass) {
-      formPass.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const password_actual = document.getElementById('passActual').value;
-        const password_nueva = document.getElementById('passNueva').value;
-        const password_confirmar = document.getElementById('passConfirmar').value;
-        try {
-          const data = await apiFetch('/api/perfil/password', {
-            method: 'PATCH',
-            body: JSON.stringify({ password_actual, password_nueva, password_confirmar }),
-          });
-          toast(data.message || 'Contraseña actualizada', 'success');
-          formPass.reset();
-        } catch (err) {
-          toast(err.message, 'error');
-        }
-      });
-    }
-  }
-
-  // ── Filtros de reservas ──────────────────────────────────
   function initFiltros() {
     document.querySelectorAll('.filtro-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -530,13 +473,11 @@
 
           toast(data.message || 'Datos actualizados con éxito.', 'success');
 
-          // Actualizar datos en sidebar
           const p = data.perfil;
           setEl('perfilNombre', p.nombre);
           setEl('perfilTelefono', p.telefono || 'Sin registrar');
           setEl('perfilDni', p.dni || 'Sin registrar');
 
-          // Actualizar nombre en el header de usuario
           const userDisplay = document.getElementById('userNameDisplay');
           if (userDisplay) userDisplay.textContent = p.nombre;
 
@@ -605,9 +546,96 @@
     }
   }
 
+  // ── Funciones globales para la boleta y PDF ───────────────
+  window.abrirBoleta = function(cliente, tour, asistentes, precioUnit, total, fechaTour, nroBoleta) {
+    const totalNum = parseFloat(total) || 0;
+    const opGravada = (totalNum / 1.18).toFixed(2);
+    const igv = (totalNum - opGravada).toFixed(2);
+
+    setEl('bolCliente', cliente);
+    setEl('bolFechaTour', fechaTour);
+    setEl('bolDesc', tour);
+    setEl('bolCant', asistentes);
+    setEl('bolPU', `S/ ${parseFloat(precioUnit).toFixed(2)}`);
+    setEl('bolTotalFila', `S/ ${totalNum.toFixed(2)}`);
+    setEl('bolOpGravada', `S/ ${opGravada}`);
+    setEl('bolIgv', `S/ ${igv}`);
+    setEl('bolTotalFinal', `S/ ${totalNum.toFixed(2)}`);
+    if (nroBoleta) setEl('bolNumero', nroBoleta);
+
+    const modal = document.getElementById('modalBoleta');
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.hidden = false;
+    }
+  };
+
+  window.cerrarBoleta = function() {
+    const modal = document.getElementById('modalBoleta');
+    if (modal) {
+      modal.style.display = 'none';
+      modal.hidden = true;
+    }
+  };
+
+  window.descargarBoletaPDF = async function () {
+    const boleta = document.getElementById('areaImpresionBoleta');
+    const boton = document.getElementById('btnDescargarPdf');
+
+    if (!boleta) {
+      alert('No se encontró el contenido de la boleta.');
+      return;
+    }
+
+    if (typeof html2pdf === 'undefined') {
+      alert('No se cargó la librería para generar el PDF.');
+      return;
+    }
+
+    const numero = document.getElementById('bolNumero')?.textContent.trim() || 'B001-0001';
+
+    try {
+      if (boton) {
+        boton.disabled = true;
+        boton.textContent = 'Generando PDF...';
+      }
+
+      await new Promise(resolve => requestAnimationFrame(() => {
+        requestAnimationFrame(resolve);
+      }));
+
+      await html2pdf()
+        .set({
+          margin: 10,
+          filename: `Boleta_IcaTurismo_${numero}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            logging: true,
+            scrollX: 0,
+            scrollY: 0
+          },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['css', 'legacy'] }
+        })
+        .from(boleta)
+        .save();
+
+    } catch (error) {
+      console.error('Error al generar la boleta:', error);
+      alert('No se pudo generar el PDF. Revisa la consola con F12.');
+    } finally {
+      if (boton) {
+        boton.disabled = false;
+        boton.textContent = '📄 Descargar PDF';
+      }
+    }
+  };
+
   // ── Entrada principal ────────────────────────────────────
   async function init() {
-    // Verificar sesión
     if (!window.Auth || !Auth.isLoggedIn()) {
       window.location.href = 'login.html?redirect=perfil.html';
       return;
@@ -623,9 +651,8 @@
       await cargarPerfil();
       await cargarReservas();
 
-       initTabs();
-       initFiltros();
-       // initEditar removed (duplicate)
+      initTabs();
+      initFiltros();
       initEditarPerfil();
 
       if (cargando) cargando.hidden = true;
