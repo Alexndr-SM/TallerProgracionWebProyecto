@@ -30,7 +30,8 @@ function imageUrl(value, field) {
 }
 function destination(body) {
   const nombre = text(body.nombre, 'nombre', 180);
-  return { nombre, slug: slug(body.slug, nombre), imagen_url: imageUrl(body.imagen_url, 'imagen_url') };
+  return { nombre, slug: slug(body.slug, nombre), imagen_url: imageUrl(body.imagen_url, 'imagen_url'),
+    descripcion: text(body.descripcion ?? '', 'descripcion', 2000, false) };
 }
 function promotion(body) {
   const titulo = text(body.titulo, 'titulo', 180);
@@ -41,6 +42,8 @@ function promotion(body) {
   const gallery = body.galeria_urls === undefined ? [] : body.galeria_urls;
   if (!Array.isArray(gallery) || gallery.length > 10) throw new CmsError('galeria_urls debe ser un array de hasta 10 imágenes.');
   if (body.activo !== undefined && typeof body.activo !== 'boolean') throw new CmsError('activo debe ser booleano.');
+  const includes = body.incluye === undefined ? [] : body.incluye;
+  if (!Array.isArray(includes) || includes.length > 20) throw new CmsError('incluye debe ser un array de hasta 20 elementos.');
   return {
     destino_id: id(body.destino_id, 'destino_id'), titulo, slug: slug(body.slug, titulo),
     descripcion_corta: text(body.descripcion_corta, 'descripcion_corta', 500),
@@ -49,6 +52,9 @@ function promotion(body) {
     imagen_principal_url: imageUrl(body.imagen_principal_url, 'imagen_principal_url'),
     galeria_urls: gallery.map((url) => imageUrl(url, 'galeria_urls')),
     activo: body.activo === undefined ? true : body.activo,
+    ubicacion: text(body.ubicacion ?? '', 'ubicacion', 180, false),
+    incluye: includes.map((item) => text(item, 'incluye', 250)),
+    itinerario: text(body.itinerario ?? '', 'itinerario', 10000, false),
   };
 }
 function handleError(res, error) {

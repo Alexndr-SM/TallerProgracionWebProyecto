@@ -43,7 +43,7 @@ if (gridPromociones) {
     const cards = promotions.map((promotion) => {
       const card = document.createElement('a');
       card.className = offerLayout ? 'offer-card' : 'promotion-card';
-      card.href = `../../compras.html?promocion=${encodeURIComponent(promotion.slug)}`;
+      card.href = `../../promocion.html?slug=${encodeURIComponent(promotion.slug)}`;
 
       const image = document.createElement('div');
       image.className = offerLayout ? 'offer-image' : 'promotion-image';

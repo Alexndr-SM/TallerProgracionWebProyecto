@@ -11,6 +11,7 @@ import {
   CreditCard,
   Download,
   Ellipsis,
+  ExternalLink,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -26,6 +27,7 @@ import {
   X,
 } from 'lucide-react'
 import './App.css'
+import CmsPanel from './CmsPanel.jsx'
 
 const navGroups = [
   {
@@ -34,7 +36,8 @@ const navGroups = [
       { id: 'dashboard', label: 'Resumen', icon: LayoutDashboard },
       { id: 'pedidos', label: 'Pedidos', icon: ShoppingBag },
       { id: 'clientes', label: 'Clientes', icon: Users },
-      { id: 'productos', label: 'Productos', icon: Package },
+      { id: 'destinos', label: 'Destinos', icon: Compass },
+      { id: 'productos', label: 'Promociones', icon: Package },
     ],
   },
   {
@@ -422,7 +425,7 @@ function EmployeeModal({ onClose, onSave }) {
 }
 
 export default function App({ user }) {
-  const [activePage, setActivePage] = useState('dashboard')
+  const [activePage, setActivePage] = useState(user?.rol === 'editor' ? 'destinos' : 'dashboard')
   const [products, setProducts] = useState([])
   const [employees, setEmployees] = useState([])
   const [customers, setCustomers] = useState([])
@@ -438,6 +441,12 @@ export default function App({ user }) {
   const [dashboardError, setDashboardError] = useState('')
   const isAdmin = user?.rol === 'admin'
   const canManageCatalog = isAdmin || user?.rol === 'editor'
+  const isEditor = user?.rol === 'editor'
+  const visibleNav = navGroups.map((group) => ({ ...group, items: group.items.filter((item) => {
+    if (['destinos', 'productos'].includes(item.id)) return canManageCatalog
+    if (item.id === 'equipo') return isAdmin
+    return !isEditor
+  }) })).filter((group) => group.items.length)
   const currentNav = navGroups.flatMap((group) => group.items).find((item) => item.id === activePage)
   const PageIcon = currentNav?.icon || LayoutDashboard
 
@@ -450,9 +459,9 @@ export default function App({ user }) {
   useEffect(() => {
     let current = true
     Promise.all([
-      loadAdminResource('/summary'),
-      loadAdminResource('/reservas'),
-      loadAdminResource('/clientes'),
+      isEditor ? Promise.resolve({ summary: null }) : loadAdminResource('/summary'),
+      isEditor ? Promise.resolve({ reservations: [] }) : loadAdminResource('/reservas'),
+      isEditor ? Promise.resolve({ customers: [] }) : loadAdminResource('/clientes'),
       isAdmin ? loadAdminResource('/empleados') : Promise.resolve({ employees: [] }),
       canManageCatalog ? loadAdminResource('/promociones') : Promise.resolve({ promotions: [] }),
     ])
@@ -479,7 +488,7 @@ export default function App({ user }) {
         if (current) setDashboardLoading(false)
       })
     return () => { current = false }
-  }, [canManageCatalog, isAdmin])
+  }, [canManageCatalog, isAdmin, isEditor])
 
   async function changeCustomerStatus(id, estado_cuenta) {
     try {
@@ -530,13 +539,13 @@ export default function App({ user }) {
 
   const pageContent = useMemo(() => {
     const changePage = (page) => { setActivePage(page); setMobileNav(false) }
-    if (activePage === 'productos') return <ProductsPage products={products} reservations={reservations} onAdd={() => setProductModal({ mode: 'add' })} onEdit={(product) => setProductModal({ mode: 'edit', product })} onToggle={toggleProduct} />
+    if (['destinos', 'productos'].includes(activePage) && canManageCatalog) return <CmsPanel key={activePage} kind={activePage === 'destinos' ? 'destinos' : 'promociones'} onCatalogChange={(rows) => setProducts(rows.map((record) => ({ id: record.id, name: record.nombre, description: record.descripcion, category: record.categoria, price: Number(record.precio), active: record.activo })))} />
     if (activePage === 'pedidos') return <OrdersPage reservations={reservations} />
     if (activePage === 'clientes') return <CustomersPage customers={customers} onNavigate={changePage} onStatusChange={changeCustomerStatus} onPointsChange={changeCustomerPoints} canManage={isAdmin} loading={dashboardLoading} />
     if (activePage === 'equipo') return <EmployeesPage employees={employees} onAdd={() => setEmployeeModal(true)} onUpdate={changeEmployee} currentUserId={user?.id} loading={dashboardLoading} />
     if (activePage === 'puntos') return <PointsPage customers={customers} />
     return <DashboardHome user={user} products={products} onNavigate={changePage} period={period} setPeriod={setPeriod} summary={summary} reservations={reservations} loading={dashboardLoading} error={dashboardError} />
-  }, [activePage, customers, dashboardError, dashboardLoading, employees, isAdmin, period, products, reservations, summary, user])
+  }, [activePage, canManageCatalog, customers, dashboardError, dashboardLoading, employees, isAdmin, period, products, reservations, summary, user])
 
   async function saveProduct(product) {
     try {
@@ -574,9 +583,9 @@ export default function App({ user }) {
       <a className="sidebar-brand" href="../index.html"><img src="../assets/logoIcaTurismo.png" alt="" /><span>IcaTurismo<small>ADMINISTRACIÓN</small></span></a>
       <div className="workspace-switch"><span className="workspace-avatar">I</span><span><strong>IcaTurismo</strong><small>Panel de control</small></span><ChevronDown size={15} /></div>
       <nav className="side-nav" aria-label="Navegación del panel">
-        {navGroups.map((group) => <div className="nav-group" key={group.label}><span className="nav-group__label">{group.label}</span>{group.items.map(({ id, label, icon: Icon, count }) => <button className={`nav-link ${activePage === id ? 'nav-link--active' : ''}`} key={id} onClick={() => { setActivePage(id); setMobileNav(false) }}><Icon size={17} strokeWidth={1.8} /><span>{label}</span>{count && <span className="nav-count">{count}</span>}</button>)}</div>)}
+        {visibleNav.map((group) => <div className="nav-group" key={group.label}><span className="nav-group__label">{group.label}</span>{group.items.map(({ id, label, icon: Icon, count }) => <button className={`nav-link ${activePage === id ? 'nav-link--active' : ''}`} key={id} onClick={() => { setActivePage(id); setMobileNav(false) }}><Icon size={17} strokeWidth={1.8} /><span>{label}</span>{count && <span className="nav-count">{count}</span>}</button>)}</div>)}
       </nav>
-      <div className="sidebar-bottom"><div className="sidebar-promo"><Sparkles size={17} /><span><strong>Un programa de puntos</strong><small>Fideliza a tus viajeros.</small></span><button onClick={() => setActivePage('puntos')} aria-label="Ver programa de puntos"><ArrowRight size={16} /></button></div><button className="nav-link sidebar-help"><CircleHelp size={17} /><span>Centro de ayuda</span></button><div className="sidebar-user"><Avatar initials={user?.nombre?.split(' ').map((part) => part[0]).slice(0, 2).join('') || 'AD'} tone="mint" /><span><strong>{user?.nombre || 'Administrador'}</strong><small>Administrador</small></span><button className="icon-button" title="Cerrar sesión" onClick={() => window.Auth?.logout()}><LogOut size={16} /></button></div></div>
+      <div className="sidebar-bottom">{!isEditor && <div className="sidebar-promo"><Sparkles size={17} /><span><strong>Un programa de puntos</strong><small>Fideliza a tus viajeros.</small></span><button onClick={() => setActivePage('puntos')} aria-label="Ver programa de puntos"><ArrowRight size={16} /></button></div>}<a className="nav-link sidebar-help" href="../index.html" target="_blank" rel="noopener noreferrer"><ExternalLink size={17} /><span>Ver sitio público</span></a><div className="sidebar-user"><Avatar initials={user?.nombre?.split(' ').map((part) => part[0]).slice(0, 2).join('') || 'AD'} tone="mint" /><span><strong>{user?.nombre || 'Equipo'}</strong><small>{({ admin: 'Administrador', editor: 'Editor', soporte: 'Soporte', registrador: 'Registrador' })[user?.rol] || 'Equipo'}</small></span><button className="icon-button" title="Cerrar sesión" onClick={() => window.Auth?.logout()}><LogOut size={16} /></button></div></div>
     </aside>
     {mobileNav && <button className="mobile-scrim" onClick={() => setMobileNav(false)} aria-label="Cerrar menú" />}
     <main className="admin-content">

@@ -235,6 +235,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Asegurar que el enlace a "Mi Perfil" esté presente arriba de "Cerrar sesión"
       const profileDropdown = document.getElementById('userProfileDropdown');
+      if (profileDropdown && Auth.isStaff() && !document.getElementById('editorPanelLink')) {
+        const scriptEl = document.querySelector('script[src*="Script.js"]');
+        if (scriptEl) {
+          const panelLink = document.createElement('a');
+          panelLink.id = 'editorPanelLink';
+          panelLink.href = new URL('../html/admin.html', scriptEl.src).href;
+          panelLink.textContent = 'Panel del equipo';
+          profileDropdown.prepend(panelLink);
+        }
+      }
       if (profileDropdown && !document.getElementById('miPerfilLink')) {
         const scriptEl = document.querySelector('script[src*="Script.js"]');
         const perfilHref = scriptEl ? new URL('../html/perfil.html', scriptEl.src).href : 'html/perfil.html';

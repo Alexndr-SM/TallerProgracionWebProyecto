@@ -14,15 +14,15 @@ const getDestination = endpoint(async (req, res) => {
 });
 const createDestination = endpoint(async (req, res) => {
   const data = destination(req.body || {});
-  const result = await query('INSERT INTO destinos (nombre, slug, imagen_url) VALUES ($1, $2, $3) RETURNING *',
-    [data.nombre, data.slug, data.imagen_url]);
+  const result = await query('INSERT INTO destinos (nombre, slug, imagen_url, descripcion) VALUES ($1, $2, $3, $4) RETURNING *',
+    [data.nombre, data.slug, data.imagen_url, data.descripcion]);
   return res.status(201).json({ ok: true, destino: result.rows[0] });
 });
 const updateDestination = endpoint(async (req, res) => {
   const destinationId = id(req.params.id);
   const data = destination(req.body || {});
-  const result = await query('UPDATE destinos SET nombre = $1, slug = $2, imagen_url = $3 WHERE id = $4 RETURNING *',
-    [data.nombre, data.slug, data.imagen_url, destinationId]);
+  const result = await query('UPDATE destinos SET nombre = $1, slug = $2, imagen_url = $3, descripcion = $4 WHERE id = $5 RETURNING *',
+    [data.nombre, data.slug, data.imagen_url, data.descripcion, destinationId]);
   if (!result.rowCount) throw new CmsError('No se encontró el destino.', 404);
   return res.json({ ok: true, destino: result.rows[0] });
 });

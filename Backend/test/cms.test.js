@@ -48,7 +48,7 @@ test('migraciones PostgreSQL en una base nueva', sqlOptions, async () => {
     const pool = adapter(db);
     await migrate(pool);
     await migrate(pool);
-    assert.equal((await db.query('SELECT count(*)::int AS total FROM cms_migrations')).rows[0].total, 1);
+    assert.equal((await db.query('SELECT count(*)::int AS total FROM cms_migrations')).rows[0].total, 2);
     assert.equal((await db.query('SELECT * FROM promociones')).rows.length, 0);
     await db.query("INSERT INTO destinos (nombre,slug) VALUES ('Temporal','temporal')");
     await db.query("DELETE FROM destinos WHERE slug='temporal'");
@@ -70,6 +70,8 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
     2: { id: 2, rol: 'cliente', estado_cuenta: 'activo' },
     3: { id: 3, rol: 'editor', estado_cuenta: 'activo' },
     4: { id: 4, rol: 'admin', estado_cuenta: 'inactivo' },
+    5: { id: 5, rol: 'soporte', estado_cuenta: 'activo' },
+    6: { id: 6, rol: 'registrador', estado_cuenta: 'activo' },
   };
   const databasePath = require.resolve('../src/config/database');
   require.cache[databasePath] = { id: databasePath, filename: databasePath, loaded: true, exports: {
@@ -123,7 +125,7 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
     for (let i = 0; i < count; i++) data.append(field, new Blob([bytes], { type: mime }), `image-${i}.png`);
     return data;
   }
-  await t.test('todas las escrituras exigen sesión y rol admin', async () => {
+  await t.test('las escrituras del CMS solo aceptan admin y editor', async () => {
     const endpoints = [
       ['/api/destinos', 'POST'], ['/api/destinos/1', 'PUT'], ['/api/destinos/1', 'DELETE'],
       ['/api/promociones', 'POST'], ['/api/promociones/1', 'PUT'], ['/api/promociones/1', 'DELETE'],
@@ -131,13 +133,13 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
     ];
     for (const [url, method] of endpoints) {
       assert.equal((await request(url, method, {})).status, 401, `${method} ${url}`);
-      for (const user of [2, 3]) assert.equal((await request(url, method, {}, user)).status, 403);
+      for (const user of [2, 5, 6]) assert.equal((await request(url, method, {}, user)).status, 403);
     }
     assert.equal((await request('/api/destinos', 'POST', {}, 4)).status, 401);
     assert.equal(uploadCount, 0);
   });
   await t.test('sube varias imágenes y mantiene el orden', async () => {
-    const result = await request('/api/uploads', 'POST', form(3), 1);
+    const result = await request('/api/uploads', 'POST', form(3), 3);
     assert.equal(result.status, 201);
     assert.deepEqual(result.data.urls, ['https://example.com/1.png', 'https://example.com/2.png', 'https://example.com/3.png']);
   });
@@ -177,13 +179,14 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
   });
   let destinationId;
   let promotionId;
-  const destinationBody = { nombre: 'Selva', imagen_url: 'https://example.com/selva.jpg' };
+  const destinationBody = { nombre: 'Selva', imagen_url: 'https://example.com/selva.jpg', descripcion: 'Un destino para descubrir.' };
   let promotionBody;
   await t.test('CRUD de destinos, slugs únicos y lecturas públicas', sqlOptions, async () => {
-    const created = await request('/api/destinos', 'POST', destinationBody, 1);
+    const created = await request('/api/destinos', 'POST', destinationBody, 3);
     assert.equal(created.status, 201);
     destinationId = created.data.destino.id;
     assert.equal(created.data.destino.slug, 'selva');
+    assert.equal(created.data.destino.descripcion, destinationBody.descripcion);
     assert.equal((await request('/api/destinos', 'POST', destinationBody, 1)).status, 409);
     assert.equal((await request(`/api/destinos/${destinationId}`)).data.destino.nombre, 'Selva');
     assert.equal((await request('/api/destinos/slug/selva')).status, 200);
@@ -194,12 +197,16 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
   await t.test('crea promociones relacionadas y filtra por destino', sqlOptions, async () => {
     promotionBody = { destino_id: destinationId, titulo: 'Aventura Selva', descripcion_corta: 'Una aventura única',
       descripcion_larga: 'Día 1: recorrido. Día 2: regreso.', precio: '180.50', duracion: '2 días',
-      imagen_principal_url: 'https://example.com/main.png', galeria_urls: ['https://example.com/gallery.png'] };
-    const result = await request('/api/promociones', 'POST', promotionBody, 1);
+      imagen_principal_url: 'https://example.com/main.png', galeria_urls: ['https://example.com/gallery.png'],
+      ubicacion: 'Iquitos', incluye: ['Guía', 'Transporte'], itinerario: 'Día 1: recorrido.' };
+    const result = await request('/api/promociones', 'POST', promotionBody, 3);
     assert.equal(result.status, 201);
     promotionId = result.data.promotion.id;
     assert.deepEqual(result.data.promotion.galeria_urls, promotionBody.galeria_urls);
     assert.equal(result.data.promotion.nombre, promotionBody.titulo);
+    assert.deepEqual(result.data.promotion.incluye, promotionBody.incluye);
+    assert.equal(result.data.promotion.ubicacion, 'Iquitos');
+    assert.equal(result.data.promotion.itinerario, 'Día 1: recorrido.');
     assert.equal((await request('/api/promociones?destino_slug=selva')).data.promotions.length, 1);
     assert.equal((await request(`/api/promociones?destino_id=${destinationId}`)).data.promotions.length, 1);
     assert.equal((await request('/api/promociones/slug/aventura-selva')).status, 200);
@@ -216,7 +223,7 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
     assert.equal((await request('/api/promociones', 'POST', { ...promotionBody, destino_id: 999999 }, 1)).status, 404);
   });
   await t.test('edita contenido y mantiene las inactivas solo en el catálogo administrativo', sqlOptions, async () => {
-    const updated = await request(`/api/promociones/${promotionId}`, 'PUT', { ...promotionBody, titulo: 'Selva renovada', activo: false }, 1);
+    const updated = await request(`/api/promociones/${promotionId}`, 'PUT', { ...promotionBody, titulo: 'Selva renovada', activo: false }, 3);
     assert.equal(updated.status, 200);
     assert.equal(updated.data.promotion.nombre, 'Selva renovada');
     assert.equal((await request(`/api/promociones/${promotionId}`)).status, 404);
@@ -241,12 +248,12 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
     const reservation = await pool.query(`INSERT INTO reservas
       (nombre,email,fecha_tour,asistentes,metodo_pago,promocion_id,promocion_nombre,precio_unitario,total)
       VALUES ('Cliente','cliente@example.com','2030-01-01',1,'yape',$1,'Aventura Selva',180.50,180.50) RETURNING id`, [promotionId]);
-    assert.equal((await request(`/api/promociones/${promotionId}`, 'DELETE', undefined, 1)).status, 204);
+    assert.equal((await request(`/api/promociones/${promotionId}`, 'DELETE', undefined, 3)).status, 204);
     const row = (await pool.query('SELECT * FROM reservas WHERE id=$1', [reservation.rows[0].id])).rows[0];
     assert.equal(row.promocion_id, null);
     assert.equal(row.promocion_nombre, 'Aventura Selva');
     assert.equal(Number(row.total), 180.50);
-    assert.equal((await request(`/api/destinos/${destinationId}`, 'DELETE', undefined, 1)).status, 204);
+    assert.equal((await request(`/api/destinos/${destinationId}`, 'DELETE', undefined, 3)).status, 204);
     assert.equal((await request(`/api/destinos/${destinationId}`)).status, 404);
     assert.equal((await request(`/api/promociones/${promotionId}`, 'DELETE', undefined, 1)).status, 404);
     await migrate(pool);

@@ -1,7 +1,7 @@
 const express = require('express');
 const controller = require('../controllers/adminController');
 const cmsPromotions = require('../controllers/promotionController');
-const { requireAuth, requireRole, requireAdmin } = require('../middleware/auth.middleware');
+const { requireAuth, requireRole } = require('../middleware/auth.middleware');
 
 const router = express.Router();
 router.use(requireAuth);
@@ -17,7 +17,7 @@ router.get('/empleados', requireRole('admin'), controller.listEmployees);
 router.post('/empleados', requireRole('admin'), controller.createEmployee);
 router.patch('/empleados/:id', requireRole('admin'), controller.updateEmployee);
 router.get('/promociones', requireRole('admin', 'editor'), cmsPromotions.listAdminPromotions);
-router.post('/promociones', requireAdmin, controller.createPromotion);
-router.patch('/promociones/:id', requireAdmin, controller.updatePromotion);
+router.post('/promociones', requireRole('admin', 'editor'), controller.createPromotion);
+router.patch('/promociones/:id', requireRole('admin', 'editor'), controller.updatePromotion);
 
 module.exports = router;
