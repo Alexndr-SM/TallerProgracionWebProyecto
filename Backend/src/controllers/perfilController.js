@@ -48,7 +48,7 @@ async function getPerfil(req, res) {
 async function getMisReservas(req, res) {
   try {
     const result = await query(
-      `SELECT r.id, r.fecha_tour, r.asistentes, r.metodo_pago,
+      `SELECT r.id, r.promocion_id, r.fecha_tour, r.asistentes, r.metodo_pago,
               r.estado, r.estado_pago, r.promocion_nombre, r.precio_unitario,
               r.total, r.created_at,
               p.categoria AS promocion_categoria
@@ -190,7 +190,7 @@ async function cancelarReserva(req, res) {
   }
 }
 
-/** PATCH /api/perfil/reservas/:id/confirmar-pago — cliente confirma el pago de su reserva */
+/** PATCH /api/perfil/reservas/:id/confirmar-pago — simulación sin pasarela ni cobros reales. */
 async function confirmarPagoReserva(req, res) {
   const reservaId = Number(req.params.id);
   if (!Number.isInteger(reservaId) || reservaId < 1) {
@@ -231,7 +231,7 @@ async function confirmarPagoReserva(req, res) {
        SET estado_pago = 'pagado',
            estado = 'confirmada'
        WHERE id = $1
-       RETURNING id, fecha_tour, asistentes, metodo_pago, estado, promocion_nombre,
+       RETURNING id, promocion_id, fecha_tour, asistentes, metodo_pago, estado, promocion_nombre,
                  precio_unitario, total, estado_pago, created_at`,
       [reservaId]
     );
@@ -240,7 +240,8 @@ async function confirmarPagoReserva(req, res) {
 
     return res.json({
       ok: true,
-      message: '¡Pago confirmado con éxito! Tu reserva ahora figura como confirmada y pagada.',
+      message: 'Pago simulado completado. Tu reserva figura como confirmada y pagada en esta demostración. No se realizó ningún cobro.',
+      simulado: true,
       reserva: updated.rows[0],
     });
   } catch (err) {

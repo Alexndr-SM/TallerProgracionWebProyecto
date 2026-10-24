@@ -1,155 +1,156 @@
-const formReserva = document.getElementById('form-reserva');
-const reservaLayout = document.querySelector('.reserva-layout');
-const panelPago = document.getElementById('panel-pago');
-const selectorPago = document.getElementById('pago');
-const selectorPromocion = document.getElementById('promocion');
-const selectorPersonas = document.getElementById('personas');
-const formularioAcceso = document.getElementById('reserva-acceso');
-const mensajeReserva = document.getElementById('reserva-mensaje');
-const botonConfirmar = document.getElementById('confirmar-reserva');
-const precioTotal = document.getElementById('reserva-total');
-const promociones = new Map();
-const accionCompra = new URLSearchParams(window.location.search).get('accion') === 'compra';
-if (accionCompra) {
-  document.getElementById('reserva-titulo').textContent = 'Solicita tu compra';
-  formReserva.querySelector('[type="submit"]').textContent = 'Continuar con la compra';
-}
-const usuario = window.Auth.getUser();
-
-const formatoPrecio = (amount) => new Intl.NumberFormat('es-PE', {
-  style: 'currency',
-  currency: 'PEN',
-}).format(amount);
-
-if (!window.Auth.getToken() || !usuario?.email) {
-  formReserva.hidden = true;
-  formularioAcceso.hidden = false;
-} else {
-  document.getElementById('nombre').value = usuario.nombre || '';
-  document.getElementById('email').value = usuario.email;
-  document.getElementById('nombre').readOnly = true;
-  document.getElementById('email').readOnly = true;
-}
-
-function selectedPromotion() {
-  return promociones.get(Number(selectorPromocion.value));
-}
-
-function updatePrice() {
-  const promotion = selectedPromotion();
-  if (!promotion) {
-    precioTotal.textContent = 'Selecciona una promoción para ver el total.';
-    return;
+/* Carrito de demostración. Las reservas y sus estados se guardan en la API. */
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const form = $('form-reserva'), fields = $('reserva-campos'), select = $('promocion');
+  const guests = $('personas'), date = $('fecha'), method = $('pago'), notice = $('reserva-mensaje');
+  const user = window.Auth.getUser(), params = new URLSearchParams(location.search);
+  const promotions = new Map(), reservations = new Map();
+  const storageKey = `icat_checkout_reservation_${user?.id || user?.email || 'guest'}`;
+  const money = (value) => new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(Number(value));
+  const labels = { tarjeta: 'Tarjeta · demostración', paypal: 'PayPal · demostración', yape: 'Yape / Plin · demostración' };
+  let active = null, busy = false, listing = false;
+  function node(tag, cls, text) { const item = document.createElement(tag); if (cls) item.className = cls; if (text !== undefined) item.textContent = text; return item; }
+  function message(text, error = false) { notice.hidden = !text; notice.textContent = text; notice.dataset.error = String(error); }
+  function remember(id) { try { if (id) sessionStorage.setItem(storageKey, String(id)); else sessionStorage.removeItem(storageKey); } catch { /* La API sigue siendo la fuente del estado. */ } }
+  function remembered() { try { return Number(sessionStorage.getItem(storageKey)); } catch { return null; } }
+  function setBusy(value) {
+    busy = value; fields.disabled = value || Boolean(active);
+    document.querySelectorAll('.checkout-page button:not(dialog button)').forEach((button) => { button.disabled = value; });
+    $('confirmar-reserva').textContent = value ? 'Guardando…' : 'Guardar mi reserva ↗';
+    document.querySelector('.checkout-grid').setAttribute('aria-busy', String(value));
   }
-  document.title = `${promotion.nombre} · ${accionCompra ? 'Compra' : 'Reserva'} · IcaTurismo`;
-  const attendees = Number(selectorPersonas.value) || 0;
-  precioTotal.textContent = `${formatoPrecio(Number(promotion.precio))} por persona · Total: ${formatoPrecio(Number(promotion.precio) * attendees)}`;
-}
-
-async function loadPromotions() {
-  const base = (window.API_URL || '').replace(/\/$/, '');
-  if (!base) throw new Error('No se configuró la dirección de la API.');
-  const response = await fetch(`${base}/api/promociones`);
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok || !data.ok || !Array.isArray(data.promotions)) {
-    throw new Error(data.message || 'No se pudieron cargar las promociones.');
-  }
-
-  const requestedSlug = new URLSearchParams(window.location.search).get('promocion');
-  selectorPromocion.replaceChildren(new Option('Selecciona una promoción', ''));
-  data.promotions.forEach((promotion) => {
-    promociones.set(Number(promotion.id), promotion);
-    selectorPromocion.add(new Option(`${promotion.nombre} · ${formatoPrecio(Number(promotion.precio))} por persona`, promotion.id));
-  });
-  const selected = data.promotions.find((promotion) => promotion.slug === requestedSlug);
-  if (selected) selectorPromocion.value = String(selected.id);
-  selectorPromocion.disabled = data.promotions.length === 0;
-  if (data.promotions.length === 0) {
-    selectorPromocion.replaceChildren(new Option('No hay promociones disponibles', ''));
-  }
-  updatePrice();
-}
-
-loadPromotions().catch((error) => {
-  selectorPromocion.replaceChildren(new Option('No se pudieron cargar las promociones', ''));
-  precioTotal.textContent = error.message;
-});
-
-selectorPromocion.addEventListener('change', updatePrice);
-selectorPersonas.addEventListener('input', updatePrice);
-
-formReserva.addEventListener('submit', (event) => {
-  event.preventDefault();
-
-  if (!window.Auth.getToken()) {
-    formularioAcceso.hidden = false;
-    return;
-  }
-
-  if (!selectedPromotion()) {
-    mensajeReserva.hidden = false;
-    mensajeReserva.textContent = 'Selecciona una promoción disponible.';
-    return;
-  }
-
-  if (!selectorPago.value) {
-    selectorPago.focus();
-    return;
-  }
-
-  const promotion = selectedPromotion();
-  document.getElementById('resumen-promocion').textContent = promotion.nombre;
-  document.getElementById('resumen-total').textContent = `Total de la reserva: ${formatoPrecio(Number(promotion.precio) * Number(selectorPersonas.value))}`;
-  panelPago.hidden = false;
-  reservaLayout.classList.add('mostrar-pago');
-  panelPago.setAttribute('aria-label', `Resumen de reserva: ${promotion.nombre}`);
-  mensajeReserva.hidden = true;
-});
-
-botonConfirmar.addEventListener('click', async () => {
-  botonConfirmar.disabled = true;
-  mensajeReserva.hidden = false;
-  mensajeReserva.textContent = 'Registrando reserva...';
-
-  try {
-    const response = await fetch(`${(window.API_URL || '').replace(/\/$/, '')}/api/reservas`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${window.Auth.getToken()}`,
-      },
-      body: JSON.stringify({
-        fecha_tour: document.getElementById('fecha').value,
-        asistentes: Number(selectorPersonas.value),
-        metodo_pago: selectorPago.value,
-        promocion_id: Number(selectorPromocion.value),
-      }),
-    });
-    const result = await response.json().catch(() => ({}));
-
-    if (!response.ok || !result.ok) {
-      if (response.status === 401) {
-        formReserva.hidden = true;
-        formularioAcceso.hidden = false;
-        panelPago.hidden = true;
-        reservaLayout.classList.remove('mostrar-pago');
+  async function api(path, options = {}) {
+    const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 60000);
+    try {
+      const response = await fetch(`${(window.API_URL || '').replace(/\/$/, '')}/api${path}`, {
+        ...options, cache: 'no-store', signal: controller.signal,
+        headers: { Authorization: `Bearer ${window.Auth.getToken() || ''}`, ...(options.body ? { 'Content-Type': 'application/json' } : {}) },
+        body: options.body ? JSON.stringify(options.body) : undefined,
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.ok) {
+        if (response.status === 401) { form.hidden = true; $('reserva-guardada').hidden = true; $('reserva-acceso').hidden = false; }
+        throw new Error(data.message || 'No se pudo completar la operación.');
       }
-      throw new Error(result.message || 'No se pudo registrar la reserva.');
-    }
-
-    mensajeReserva.textContent = `Reserva #${result.reserva.id} registrada por ${formatoPrecio(Number(result.reserva.total))}. Estado del pago: pendiente.`;
-    botonConfirmar.hidden = true;
-    document.getElementById('volver-reserva').hidden = true;
-  } catch (error) {
-    mensajeReserva.textContent = error.message || 'No se pudo conectar con el servidor.';
-    botonConfirmar.disabled = false;
+      return data;
+    } catch (error) { if (error.name === 'AbortError') throw new Error('El servidor está tardando. Actualiza tus reservas antes de volver a intentarlo.'); throw error; }
+    finally { clearTimeout(timer); }
   }
-});
-
-document.getElementById('volver-reserva').addEventListener('click', () => {
-  reservaLayout.classList.remove('mostrar-pago');
-  panelPago.hidden = true;
-  selectorPago.focus();
-});
-
-document.getElementById('fecha').min = new Date().toISOString().split('T')[0];
+  function friendlyDate(value) {
+    const raw = String(value || '').slice(0, 10);
+    return /^\d{4}-\d{2}-\d{2}$/.test(raw) ? new Date(`${raw}T12:00:00`).toLocaleDateString('es-PE', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Por elegir';
+  }
+  function stateLabel(reservation) {
+    if (reservation.estado === 'cancelada') return reservation.estado_pago === 'reembolsado' ? 'Cancelada · Reembolso simulado' : 'Reserva cancelada';
+    return reservation.estado_pago === 'pagado' ? 'Confirmada · Pago de demostración completado' : 'Reserva guardada · Pago pendiente';
+  }
+  function summary() {
+    const promotion = promotions.get(Number(active ? active.promocion_id : select.value));
+    const count = active ? Number(active.asistentes) : Number(guests.value);
+    const unit = active ? Number(active.precio_unitario) : Number(promotion?.precio || 0);
+    const total = active ? Number(active.total) : Math.round(unit * 100) * (Number.isInteger(count) && count > 0 ? count : 0) / 100;
+    $('resumen-promocion').textContent = active?.promocion_nombre || promotion?.titulo || promotion?.nombre || 'Elige tu experiencia';
+    $('resumen-fecha').textContent = friendlyDate(active?.fecha_tour || date.value);
+    $('resumen-personas').textContent = `${count || 0} ${count === 1 ? 'persona' : 'personas'}`;
+    $('resumen-unitario').textContent = unit ? money(unit) : '—';
+    $('resumen-total').textContent = unit ? money(total) : '—';
+    $('resumen-metodo').textContent = labels[active?.metodo_pago || method.value] || 'Por elegir';
+    $('reserva-total').textContent = active ? stateLabel(active) : promotion ? 'El total se confirma al guardar la reserva. Pago de prueba, sin cargos reales.' : 'Selecciona una experiencia para calcular el total.';
+    const image = $('resumen-imagen');
+    image.src = promotion?.imagen_principal_url || window.IcaCMS?.imageFor(promotion || {}) || '../assets/imagendunas.jpg';
+    image.alt = promotion?.titulo || 'Paisaje de Ica';
+    $('resumen-destino').textContent = promotion?.destino_nombre || 'Ica, Perú';
+    const link = $('ver-experiencia'); link.href = promotion ? `promocion.html?slug=${encodeURIComponent(promotion.slug)}` : '../index.html#destinos'; link.textContent = promotion ? 'Ver experiencia ↗' : 'Explorar experiencias ↗';
+  }
+  $('resumen-imagen').addEventListener('error', function () { if (!this.src.endsWith('/assets/imagendunas.jpg')) this.src = '../assets/imagendunas.jpg'; });
+  function showReservation(reservation, scroll = false) {
+    active = reservation; remember(reservation.id);
+    form.hidden = true; $('reserva-guardada').hidden = false;
+    $('reserva-numero').textContent = `Reserva #${reservation.id}`; $('reserva-estado').textContent = stateLabel(reservation);
+    const pending = reservation.estado !== 'cancelada' && reservation.estado_pago === 'pendiente';
+    $('completar-pago').hidden = !pending; $('cancelar-reserva').hidden = !pending; $('pago-aviso').hidden = !pending;
+    document.querySelectorAll('.checkout-steps li').forEach((item, index) => {
+      item.removeAttribute('aria-current'); if (index === (reservation.estado_pago === 'pagado' ? 2 : 1)) item.setAttribute('aria-current', 'step');
+    });
+    summary(); if (scroll) document.querySelector('.checkout-form').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+  }
+  function renderReservations() {
+    const list = $('lista-reservas'); list.replaceChildren(); $('mis-reservas').hidden = false;
+    if (!reservations.size) list.append(node('p', 'checkout-help', 'Aún no tienes reservas. Tu próxima experiencia puede empezar hoy.'));
+    [...reservations.values()].sort((a, b) => Number(b.id) - Number(a.id)).slice(0, 8).forEach((reservation) => {
+      const card = node('article', 'checkout-reservation');
+      card.append(node('span', 'checkout-badge', stateLabel(reservation)), node('h3', '', reservation.promocion_nombre || 'Experiencia en Ica'),
+        node('p', '', `#${reservation.id} · ${friendlyDate(reservation.fecha_tour)} · ${reservation.asistentes} viajeros · ${money(reservation.total)}`));
+      const button = node('button', 'checkout-button checkout-button--quiet', reservation.estado_pago === 'pendiente' && reservation.estado !== 'cancelada' ? 'Retomar reserva →' : 'Ver resumen →');
+      button.type = 'button'; button.disabled = busy; button.addEventListener('click', () => { if (!busy) { message(''); showReservation(reservation, true); } }); card.append(button); list.append(card);
+    });
+  }
+  async function loadReservations(restore = false) {
+    if (!window.Auth.getToken() || listing) return;
+    listing = true;
+    try {
+      const data = await api('/perfil/reservas'); reservations.clear();
+      data.reservas.forEach((item) => reservations.set(Number(item.id), item)); renderReservations();
+      if (active && reservations.has(Number(active.id))) showReservation(reservations.get(Number(active.id)));
+      else if (restore && reservations.has(remembered())) {
+        const saved = reservations.get(remembered());
+        if (!params.get('promocion') || promotions.get(Number(saved.promocion_id))?.slug === params.get('promocion')) showReservation(saved);
+      }
+    } finally { listing = false; }
+  }
+  function confirmAction(title, text, label) {
+    const dialog = $('checkout-confirmacion'); $('confirmacion-titulo').textContent = title; $('confirmacion-texto').textContent = text; $('confirmacion-aceptar').textContent = label; dialog.returnValue = '';
+    return new Promise((resolve) => { dialog.addEventListener('close', () => resolve(dialog.returnValue === 'confirmar'), { once: true }); dialog.showModal(); });
+  }
+  async function mutate(action) {
+    if (busy || !active) return;
+    const reservation = active;
+    const paid = action === 'confirmar-pago';
+    const accepted = await confirmAction(paid ? 'Prueba tu pago' : '¿Cancelar esta reserva?',
+      paid ? `Simularemos un pago de ${money(reservation.total)} con ${labels[reservation.metodo_pago] || 'tu método elegido'}. Tu reserva quedará confirmada. Es una demostración: no se hará ningún cobro ni se necesitan datos bancarios.` : `Se cancelará la reserva #${reservation.id} de “${reservation.promocion_nombre}”. Podrás preparar otra reserva cuando quieras.`,
+      paid ? 'Completar pago de prueba' : 'Sí, cancelar reserva');
+    if (!accepted) return;
+    setBusy(true); message(paid ? 'Procesando tu pago de prueba…' : 'Cancelando reserva…');
+    try {
+      const data = await api(`/perfil/reservas/${reservation.id}/${action}`, { method: 'PATCH' });
+      const updated = data.reserva || { ...reservation, estado: 'cancelada' };
+      reservations.set(Number(reservation.id), updated); showReservation(updated); renderReservations();
+      message(paid ? `Pago ficticio completado: ${money(updated.total)}. Tu reserva #${updated.id} está confirmada. ¡Nos vemos en Ica!` : 'Reserva cancelada. Puedes elegir otra experiencia cuando quieras.');
+    } catch (error) { message(error.message, true); try { await loadReservations(); } catch { /* Se conserva el error de la operación. */ } }
+    finally { setBusy(false); }
+  }
+  $('completar-pago').addEventListener('click', () => mutate('confirmar-pago'));
+  $('cancelar-reserva').addEventListener('click', () => mutate('cancelar'));
+  $('nueva-reserva').addEventListener('click', () => {
+    if (busy) return; active = null; remember(null); form.hidden = false; $('reserva-guardada').hidden = true; fields.disabled = false; message('');
+    document.querySelectorAll('.checkout-steps li').forEach((item, index) => { item.removeAttribute('aria-current'); if (!index) item.setAttribute('aria-current', 'step'); }); summary(); select.focus();
+  });
+  $('actualizar-reservas').addEventListener('click', async () => { if (busy || listing) return; setBusy(true); try { await loadReservations(); message('Reservas actualizadas.'); } catch (error) { message(error.message, true); } finally { setBusy(false); } });
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault(); if (busy || active || !form.reportValidity()) return;
+    if (!promotions.has(Number(select.value))) return message('Selecciona una experiencia disponible.', true);
+    setBusy(true); message('Guardando tu reserva…');
+    try {
+      const data = await api('/reservas', { method: 'POST', body: { fecha_tour: date.value, asistentes: Number(guests.value), metodo_pago: method.value, promocion_id: Number(select.value) } });
+      reservations.set(Number(data.reserva.id), data.reserva); showReservation(data.reserva); renderReservations(); message('Reserva guardada. Ahora puedes simular el pago o cancelarla desde aquí.');
+    } catch (error) { message(error.message, true); }
+    finally { setBusy(false); }
+  });
+  [select, guests, date, method].forEach((input) => input.addEventListener('input', summary));
+  date.min = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  if (!window.Auth.getToken() || !user?.email) { form.hidden = true; $('reserva-acceso').hidden = false; }
+  else { $('nombre').value = user.nombre || ''; $('email').value = user.email; }
+  async function start() {
+    try {
+      const data = await api('/promociones'); select.replaceChildren(new Option('Selecciona tu experiencia', ''));
+      data.promotions.forEach((item) => { promotions.set(Number(item.id), item); select.add(new Option(`${item.titulo || item.nombre} · ${money(item.precio)}`, item.id)); });
+      const selected = data.promotions.find((item) => item.slug === params.get('promocion')); if (selected) select.value = String(selected.id);
+      select.disabled = !promotions.size;
+      if (!promotions.size) select.replaceChildren(new Option('Pronto tendremos nuevas experiencias', ''));
+      summary();
+    } catch (error) { select.replaceChildren(new Option('No se pudieron cargar las experiencias', '')); message(error.message, true); }
+    try { await loadReservations(true); } catch (error) { message(`No pudimos consultar tus reservas: ${error.message}`, true); }
+  }
+  start();
+})();

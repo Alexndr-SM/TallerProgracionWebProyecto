@@ -12,6 +12,7 @@
   const slug = new URLSearchParams(location.search).get('slug');
   let destinations = [], promotions = [], signature = '', destinationSignature = '', loading = false, loaded = false;
   let observer;
+  const carouselCleanups = new Set();
   const carouselSizes = 'ResizeObserver' in window ? new ResizeObserver((entries) => entries.forEach((entry) => entry.target.dispatchEvent(new Event('cms:resize')))) : null;
   if (!reduced && 'IntersectionObserver' in window) observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
     if (entry.isIntersecting) { entry.target.classList.add('cms-visible'); observer.unobserve(entry.target); }
@@ -82,27 +83,74 @@
     const outer = el('div', mini ? 'cms-mini-carousel' : 'cms-film');
     const track = el('div', mini ? 'cms-mini-track' : 'cms-film-track');
     track.tabIndex = 0; track.setAttribute('role', 'region'); track.setAttribute('aria-label', `Galería de ${title}`);
-    images.forEach((src, index) => {
+    // Dos grupos de reserva a cada lado cubren también una tira de varias fotos visibles.
+    const cyclic = images.length > 1;
+    const copies = cyclic ? 5 : 1;
+    for (let copy = 0; copy < copies; copy++) images.forEach((src, index) => {
       const button = el(mini ? 'a' : 'button', 'cms-photo-button');
       if (mini) button.href = href; else button.type = 'button';
       button.setAttribute('aria-label', mini ? `Ver ${title}` : `Ampliar imagen ${index + 1} de ${title}`);
+      if (cyclic && copy !== 2) { button.tabIndex = -1; button.setAttribute('aria-hidden', 'true'); }
       button.append(photo(src, `${title} · imagen ${index + 1}`));
       if (!mini) button.addEventListener('click', () => lightbox(images, index, title));
       track.append(button);
     });
-    const controls = el('div', 'cms-carousel-controls'); const previous = el('button', '', '←'); const next = el('button', '', '→');
+    const controls = el('div', 'cms-carousel-controls cms-carousel-overlay'); const previous = el('button', 'cms-carousel-prev', '←'); const next = el('button', 'cms-carousel-next', '→');
     previous.type = next.type = 'button'; previous.setAttribute('aria-label', `Imagen anterior de ${title}`); next.setAttribute('aria-label', `Imagen siguiente de ${title}`);
-    function move(direction) { track.scrollBy({ left: (track.firstElementChild?.getBoundingClientRect().width || 320) * direction + 16 * direction, behavior: reduced ? 'instant' : 'smooth' }); }
+    const pause = el('button', 'cms-carousel-pause', reduced ? '▶' : 'Ⅱ'); pause.type = 'button';
+    const counter = el('span', 'cms-carousel-count', `1 / ${images.length}`);
+    let paused = reduced, hovering = false, touching = false, inView = false, lastInteraction = 0, scrollTimer, ready = false;
+    const step = () => (track.firstElementChild?.getBoundingClientRect().width || 320) + (parseFloat(getComputedStyle(track).columnGap) || 0);
+    function jump(left) { const behavior = track.style.scrollBehavior; track.style.scrollBehavior = 'auto'; track.scrollTo({ left, behavior: 'instant' }); track.style.scrollBehavior = behavior; }
+    function normalize() {
+      if (!cyclic || !ready) return;
+      const cycle = step() * images.length;
+      const start = cycle * 2;
+      if (track.scrollLeft < start - 2 || track.scrollLeft >= start + cycle - 2) jump(start + ((track.scrollLeft - start) % cycle + cycle) % cycle);
+      const index = ((Math.round(track.scrollLeft / step()) % images.length) + images.length) % images.length;
+      counter.textContent = `${index + 1} / ${images.length}`;
+    }
+    function move(direction) {
+      normalize();
+      track.scrollBy({ left: step() * direction, behavior: reduced ? 'instant' : 'smooth' });
+    }
     previous.addEventListener('click', () => move(-1)); next.addEventListener('click', () => move(1));
-    function sync() { previous.disabled = track.scrollLeft < 3; next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 3; }
-    track.addEventListener('scroll', sync, { passive: true });
+    function sync() { if (track.clientWidth > 0 && cyclic) { jump(step() * images.length * 2); ready = true; } }
+    function pauseLabel() { pause.textContent = paused ? '▶' : 'Ⅱ'; pause.setAttribute('aria-label', `${paused ? 'Reanudar' : 'Pausar'} galería de ${title}`); pause.setAttribute('aria-pressed', String(paused)); }
+    pauseLabel(); pause.addEventListener('click', () => { paused = !paused; pauseLabel(); });
+    track.addEventListener('scroll', () => { clearTimeout(scrollTimer); scrollTimer = setTimeout(normalize, 180); }, { passive: true });
+    outer.addEventListener('pointerenter', () => { hovering = true; }); outer.addEventListener('pointerleave', () => { hovering = false; });
+    outer.addEventListener('pointerdown', () => { lastInteraction = Date.now(); touching = true; });
+    const pointerUp = () => { touching = false; }; window.addEventListener('pointerup', pointerUp);
     track.addEventListener('cms:resize', sync);
     if (carouselSizes) carouselSizes.observe(track);
     track.addEventListener('keydown', (event) => { if (['ArrowLeft', 'ArrowRight'].includes(event.key)) { event.preventDefault(); move(event.key === 'ArrowLeft' ? -1 : 1); } });
-    controls.append(previous, el('span', '', `${images.length} ${images.length === 1 ? 'imagen' : 'imágenes'}`), next);
-    outer.append(track); if (!mini || images.length > 1) outer.append(controls);
+    controls.append(previous, next);
+    const status = el('div', 'cms-carousel-status'); status.append(counter, pause);
+    outer.append(track); if (cyclic) outer.append(controls, status);
+    let visibility;
+    if ('IntersectionObserver' in window) { visibility = new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; }, { threshold: .15 }); visibility.observe(outer); } else inView = true;
+    const timer = cyclic ? setInterval(() => {
+      if (!paused && inView && !hovering && !touching && !document.hidden && !outer.contains(document.activeElement) && !document.querySelector('.cms-lightbox[open]') && Date.now() - lastInteraction > 5000) move(1);
+    }, mini ? 4800 : 3800) : null;
+    carouselCleanups.add(() => { clearInterval(timer); clearTimeout(scrollTimer); visibility?.disconnect(); window.removeEventListener('pointerup', pointerUp); });
     requestAnimationFrame(sync);
     return outer;
+  }
+  function backgroundFor(record, parent) {
+    const source = record.imagen_fondo_url || parent?.imagen_fondo_url || imageFor(record);
+    document.body.style.setProperty('--cms-background-image', `url(${JSON.stringify(source)})`);
+  }
+  function recommendations(excludeIds = [], includeDestinationFallback = false) {
+    const candidates = promotions.filter((item) => !excludeIds.includes(item.id));
+    if (includeDestinationFallback && candidates.length < 3) candidates.push(...promotions.filter((item) => excludeIds.includes(item.id)));
+    // Se mezcla una vez por render; el refresco sin cambios conserva la selección y los carruseles.
+    for (let i = candidates.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [candidates[i], candidates[j]] = [candidates[j], candidates[i]]; }
+    if (!candidates.length) return document.createDocumentFragment();
+    const section = el('section', 'wrap cms-recommendations');
+    const heading = el('div', 'cms-section-heading'); heading.append(el('span', 'cms-eyebrow', 'Todavía queda mucho por vivir'), el('h2', '', 'Más experiencias para ti'), el('p', '', 'Una selección diferente para seguir descubriendo Ica.'));
+    const grid = el('div', 'cms-offer-grid cms-recommendation-grid'); candidates.slice(0, 4).forEach((offer) => grid.append(promotionCard(offer)));
+    section.append(heading, grid); return section;
   }
   function imagesFor(promotion) {
     return [...new Set([imageFor(promotion), ...(Array.isArray(promotion.galeria_urls) ? promotion.galeria_urls.filter((src) => /^https:\/\//i.test(src)) : [])])];
@@ -131,6 +179,7 @@
     if (!destination) return unavailable(main, 'Este destino no está disponible', 'Puede que haya cambiado su dirección o se haya retirado del catálogo.');
     const offers = promotions.filter((item) => item.destino_id === destination.id);
     document.title = `${destination.nombre} · IcaTurismo`;
+    backgroundFor(destination);
     const hero = el('section', 'cms-destination-hero wrap');
     const info = el('div', 'cms-destination-intro'); info.append(breadcrumb({ name: destination.nombre }), el('span', 'cms-eyebrow', 'Ica, desde otra perspectiva'), el('h1', '', destination.nombre), el('p', 'cms-lead', destination.descripcion || `Déjate sorprender por ${destination.nombre}. Elige tu próxima experiencia y vive un viaje a tu medida.`));
     info.append(anchor(`Explorar ${offers.length} ${offers.length === 1 ? 'experiencia' : 'experiencias'} ↓`, '#experiencias', 'cms-button cms-button--primary'));
@@ -138,7 +187,9 @@
     hero.append(reveal(info), reveal(media));
     const section = el('section', 'cms-experiences wrap'); section.id = 'experiencias'; const heading = el('div', 'cms-section-heading'); heading.append(el('span', 'cms-eyebrow', 'El viaje empieza aquí'), el('h2', '', 'Encuentra tu próxima historia'), el('p', '', 'Experiencias elegidas para que disfrutes cada momento.'));
     const grid = el('div', 'cms-offer-grid'); offers.forEach((offer) => grid.append(promotionCard(offer))); if (!offers.length) grid.append(el('p', 'cms-state', 'Pronto publicaremos nuevas experiencias en este destino.'));
-    section.append(heading, grid); main.replaceChildren(hero, section);
+    section.append(heading, grid);
+    const more = el('section', 'wrap cms-discover-heading'); more.append(el('h2', '', 'Sigue descubriendo'), el('p', '', 'Tu próximo recuerdo puede estar en otro rincón de Ica.'));
+    main.replaceChildren(hero, section, more, recommendations(offers.map((offer) => offer.id), true));
   }
   function renderPromotion(main) {
     const promotion = promotions.find((item) => item.slug === slug);
@@ -146,6 +197,7 @@
     const destination = destinations.find((item) => item.id === promotion.destino_id);
     const destinationLink = destination ? link('destino', destination.slug) : url('index.html#destinos');
     document.title = `${promotion.titulo} · IcaTurismo`;
+    backgroundFor(promotion, destination);
     const heading = el('div', 'wrap'); heading.append(breadcrumb({ name: destination?.nombre || 'Destinos', href: destinationLink }, { name: promotion.titulo }));
     const hero = el('section', 'cms-promotion-hero wrap'); const info = el('div', 'cms-promotion-info');
     info.append(el('span', 'cms-eyebrow', `${destination?.nombre || 'Ica'} · Una experiencia inolvidable`), el('h1', '', promotion.titulo), el('p', 'cms-lead', promotion.descripcion_corta || promotion.descripcion));
@@ -154,7 +206,7 @@
     if (Array.isArray(promotion.incluye) && promotion.incluye.length) { const box = el('div', 'cms-includes'); const list = el('ul'); promotion.incluye.forEach((item) => list.append(el('li', '', item))); box.append(el('h2', '', 'Tu experiencia incluye'), list); info.append(box); }
     const booking = el('div', 'cms-booking'); const price = el('div', 'cms-booking-price'); price.append(el('span', '', 'Desde'), el('strong', '', money(promotion.precio)), el('small', '', 'por persona'));
     const actions = el('div', 'cms-booking-actions'); actions.append(anchor('Solicitar reserva ↗', url(`html/compras.html?promocion=${encodeURIComponent(promotion.slug)}&accion=reserva`), 'cms-button cms-button--primary'), anchor('Comprar experiencia', url(`html/compras.html?promocion=${encodeURIComponent(promotion.slug)}&accion=compra`), 'cms-button cms-button--outline'));
-    booking.append(price, actions, el('small', 'cms-booking-note', 'Elige fecha y viajeros en el siguiente paso. El pago se coordina al registrar tu solicitud.')); info.append(booking);
+    booking.append(price, actions, el('small', 'cms-booking-note', 'Elige fecha y viajeros en el siguiente paso. Podrás reservar y probar un pago simulado, sin cobros reales.')); info.append(booking);
     const media = el('div', 'cms-promotion-cover'); media.append(photo(imageFor(promotion), promotion.titulo, true)); const tag = el('div', 'cms-image-caption'); tag.append(el('span', '', 'Vive el momento'), el('small', '', promotion.ubicacion || destination?.nombre || 'Ica, Perú')); media.append(tag);
     hero.append(reveal(info), reveal(media));
     const gallerySection = el('section', 'cms-gallery-section'); const galleryTitle = el('div', 'wrap cms-section-heading'); galleryTitle.append(el('span', 'cms-eyebrow', 'Un vistazo a lo que te espera'), el('h2', '', 'Imagina estar aquí'), el('p', '', 'Desliza, explora y guarda el recuerdo.'));
@@ -162,7 +214,7 @@
     const extras = el('section', 'wrap cms-promotion-extras');
     if (promotion.itinerario) { const itinerary = el('div', 'cms-itinerary'); itinerary.append(el('span', 'cms-eyebrow', 'Cada momento cuenta'), el('h2', '', 'Así será tu experiencia'), el('p', '', promotion.itinerario)); extras.append(reveal(itinerary)); }
     const back = el('div', 'cms-more'); back.append(el('h2', '', 'Sigue descubriendo'), el('p', '', `Hay más historias esperándote en ${destination?.nombre || 'Ica'}.`), anchor('Ver todas las experiencias →', destinationLink, 'cms-button cms-button--outline')); extras.append(back);
-    main.replaceChildren(heading, hero, gallerySection, extras);
+    main.replaceChildren(heading, hero, gallerySection, extras, recommendations([promotion.id]));
   }
   function unavailable(main, title, description) {
     const box = el('section', 'wrap cms-unavailable'); box.append(el('span', 'cms-eyebrow', 'Sigamos explorando'), el('h1', '', title), el('p', '', description), anchor('Descubrir destinos', url('index.html#destinos'), 'cms-button cms-button--primary')); main.replaceChildren(box); document.title = `${title} · IcaTurismo`;
@@ -192,7 +244,7 @@
       destinations = places.destinos; promotions = offers.promotions;
       const nextDestinations = JSON.stringify(destinations); const next = JSON.stringify([destinations, promotions]);
       if (nextDestinations !== destinationSignature) { renderNavigation(); renderHome(); destinationSignature = nextDestinations; }
-      if (next !== signature) { const main = document.querySelector('[data-cms-page]'); if (main) { carouselSizes?.disconnect(); if (main.dataset.cmsPage === 'destino') renderDestination(main); else renderPromotion(main); main.removeAttribute('aria-busy'); } signature = next; }
+      if (next !== signature) { const main = document.querySelector('[data-cms-page]'); if (main) { carouselSizes?.disconnect(); carouselCleanups.forEach((cleanup) => cleanup()); carouselCleanups.clear(); if (main.dataset.cmsPage === 'destino') renderDestination(main); else renderPromotion(main); main.removeAttribute('aria-busy'); } signature = next; }
       loaded = true;
     } catch (error) { showError(error); }
     finally { loading = false; }

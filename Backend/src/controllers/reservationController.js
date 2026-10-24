@@ -10,7 +10,8 @@ async function createReservation(req, res) {
     && !Number.isNaN(Date.parse(`${fechaTour}T00:00:00Z`))
     && new Date(`${fechaTour}T00:00:00Z`).toISOString().slice(0, 10) === fechaTour;
 
-  if (!fechaValida || fechaTour < new Date().toISOString().slice(0, 10)) {
+  const hoy = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  if (!fechaValida || fechaTour < hoy) {
     return res.status(400).json({ ok: false, message: 'Selecciona una fecha válida a partir de hoy.' });
   }
   if (!Number.isInteger(asistentes) || asistentes < 1 || asistentes > 15) {
@@ -55,7 +56,7 @@ async function createReservation(req, res) {
          (usuario_id, nombre, email, fecha_tour, asistentes, metodo_pago, promocion_id,
           promocion_nombre, precio_unitario, total, estado_pago)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pendiente')
-       RETURNING id, fecha_tour, asistentes, metodo_pago, estado, promocion_nombre,
+       RETURNING id, promocion_id, fecha_tour, asistentes, metodo_pago, estado, promocion_nombre,
                  precio_unitario, total, estado_pago, created_at`,
       [user.id, user.nombre, user.email, fechaTour, asistentes, metodoPago, promotion.id,
         promotion.nombre, unitPrice, total]

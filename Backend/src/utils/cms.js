@@ -31,7 +31,8 @@ function imageUrl(value, field) {
 function destination(body) {
   const nombre = text(body.nombre, 'nombre', 180);
   return { nombre, slug: slug(body.slug, nombre), imagen_url: imageUrl(body.imagen_url, 'imagen_url'),
-    descripcion: text(body.descripcion ?? '', 'descripcion', 2000, false) };
+    descripcion: text(body.descripcion ?? '', 'descripcion', 2000, false),
+    imagen_fondo_url: body.imagen_fondo_url ? imageUrl(body.imagen_fondo_url, 'imagen_fondo_url') : '' };
 }
 function promotion(body) {
   const titulo = text(body.titulo, 'titulo', 180);
@@ -55,6 +56,7 @@ function promotion(body) {
     ubicacion: text(body.ubicacion ?? '', 'ubicacion', 180, false),
     incluye: includes.map((item) => text(item, 'incluye', 250)),
     itinerario: text(body.itinerario ?? '', 'itinerario', 10000, false),
+    imagen_fondo_url: body.imagen_fondo_url ? imageUrl(body.imagen_fondo_url, 'imagen_fondo_url') : '',
   };
 }
 function handleError(res, error) {

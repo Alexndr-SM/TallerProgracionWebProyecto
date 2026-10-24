@@ -15,10 +15,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,500&family=Inter:wght@300;400;500&display=swap">
     <!-- Estilos de la página principal -->
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/checkout.css">
     <!-- Favicon -->
     <link rel="icon" href="../assets/UTP.webp" type="image/webp">
 </head>
-<body>
+<body class="checkout-body">
 <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
 <!-- ========== ENCABEZADO / NAV ========== -->
@@ -73,69 +74,50 @@
         </div>
     </div>
 </header>
-    <main id="contenido" class="reserva-layout">
-        <section class="formulario-contenedor" aria-labelledby="reserva-titulo">
-        <h1 id="reserva-titulo">Completa tu reserva</h1>
-        <p class="reserva-acceso" id="reserva-acceso" role="status" hidden>
-            Inicia sesión con una cuenta registrada para reservar.
-            <a href="login.html">Iniciar sesión</a> o <a href="registro.html">crear una cuenta</a>.
-        </p>
-        <form id="form-reserva" action="#" method="POST">
-      
-      <div class="grupo-input">
-        <label for="nombre">Nombre completo</label>
-        <input type="text" id="nombre" name="nombre" required placeholder="Ej. Juan Pérez">
+    <main id="contenido" class="checkout-page">
+      <div class="wrap checkout-heading">
+        <span class="checkout-eyebrow">Tu próxima historia empieza aquí</span><h1 id="reserva-titulo">Prepara tu próxima escapada</h1>
+        <p>Elige la experiencia, revisa tu viaje y gestiona tu reserva desde un solo lugar.</p>
+        <span class="checkout-demo">◈ Modo demostración · Pagos ficticios, sin cobros reales</span>
+        <ol class="checkout-steps" aria-label="Pasos de tu reserva"><li aria-current="step"><span>01</span> Tu viaje</li><li><span>02</span> Reserva</li><li><span>03</span> Pago</li></ol>
       </div>
-
-      <div class="grupo-input">
-        <label for="email">Correo electrónico</label>
-        <input type="email" id="email" name="email" required placeholder="correo@ejemplo.com">
-      </div>
-
-      <div class="grupo-input">
-        <label for="fecha">Fecha del tour</label>
-        <input type="date" id="fecha" name="fecha" required>
-      </div>
-
-      <div class="grupo-input">
-        <label for="promocion">Promoción</label>
-        <select id="promocion" name="promocion" required disabled>
-          <option value="">Cargando promociones...</option>
-        </select>
-      </div>
-
-      <div class="grupo-input">
-        <label for="personas">Número de asistentes</label>
-        <input type="number" id="personas" name="personas" min="1" max="15" required value="1">
-      </div>
-
-      <p class="reserva-total" id="reserva-total" aria-live="polite">Selecciona una promoción para ver el total.</p>
-
-      <div class="grupo-input">
-        <label for="pago">Método de pago</label>
-        <select id="pago" name="pago" required>
-          <option value="" disabled selected>Selecciona una opción</option>
-          <option value="tarjeta">Tarjeta de Crédito / Débito</option>
-          <option value="paypal">PayPal</option>
-          <option value="yape">Yape / Plin</option>
-        </select>
-      </div>
-
-    <button type="submit" class="btn-pagar">Continuar al pago</button>
-      
-    </form>
+      <div class="wrap checkout-grid">
+        <section class="checkout-card checkout-form" aria-labelledby="datos-titulo">
+          <div class="checkout-section-title"><span class="checkout-eyebrow">Diseña tu experiencia</span><h2 id="datos-titulo">Los detalles de tu viaje</h2></div>
+          <p class="checkout-notice" id="reserva-acceso" role="status" hidden>Inicia sesión para reservar y consultar tus viajes. <a href="login.html">Iniciar sesión</a> o <a href="registro.html">crear una cuenta</a>.</p>
+          <form id="form-reserva">
+            <fieldset id="reserva-campos">
+              <legend class="checkout-sr-only">Información de la reserva</legend>
+              <div class="checkout-fields"><label>Nombre completo<input type="text" id="nombre" name="nombre" autocomplete="name" readonly required></label><label>Correo electrónico<input type="email" id="email" name="email" autocomplete="email" readonly required></label></div>
+              <label for="promocion">Experiencia</label><select id="promocion" name="promocion" required disabled><option value="">Cargando experiencias…</option></select>
+              <div class="checkout-fields"><label>Fecha del tour<input type="date" id="fecha" name="fecha" required></label><label>Viajeros<input type="number" id="personas" name="personas" min="1" max="15" required value="1"><small>De 1 a 15 personas.</small></label></div>
+              <label for="pago">Método de pago</label><select id="pago" name="pago" required><option value="" disabled selected>Selecciona una opción</option><option value="tarjeta">Tarjeta de crédito / débito</option><option value="paypal">PayPal</option><option value="yape">Yape / Plin</option></select>
+              <p class="checkout-help">Puedes guardar la reserva y completar la confirmación de tu pago después.</p>
+              <button type="submit" class="checkout-button checkout-button--primary" id="confirmar-reserva">Guardar mi reserva <span aria-hidden="true">↗</span></button>
+            </fieldset>
+          </form>
+          <div class="checkout-saved" id="reserva-guardada" hidden>
+            <span class="checkout-eyebrow">Tu experiencia está registrada</span><h3 id="reserva-numero"></h3><p id="reserva-estado"></p>
+            <div class="checkout-action-row"><button type="button" class="checkout-button checkout-button--primary" id="completar-pago">Simular pago</button><button type="button" class="checkout-button checkout-button--danger" id="cancelar-reserva">Cancelar reserva</button></div>
+            <p class="checkout-help" id="pago-aviso">El pago es ficticio: permite probar la experiencia completa y actualizar el estado de tu reserva. No se solicitan datos bancarios ni se realizan cargos.</p>
+            <button type="button" class="checkout-button checkout-button--quiet" id="nueva-reserva">Preparar otro viaje →</button>
+          </div>
+          <p id="reserva-mensaje" class="checkout-notice" role="status" aria-live="polite" hidden></p>
         </section>
-        <section class="panel-pago" id="panel-pago" aria-live="polite" aria-label="Método de pago" hidden>
-            <div class="pago-metodo">
-                <p class="pago-etiqueta">Resumen de reserva</p>
-                <h2 id="resumen-promocion"></h2>
-                <p id="resumen-total"></p>
-                <p class="pago-descripcion">El método seleccionado se guardará en la reserva, pero el pago quedará pendiente. Esta página aún no procesa cobros ni solicita datos de tarjeta.</p>
-            </div>
-            <p id="reserva-mensaje" class="reserva-mensaje" role="status" aria-live="polite" hidden></p>
-            <button type="button" class="btn-pagar" id="confirmar-reserva">Confirmar reserva</button>
-            <button type="button" class="btn-volver" id="volver-reserva">Volver a los datos</button>
-        </section>
+        <aside class="checkout-card checkout-summary" aria-labelledby="resumen-titulo">
+          <div class="checkout-preview"><img id="resumen-imagen" src="../assets/imagendunas.jpg" alt="Paisaje de Ica"><span id="resumen-destino">Ica, Perú</span></div>
+          <div class="checkout-summary-body"><span class="checkout-eyebrow">Un viaje que vas a recordar</span><h2 id="resumen-titulo">Tu escapada, de un vistazo</h2><h3 id="resumen-promocion">Elige tu experiencia</h3>
+            <dl class="checkout-breakdown"><div><dt>Fecha</dt><dd id="resumen-fecha">Por elegir</dd></div><div><dt>Viajeros</dt><dd id="resumen-personas">1 persona</dd></div><div><dt>Precio por persona</dt><dd id="resumen-unitario">—</dd></div><div><dt>Método de pago</dt><dd id="resumen-metodo">Por elegir</dd></div></dl>
+            <div class="checkout-total"><span>Total de tu viaje</span><strong id="resumen-total">—</strong></div><p class="checkout-help" id="reserva-total" aria-live="polite">Selecciona una experiencia para calcular el total.</p><a class="checkout-experience-link" id="ver-experiencia" href="../index.html#destinos">Explorar experiencias ↗</a>
+          </div>
+        </aside>
+      </div>
+      <section class="wrap checkout-history" id="mis-reservas" hidden>
+        <div class="checkout-history-heading"><div><span class="checkout-eyebrow">Todo listo, a tu ritmo</span><h2>Tus reservas recientes</h2><p>Retoma una reserva pendiente o consulta su estado.</p></div><button type="button" class="checkout-button checkout-button--quiet" id="actualizar-reservas">Actualizar ↻</button></div><div id="lista-reservas" class="checkout-reservations"></div>
+      </section>
+      <dialog id="checkout-confirmacion" class="checkout-dialog" aria-labelledby="confirmacion-titulo">
+        <form method="dialog"><span class="checkout-eyebrow">Revisa antes de continuar</span><h2 id="confirmacion-titulo"></h2><p id="confirmacion-texto"></p><div class="checkout-action-row"><button class="checkout-button checkout-button--quiet" value="cancelar" autofocus>Volver</button><button class="checkout-button checkout-button--primary" value="confirmar" id="confirmacion-aceptar">Confirmar</button></div></form>
+      </dialog>
     </main>
 <!-- ========== PIE DE PÁGINA ========== -->
 <footer>

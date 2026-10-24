@@ -26,7 +26,19 @@ Los enlaces antiguos del menú y del pie apuntan al catálogo dinámico. Las tar
 
 ## Reservas y compra
 
-Ambas acciones seleccionan la promoción en el formulario existente de `compras.html`. **Comprar experiencia** utiliza el modo de solicitud de compra. El sistema registra la reserva con pago pendiente; no se añadió una pasarela ni se procesa un cargo bancario. Para cobrar en línea se requiere integrar un proveedor de pagos en una tarea aparte.
+Ambas acciones seleccionan la promoción en `compras.html`. El carrito muestra fotografía, fecha, viajeros, método elegido y total; el servidor vuelve a calcular el precio al guardar. Las reservas recientes se consultan desde la API y permiten retomar una reserva, **Simular pago** o **Cancelar reserva** sin salir de la página. La última reserva consultada se recuerda por usuario en la pestaña y se vuelve a consultar al recargar.
+
+**Todos los pagos son ficticios.** Se reutiliza el endpoint de demostración `PATCH /api/perfil/reservas/:id/confirmar-pago`, que cambia los estados a `confirmada` / `pagado` y responde `simulado: true`. No hay pasarela, cobros ni captura de datos de tarjeta. Cancelar una reserva pendiente utiliza el endpoint existente del perfil, conserva el historial y revierte los puntos según las reglas existentes. Una reserva pagada no se puede cancelar desde este carrito; el flujo de reembolso del perfil sigue disponible. Las fechas del formulario y la validación del backend utilizan `America/Lima`.
+
+## Fondos, paleta y carruseles
+
+En **Destinos → Editar** y **Promociones → Editar** aparece **Imagen de fondo de la página (opcional)**. Se puede subir con Cloudinary, previsualizarla, cambiarla, quitarla o pegar una URL HTTPS. Es independiente de la portada, la imagen principal y la galería. Una promoción sin fondo propio hereda el del destino; si tampoco existe, se utiliza su imagen principal. Un destino sin fondo propio utiliza su portada.
+
+Las plantillas comparten con Inicio los tokens de `style.css`: texto, velos, cristal, menú, encabezado, pie y sus variantes claro/oscuro. El encabezado conserva su degradado transparente y `backdrop-filter: blur(10px)`. No se crean paletas independientes para el CMS.
+
+Las galerías y mini carruseles son automáticos y circulares. Las flechas están superpuestas a los extremos, fuera de la máscara de degradado. Hay contador, pausa/reanudación, teclado, desplazamiento táctil y ampliación de imágenes. La reproducción se detiene al pasar el puntero, mantener el foco, interactuar por tacto, abrir la imagen ampliada, ocultar la pestaña o salir del área visible. Con movimiento reducido comienza pausada. Las copias visuales del bucle quedan fuera de la navegación de teclado y del árbol accesible.
+
+Después de **Sigue descubriendo** se muestran hasta cuatro promociones aleatorias publicadas, sin repetir la promoción actual. En los destinos se priorizan las promociones de otros destinos. Si hay menos contenido disponible, se muestra únicamente el existente.
 
 ## Despliegue
 
@@ -38,7 +50,7 @@ npm run db:migrate
 npm start
 ```
 
-La migración nueva `src/database/migrations/002_cms_contenido.sql` agrega `destinos.descripcion`, `promociones.ubicacion`, `promociones.incluye` e `itinerario`. La API también ejecuta migraciones pendientes al arrancar. No se vuelve a modificar la migración 001 ya aplicada.
+La migración `002_cms_contenido.sql` agrega las descripciones y el contenido editorial. La nueva `003_cms_fondos.sql` agrega `imagen_fondo_url` a destinos y promociones sin cambiar los datos existentes. La API también ejecuta migraciones pendientes al arrancar. No se vuelven a modificar las migraciones ya aplicadas.
 
 Frontend: conserva la compilación aislada de React en Render:
 
