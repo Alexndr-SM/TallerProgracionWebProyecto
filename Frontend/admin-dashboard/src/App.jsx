@@ -284,7 +284,11 @@ function OrderList({ items, compact = false }) {
 
 function ProductsPage({ products, reservations, onAdd, onEdit, onToggle }) {
   const [query, setQuery] = useState('')
-  const filtered = products.filter((product) => `${product.name} ${product.category} ${product.id}`.toLowerCase().includes(query.toLowerCase()))
+  const [availability, setAvailability] = useState('todos')
+  const filtered = products.filter((product) => {
+    const matchesQuery = `${product.name} ${product.category} ${product.id}`.toLowerCase().includes(query.trim().toLowerCase())
+    return matchesQuery && (availability === 'todos' || (availability === 'activos' ? product.active : !product.active))
+  })
   const reservationCount = (productId) => reservations.filter((reservation) => Number(reservation.promocion_id) === Number(productId)).length
   return <>
     <SectionHeading eyebrow="Catálogo" title="Productos y experiencias" description="Administra tus experiencias, precios y disponibilidad." action={<button className="button button--primary" onClick={() => onAdd()}><Plus size={16} /> Nuevo producto</button>} />
@@ -292,7 +296,7 @@ function ProductsPage({ products, reservations, onAdd, onEdit, onToggle }) {
       <div><span>Productos registrados</span><strong>{products.length}</strong></div><div><span>Productos activos</span><strong>{products.filter((product) => product.active).length}</strong></div><div><span>Reservas asociadas</span><strong>{reservations.length}</strong></div>
     </div>
     <section className="panel table-panel">
-      <div className="table-toolbar"><div><h2>Todos los productos</h2><span>{filtered.length} experiencias</span></div><label className="search-box"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar producto..." /></label></div>
+      <div className="table-toolbar"><div><h2>Experiencias y paquetes</h2><span>{filtered.length} de {products.length} experiencias</span></div><div className="table-filters"><label className="search-box"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar destino o paquete..." /></label><select className="select select--small" value={availability} onChange={(event) => setAvailability(event.target.value)} aria-label="Filtrar experiencias por disponibilidad"><option value="todos">Todos</option><option value="activos">Disponibles</option><option value="inactivos">No disponibles</option></select></div></div>
       <div className="table-scroll"><table><thead><tr><th>Experiencia</th><th>Categoría</th><th>Precio</th><th>Reservas</th><th>Estado</th><th /></tr></thead><tbody>
         {filtered.map((product) => <tr key={product.id}><td><div className="table-product"><span className="product-thumb product-thumb--sea"><Compass size={17} /></span><div><strong>{product.name}</strong><small>{product.description || `Producto #${product.id}`}</small></div></div></td><td>{product.category}</td><td className="table-strong">{money(product.price)}</td><td>{reservationCount(product.id)}</td><td><span className={`status ${product.active ? 'status--confirmado' : 'status--inactivo'}`}>{product.active ? 'Activo' : 'Inactivo'}</span></td><td><div className="row-actions"><button className="icon-button" onClick={() => onEdit(product)} aria-label={`Editar ${product.name}`}><Settings size={15} /></button><button className="icon-button" onClick={() => onToggle(product)} aria-label={`${product.active ? 'Desactivar' : 'Activar'} ${product.name}`} title={product.active ? 'Desactivar' : 'Activar'}>{product.active ? <X size={15} /> : <Check size={15} />}</button></div></td></tr>)}
       </tbody></table>{filtered.length === 0 && <p className="empty-state">{query ? 'No encontramos productos con esa búsqueda.' : 'Todavía no hay productos registrados.'}</p>}</div>
@@ -345,11 +349,20 @@ function CustomersPage({ customers, onNavigate, onStatusChange, onPointsChange, 
 
 function OrdersPage({ reservations }) {
   const [query, setQuery] = useState('')
-  const filtered = reservations.filter((reservation) => `${reservation.id} ${reservation.nombre} ${reservation.email} ${reservation.promocion_nombre || ''}`.toLowerCase().includes(query.toLowerCase()))
+  const [status, setStatus] = useState('todas')
+  const [departure, setDeparture] = useState('todas')
+  const today = new Date().toISOString().slice(0, 10)
+  const filtered = reservations.filter((reservation) => {
+    const searchable = `${reservation.id} ${reservation.nombre} ${reservation.email} ${reservation.promocion_nombre || ''}`.toLowerCase()
+    const tourDate = String(reservation.fecha_tour).slice(0, 10)
+    return searchable.includes(query.trim().toLowerCase())
+      && (status === 'todas' || reservation.estado === status)
+      && (departure === 'todas' || (departure === 'proximas' ? tourDate >= today : tourDate < today))
+  })
   return <>
     <SectionHeading eyebrow="Actividad" title="Reservas" description="Consulta las reservas registradas y su estado." action={<button className="button button--quiet" onClick={() => window.location.reload()}><Download size={16} /> Actualizar</button>} />
     <div className="catalog-summary"><div><span>Reservas registradas</span><strong>{reservations.length}</strong></div><div><span>Por atender</span><strong>{reservations.filter((reservation) => reservation.estado === 'pendiente').length}</strong></div><div><span>Ingresos pagados</span><strong>{money(reservations.filter((reservation) => reservation.estado_pago === 'pagado').reduce((sum, reservation) => sum + Number(reservation.total || 0), 0))}</strong></div></div>
-    <section className="panel table-panel"><div className="table-toolbar"><div><h2>Reservas recientes</h2><span>{filtered.length} registros</span></div><label className="search-box"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar reserva o cliente..." /></label></div><div className="table-scroll"><table><thead><tr><th>Reserva</th><th>Cliente</th><th>Experiencia</th><th>Fecha del tour</th><th>Total</th><th>Estado</th><th>Pago</th></tr></thead><tbody>{filtered.map((reservation) => <tr key={reservation.id}><td className="table-strong">#{reservation.id}</td><td><div className="table-person"><strong>{reservation.nombre}</strong><small>{reservation.email}</small></div></td><td>{reservation.promocion_nombre || 'Reserva de tour'}</td><td>{new Date(`${String(reservation.fecha_tour).slice(0, 10)}T00:00:00`).toLocaleDateString('es-PE')}</td><td className="table-strong">{money(reservation.total)}</td><td><span className={`status status--${reservation.estado}`}>{reservation.estado}</span></td><td><span className={`status status--${reservation.estado_pago}`}>{reservation.estado_pago}</span></td></tr>)}</tbody></table>{filtered.length === 0 && <p className="empty-state">No hay reservas que coincidan.</p>}</div></section>
+    <section className="panel table-panel"><div className="table-toolbar"><div><h2>Reservas de viajeros</h2><span>{filtered.length} de {reservations.length} registros</span></div><div className="table-filters"><label className="search-box"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar cliente, tour o código..." /></label><select className="select select--small" value={status} onChange={(event) => setStatus(event.target.value)} aria-label="Filtrar reservas por estado"><option value="todas">Todos los estados</option><option value="pendiente">Pendientes</option><option value="confirmada">Confirmadas</option><option value="cancelada">Canceladas</option></select><select className="select select--small" value={departure} onChange={(event) => setDeparture(event.target.value)} aria-label="Filtrar por fecha de salida"><option value="todas">Todas las salidas</option><option value="proximas">Próximas salidas</option><option value="pasadas">Salidas pasadas</option></select></div></div><div className="table-scroll"><table><thead><tr><th>Reserva</th><th>Cliente</th><th>Experiencia</th><th>Fecha del tour</th><th>Total</th><th>Estado</th><th>Pago</th></tr></thead><tbody>{filtered.map((reservation) => <tr key={reservation.id}><td className="table-strong">#{reservation.id}</td><td><div className="table-person"><strong>{reservation.nombre}</strong><small>{reservation.email}</small></div></td><td>{reservation.promocion_nombre || 'Reserva de tour'}</td><td>{new Date(`${String(reservation.fecha_tour).slice(0, 10)}T00:00:00`).toLocaleDateString('es-PE')}</td><td className="table-strong">{money(reservation.total)}</td><td><span className={`status status--${reservation.estado}`}>{reservation.estado}</span></td><td><span className={`status status--${reservation.estado_pago}`}>{reservation.estado_pago}</span></td></tr>)}</tbody></table>{filtered.length === 0 && <p className="empty-state">No hay reservas que coincidan con estos filtros.</p>}</div></section>
   </>
 }
 

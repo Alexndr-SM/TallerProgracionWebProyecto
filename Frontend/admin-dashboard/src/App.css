@@ -228,6 +228,10 @@
 .local-reservation-form { margin-bottom: 16px; padding: 18px; }
 .local-reservation-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 12px; margin-top: 12px; }
 .table-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 17px 18px; border-bottom: 1px solid var(--admin-border); }
+.table-filters { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+.table-filters .search-box { width: min(245px, 34vw); }
+.table-filters .select { min-height: 33px; padding: 0 26px 0 9px; border: 1px solid var(--admin-border); border-radius: 7px; background: var(--admin-panel); color: var(--admin-text); font-size: 10px; cursor: pointer; transition: border-color .18s ease, background .18s ease; }
+.table-filters .select:hover { border-color: var(--admin-accent); }
 .table-toolbar > div > span { display: block; margin-top: 4px; color: var(--admin-muted); font-size: 9px; }
 .search-box { display: flex; width: min(235px, 43%); height: 33px; align-items: center; gap: 7px; padding: 0 9px; border: 1px solid var(--admin-border); border-radius: 7px; color: var(--admin-muted); }
 .search-box input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--admin-text); font-size: 10px; }
@@ -335,6 +339,7 @@
   .dashboard-footer { gap: 8px; font-size: 8px; }.dashboard-footer > span:first-child { max-width: 170px; }
   .catalog-summary { gap: 7px; }.catalog-summary > div { gap: 6px; padding: 12px 10px; }.catalog-summary > div > span { font-size: 8px; }.catalog-summary strong { font-size: 17px; }
   .table-toolbar { align-items: flex-start; flex-direction: column; padding: 14px; }.search-box { width: 100%; }.table-scroll table { min-width: 660px; }.table-scroll th { padding-inline: 10px; }.table-scroll td { padding-inline: 10px; }
+  .table-filters { width: 100%; align-items: stretch; }.table-filters .search-box { width: 100%; }.table-filters .select { flex: 1; min-width: 0; }
   .points-hero { min-height: unset; flex-direction: column; gap: 26px; padding: 24px 19px; }.points-card { width: min(100%, 260px); align-self: center; transform: rotate(2deg); }.points-steps { gap: 9px 13px; }.points-steps span { font-size: 8px; }
   .coming-note { align-items: flex-start; flex-wrap: wrap; }.coming-note > div { min-width: calc(100% - 42px); }.coming-note .text-link { margin-left: 29px; }
   .form-grid { grid-template-columns: 1fr; gap: 0; }.modal { padding: 18px; }.modal-actions .button { flex: 1; }
