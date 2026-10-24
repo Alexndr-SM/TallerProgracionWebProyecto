@@ -19,6 +19,9 @@ const reservationRoutes = require('./routes/reservation.routes');
 const adminRoutes = require('./routes/admin.routes');
 const promotionRoutes = require('./routes/promotion.routes');
 const perfilRoutes = require('./routes/perfil.routes');
+const destinationRoutes = require('./routes/destination.routes');
+const uploadRoutes = require('./routes/upload.routes');
+const { migrate } = require('./database/migrate');
 const { pool } = require('./config/database');
 
 const app = express();
@@ -57,6 +60,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/comentarios', commentRoutes);
 app.use('/api/reservas', reservationRoutes);
 app.use('/api/promociones', promotionRoutes);
+app.use('/api/destinos', destinationRoutes);
+app.use('/api/uploads', uploadRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/perfil', perfilRoutes);
 
@@ -190,6 +195,7 @@ async function start() {
   }
   try {
     await ensureTable();
+    await migrate(pool);
   } catch (err) {
     console.error('No se pudo preparar la BD:', err.message);
     process.exit(1);

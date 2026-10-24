@@ -5,6 +5,7 @@
  */
 require('dotenv').config();
 const { pool } = require('../config/database');
+const { migrate } = require('./migrate');
 
 const SQL = `
 CREATE TABLE IF NOT EXISTS usuarios (
@@ -86,6 +87,7 @@ CREATE INDEX IF NOT EXISTS idx_reservas_promocion_id ON reservas (promocion_id);
 async function init() {
   try {
     await pool.query(SQL);
+    await migrate(pool);
     console.log('Tablas "usuarios", "reservas" y "comentarios" listas.');
   } catch (err) {
     console.error('Error creando tabla:', err.message);
