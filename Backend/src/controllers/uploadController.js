@@ -1,4 +1,5 @@
 const { cloudinary, configureCloudinary } = require('../config/cloudinary');
+const { invalidateMediaCache } = require('../services/mediaLibrary');
 
 function validSignature(file) {
   const buffer = file.buffer;
@@ -29,6 +30,7 @@ async function uploadImages(req, res) {
   try {
     // Secuencial para limitar solicitudes simultáneas y preservar el orden.
     for (const file of req.files) uploaded.push(await uploadBuffer(file.buffer));
+    invalidateMediaCache();
     return res.status(201).json({ ok: true, urls: uploaded.map((item) => item.secure_url) });
   } catch (error) {
     console.error('CMS upload:', error.message);

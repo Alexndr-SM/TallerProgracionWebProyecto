@@ -1,20 +1,8 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, Check, ExternalLink, ImagePlus, MapPin, Pencil, Plus, RefreshCw, Search, Trash2, X } from 'lucide-react'
 import './CmsPanel.css'
-
-export async function cmsRequest(path, options = {}) {
-  const form = options.body instanceof FormData
-  const response = await fetch(`${(window.API_URL || '').replace(/\/$/, '')}/api${path}`, {
-    ...options, cache: 'no-store',
-    headers: { ...(!form && options.body ? { 'Content-Type': 'application/json' } : {}),
-      Authorization: `Bearer ${window.Auth?.getToken() || ''}`, ...options.headers },
-    body: options.body === undefined ? undefined : form ? options.body : JSON.stringify(options.body),
-  })
-  if (response.status === 204) return null
-  const data = await response.json().catch(() => ({}))
-  if (!response.ok || !data.ok) throw new Error(data.message || 'No se pudo completar la operación. Vuelve a intentarlo.')
-  return data
-}
+import { cmsRequest } from './cmsApi.js'
+import { MediaBrowser } from './MediaLibrary.jsx'
 
 function notifyPublic() {
   try { localStorage.setItem('icat_catalog_updated', String(Date.now())) } catch { /* Sin almacenamiento: la API sigue siendo la fuente de datos. */ }
@@ -29,6 +17,8 @@ function ImagePicker({ label, urls, multiple = false, required = true, onChange,
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [previews, setPreviews] = useState([])
+  const [libraryOpen, setLibraryOpen] = useState(false)
+  const [selected, setSelected] = useState([])
   const controller = useRef(null)
   const inputId = useId()
   useEffect(() => () => controller.current?.abort(), [])
@@ -52,7 +42,7 @@ function ImagePicker({ label, urls, multiple = false, required = true, onChange,
       files.forEach((file) => form.append('imagenes', file))
       const result = await cmsRequest('/uploads', { method: 'POST', body: form, signal: controller.current.signal })
       if (!Array.isArray(result.urls) || result.urls.length !== files.length) throw new Error('La subida no devolvió todas las imágenes.')
-      onChange(multiple ? [...urls, ...result.urls] : result.urls)
+      onChange(multiple ? [...new Set([...urls, ...result.urls])] : result.urls)
     } catch (failure) { if (failure.name !== 'AbortError') setError(failure.message) }
     finally { setBusy(false); onBusy(false); setPreviews([]) }
   }
@@ -76,6 +66,8 @@ function ImagePicker({ label, urls, multiple = false, required = true, onChange,
       {(multiple ? urls.length < 10 : !urls.length) && <label className="cms-upload" htmlFor={inputId}><ImagePlus size={24} /><strong>{busy ? 'Subiendo…' : 'Subir imágenes'}</strong><span>JPEG, PNG, WebP · 5 MB</span></label>}
     </div>
     <input id={inputId} className="cms-file-input" type="file" accept="image/jpeg,image/png,image/webp" multiple={multiple} onChange={upload} disabled={busy} aria-label={label} />
+    <div className="media-picker-actions"><button type="button" className="button button--quiet" disabled={busy} onClick={() => { setSelected([...urls]); setLibraryOpen((value) => !value) }}><ImagePlus size={15} />{libraryOpen ? 'Cerrar biblioteca' : 'Elegir de la biblioteca'}</button></div>
+    {libraryOpen && <div><p className="media-picker-heading">{multiple ? 'Selecciona hasta 10 imágenes para tu galería.' : 'Selecciona una imagen para este campo. Se reemplazará la imagen actual.'}</p><MediaBrowser embedded selectedUrls={selected} onSelectionChange={setSelected} multiple={multiple} /><div className="media-picker-footer"><button type="button" className="button button--primary" disabled={!selected.length} onClick={() => { onChange([...new Set(selected)]); setLibraryOpen(false) }}><Check size={14} />{multiple ? `Usar selección (${selected.length}/10)` : 'Usar imagen seleccionada'}</button><button type="button" className="button button--quiet" onClick={() => setLibraryOpen(false)}>Cerrar</button></div></div>}
     {!multiple && <label className="field-label cms-image-url">O utiliza una URL HTTPS<input type="url" placeholder="https://…" required={required} pattern="https://.*" value={urls[0] || ''} onChange={(event) => onChange(event.target.value ? [event.target.value] : [])} /></label>}
     {multiple && <p className="cms-help">{urls.length}/10 imágenes. Cambia el orden con las flechas; así aparecerán en la galería pública.</p>}
     {error && <p className="form-error" role="alert">{error}</p>}
@@ -202,3 +194,4 @@ export default function CmsPanel({ kind, onCatalogChange }) {
     {modal && <ContentForm key={`${kind}-${modal.record?.id || 'new'}`} kind={kind} record={modal.record} destinations={destinations} onClose={() => setModal(null)} onSaved={saved} />}
   </section>
 }
+

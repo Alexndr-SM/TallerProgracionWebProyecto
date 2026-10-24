@@ -30,6 +30,20 @@ Ambas acciones seleccionan la promoción en `compras.html`. El carrito muestra f
 
 **Todos los pagos son ficticios.** Se reutiliza el endpoint de demostración `PATCH /api/perfil/reservas/:id/confirmar-pago`, que cambia los estados a `confirmada` / `pagado` y responde `simulado: true`. No hay pasarela, cobros ni captura de datos de tarjeta. Cancelar una reserva pendiente utiliza el endpoint existente del perfil, conserva el historial y revierte los puntos según las reglas existentes. Una reserva pagada no se puede cancelar desde este carrito; el flujo de reembolso del perfil sigue disponible. Las fechas del formulario y la validación del backend utilizan `America/Lima`.
 
+## Biblioteca multimedia
+
+En **Principal → Biblioteca multimedia**, debajo de Promociones, el equipo puede consultar el material gráfico público de Cloudinary, abrir una vista previa, copiar su dirección y subir imágenes nuevas. Está disponible únicamente para `admin` y `editor`.
+
+El endpoint protegido **GET /api/admin/medios?cursor=…** consulta bloques de 24 recursos. No descarga toda la biblioteca: el siguiente bloque se solicita al llegar al final de la lista, con un botón «Cargar más imágenes» como alternativa. Las miniaturas se entregan a 420 × 280 con calidad/formato automáticos y `loading="lazy"`. La búsqueda actúa únicamente sobre las imágenes ya cargadas, para evitar barrer toda la cuenta con cada búsqueda.
+
+En los campos **Portada del destino**, **Imagen principal**, **Galería de la promoción** e **Imagen de fondo** aparece **Elegir de la biblioteca**. Selecciona una imagen para portada/fondo, o hasta diez para la galería, y pulsa **Usar imagen seleccionada / Usar selección**. Se guardan las URLs existentes, conservando la posibilidad de reordenar y quitar imágenes; no se sube otra copia. También puedes seguir subiendo material nuevo desde esos campos.
+
+Privacidad: se excluyen recursos privados/autenticados, archivos con control de acceso, carpetas de perfiles/clientes (incluido `asset_folder` en cuentas con carpetas dinámicas) e imágenes cuyo ID o URL esté asociado a cualquier usuario en PostgreSQL. El filtro se aplica en el servidor y vuelve a consultar las asociaciones en cada solicitud, aunque exista una página de Cloudinary en caché. Si no se puede comprobar la privacidad, no se entrega la lista. El CRUD de destinos y promociones también rechaza URLs de perfiles, incluidas variantes transformadas, aunque se envíen manualmente. La biblioteca no devuelve cuentas, fotos ni metadatos privados de clientes.
+
+Las páginas brutas de Cloudinary se mantienen hasta 30 segundos en una caché acotada del servidor para reducir solicitudes simultáneas; una subida correcta invalida esa caché. No se borra ni mueve material existente, ni se cambia su visibilidad en Cloudinary. Esta función no requiere migraciones ni nuevas credenciales: usa la configuración Cloudinary ya existente del backend y su Admin API. Si esa API no está configurada, autorizada o alcanza su cuota, la interfaz muestra un error recuperable.
+
+Referencias de implementación: [paginación de Admin API](https://cloudinary.com/documentation/admin_api#get_resources) y [optimización de imágenes](https://cloudinary.com/documentation/image_optimization).
+
 ## Fondos, paleta y carruseles
 
 En **Destinos → Editar** y **Promociones → Editar** aparece **Imagen de fondo de la página (opcional)**. Se puede subir con Cloudinary, previsualizarla, cambiarla, quitarla o pegar una URL HTTPS. Es independiente de la portada, la imagen principal y la galería. Una promoción sin fondo propio hereda el del destino; si tampoco existe, se utiliza su imagen principal. Un destino sin fondo propio utiliza su portada.
