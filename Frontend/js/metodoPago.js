@@ -9,6 +9,11 @@ const mensajeReserva = document.getElementById('reserva-mensaje');
 const botonConfirmar = document.getElementById('confirmar-reserva');
 const precioTotal = document.getElementById('reserva-total');
 const promociones = new Map();
+const accionCompra = new URLSearchParams(window.location.search).get('accion') === 'compra';
+if (accionCompra) {
+  document.getElementById('reserva-titulo').textContent = 'Solicita tu compra';
+  formReserva.querySelector('[type="submit"]').textContent = 'Continuar con la compra';
+}
 const usuario = window.Auth.getUser();
 
 const formatoPrecio = (amount) => new Intl.NumberFormat('es-PE', {
@@ -36,6 +41,7 @@ function updatePrice() {
     precioTotal.textContent = 'Selecciona una promoción para ver el total.';
     return;
   }
+  document.title = `${promotion.nombre} · ${accionCompra ? 'Compra' : 'Reserva'} · IcaTurismo`;
   const attendees = Number(selectorPersonas.value) || 0;
   precioTotal.textContent = `${formatoPrecio(Number(promotion.precio))} por persona · Total: ${formatoPrecio(Number(promotion.precio) * attendees)}`;
 }

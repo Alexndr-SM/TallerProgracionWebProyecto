@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const controller = require('../controllers/destinationController');
-const { requireAuth, requireAdmin } = require('../middleware/auth.middleware');
+const { requireAuth, requireRole } = require('../middleware/auth.middleware');
 router.get('/', controller.listDestinations);
 router.get('/slug/:slug', controller.getDestination);
 router.get('/:id', controller.getDestination);
-router.post('/', requireAuth, requireAdmin, controller.createDestination);
-router.put('/:id', requireAuth, requireAdmin, controller.updateDestination);
-router.delete('/:id', requireAuth, requireAdmin, controller.deleteDestination);
+router.post('/', requireAuth, requireRole('admin', 'editor'), controller.createDestination);
+router.put('/:id', requireAuth, requireRole('admin', 'editor'), controller.updateDestination);
+router.delete('/:id', requireAuth, requireRole('admin', 'editor'), controller.deleteDestination);
 module.exports = router;

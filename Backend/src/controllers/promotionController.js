@@ -41,10 +41,11 @@ const createPromotion = endpoint(async (req, res) => {
   const category = await categoryForDestination(data.destino_id);
   const result = await query(`INSERT INTO promociones
     (destino_id, titulo, slug, descripcion_corta, descripcion_larga, precio, duracion,
-     imagen_principal_url, galeria_urls, activo, nombre, descripcion, categoria)
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,$10,$2,$5,$11) RETURNING *`,
+     imagen_principal_url, galeria_urls, activo, nombre, descripcion, categoria, ubicacion, incluye, itinerario)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,$10,$2,$5,$11,$12,$13::jsonb,$14) RETURNING *`,
   [data.destino_id, data.titulo, data.slug, data.descripcion_corta, data.descripcion_larga,
-    data.precio, data.duracion, data.imagen_principal_url, JSON.stringify(data.galeria_urls), data.activo, category]);
+    data.precio, data.duracion, data.imagen_principal_url, JSON.stringify(data.galeria_urls), data.activo, category,
+    data.ubicacion, JSON.stringify(data.incluye), data.itinerario]);
   return res.status(201).json({ ok: true, promotion: result.rows[0] });
 });
 const updatePromotion = endpoint(async (req, res) => {
@@ -54,10 +55,11 @@ const updatePromotion = endpoint(async (req, res) => {
   const result = await query(`UPDATE promociones SET
     destino_id=$1, titulo=$2, slug=$3, descripcion_corta=$4, descripcion_larga=$5,
     precio=$6, duracion=$7, imagen_principal_url=$8, galeria_urls=$9::jsonb,
-    activo=$10, nombre=$2, descripcion=$5, categoria=$11, updated_at=NOW()
-    WHERE id=$12 RETURNING *`,
+    activo=$10, nombre=$2, descripcion=$5, categoria=$11, ubicacion=$12, incluye=$13::jsonb,
+    itinerario=$14, updated_at=NOW() WHERE id=$15 RETURNING *`,
   [data.destino_id, data.titulo, data.slug, data.descripcion_corta, data.descripcion_larga,
-    data.precio, data.duracion, data.imagen_principal_url, JSON.stringify(data.galeria_urls), data.activo, category, promotionId]);
+    data.precio, data.duracion, data.imagen_principal_url, JSON.stringify(data.galeria_urls), data.activo, category,
+    data.ubicacion, JSON.stringify(data.incluye), data.itinerario, promotionId]);
   if (!result.rowCount) throw new CmsError('No se encontró la promoción.', 404);
   return res.json({ ok: true, promotion: result.rows[0] });
 });
