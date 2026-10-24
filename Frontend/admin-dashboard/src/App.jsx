@@ -12,6 +12,7 @@ import {
   Download,
   Ellipsis,
   ExternalLink,
+  Images,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -28,6 +29,7 @@ import {
 } from 'lucide-react'
 import './App.css'
 import CmsPanel from './CmsPanel.jsx'
+import MediaLibrary from './MediaLibrary.jsx'
 
 const navGroups = [
   {
@@ -38,6 +40,7 @@ const navGroups = [
       { id: 'clientes', label: 'Clientes', icon: Users },
       { id: 'destinos', label: 'Destinos', icon: Compass },
       { id: 'productos', label: 'Promociones', icon: Package },
+      { id: 'medios', label: 'Biblioteca multimedia', icon: Images },
     ],
   },
   {
@@ -443,7 +446,7 @@ export default function App({ user }) {
   const canManageCatalog = isAdmin || user?.rol === 'editor'
   const isEditor = user?.rol === 'editor'
   const visibleNav = navGroups.map((group) => ({ ...group, items: group.items.filter((item) => {
-    if (['destinos', 'productos'].includes(item.id)) return canManageCatalog
+    if (['destinos', 'productos', 'medios'].includes(item.id)) return canManageCatalog
     if (item.id === 'equipo') return isAdmin
     return !isEditor
   }) })).filter((group) => group.items.length)
@@ -539,6 +542,7 @@ export default function App({ user }) {
 
   const pageContent = useMemo(() => {
     const changePage = (page) => { setActivePage(page); setMobileNav(false) }
+    if (activePage === 'medios' && canManageCatalog) return <MediaLibrary />
     if (['destinos', 'productos'].includes(activePage) && canManageCatalog) return <CmsPanel key={activePage} kind={activePage === 'destinos' ? 'destinos' : 'promociones'} onCatalogChange={(rows) => setProducts(rows.map((record) => ({ id: record.id, name: record.nombre, description: record.descripcion, category: record.categoria, price: Number(record.precio), active: record.activo })))} />
     if (activePage === 'pedidos') return <OrdersPage reservations={reservations} />
     if (activePage === 'clientes') return <CustomersPage customers={customers} onNavigate={changePage} onStatusChange={changeCustomerStatus} onPointsChange={changeCustomerPoints} canManage={isAdmin} loading={dashboardLoading} />

@@ -1,5 +1,6 @@
 const { query } = require('../config/database');
 const { CmsError, id, slug, destination, endpoint } = require('../utils/cms');
+const { assertEditorialImages } = require('../utils/mediaPrivacy');
 
 const listDestinations = endpoint(async (_req, res) => {
   const result = await query('SELECT * FROM destinos ORDER BY nombre, id');
@@ -14,6 +15,7 @@ const getDestination = endpoint(async (req, res) => {
 });
 const createDestination = endpoint(async (req, res) => {
   const data = destination(req.body || {});
+  await assertEditorialImages([data.imagen_url, data.imagen_fondo_url]);
   const result = await query('INSERT INTO destinos (nombre, slug, imagen_url, descripcion, imagen_fondo_url) VALUES ($1, $2, $3, $4, $5) RETURNING *',
     [data.nombre, data.slug, data.imagen_url, data.descripcion, data.imagen_fondo_url]);
   return res.status(201).json({ ok: true, destino: result.rows[0] });
@@ -21,6 +23,7 @@ const createDestination = endpoint(async (req, res) => {
 const updateDestination = endpoint(async (req, res) => {
   const destinationId = id(req.params.id);
   const data = destination(req.body || {});
+  await assertEditorialImages([data.imagen_url, data.imagen_fondo_url]);
   const result = await query('UPDATE destinos SET nombre = $1, slug = $2, imagen_url = $3, descripcion = $4, imagen_fondo_url = $5 WHERE id = $6 RETURNING *',
     [data.nombre, data.slug, data.imagen_url, data.descripcion, data.imagen_fondo_url, destinationId]);
   if (!result.rowCount) throw new CmsError('No se encontró el destino.', 404);

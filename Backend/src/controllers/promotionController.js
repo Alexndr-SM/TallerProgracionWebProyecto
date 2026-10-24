@@ -1,6 +1,7 @@
 const { query } = require('../config/database');
 
 const { CmsError, id, slug, promotion, endpoint } = require('../utils/cms');
+const { assertEditorialImages } = require('../utils/mediaPrivacy');
 const selection = `SELECT p.*, d.nombre AS destino_nombre, d.slug AS destino_slug
   FROM promociones p JOIN destinos d ON d.id = p.destino_id`;
 
@@ -38,6 +39,7 @@ async function categoryForDestination(destinationId) {
 }
 const createPromotion = endpoint(async (req, res) => {
   const data = promotion(req.body || {});
+  await assertEditorialImages([data.imagen_principal_url, data.imagen_fondo_url, ...data.galeria_urls]);
   const category = await categoryForDestination(data.destino_id);
   const result = await query(`INSERT INTO promociones
     (destino_id, titulo, slug, descripcion_corta, descripcion_larga, precio, duracion,
@@ -51,6 +53,7 @@ const createPromotion = endpoint(async (req, res) => {
 const updatePromotion = endpoint(async (req, res) => {
   const promotionId = id(req.params.id);
   const data = promotion(req.body || {});
+  await assertEditorialImages([data.imagen_principal_url, data.imagen_fondo_url, ...data.galeria_urls]);
   const category = await categoryForDestination(data.destino_id);
   const result = await query(`UPDATE promociones SET
     destino_id=$1, titulo=$2, slug=$3, descripcion_corta=$4, descripcion_larga=$5,
