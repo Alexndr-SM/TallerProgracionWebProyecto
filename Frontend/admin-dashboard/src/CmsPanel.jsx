@@ -25,7 +25,7 @@ function publicUrl(kind, slug) {
   return new URL(`${kind === 'destinos' ? 'destino' : 'promocion'}.html?slug=${encodeURIComponent(slug)}`, window.location.href).href
 }
 
-function ImagePicker({ label, urls, multiple = false, onChange, onBusy }) {
+function ImagePicker({ label, urls, multiple = false, required = true, onChange, onBusy }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [previews, setPreviews] = useState([])
@@ -76,7 +76,7 @@ function ImagePicker({ label, urls, multiple = false, onChange, onBusy }) {
       {(multiple ? urls.length < 10 : !urls.length) && <label className="cms-upload" htmlFor={inputId}><ImagePlus size={24} /><strong>{busy ? 'Subiendo…' : 'Subir imágenes'}</strong><span>JPEG, PNG, WebP · 5 MB</span></label>}
     </div>
     <input id={inputId} className="cms-file-input" type="file" accept="image/jpeg,image/png,image/webp" multiple={multiple} onChange={upload} disabled={busy} aria-label={label} />
-    {!multiple && <label className="field-label cms-image-url">O utiliza una URL HTTPS<input type="url" placeholder="https://…" required pattern="https://.*" value={urls[0] || ''} onChange={(event) => onChange(event.target.value ? [event.target.value] : [])} /></label>}
+    {!multiple && <label className="field-label cms-image-url">O utiliza una URL HTTPS<input type="url" placeholder="https://…" required={required} pattern="https://.*" value={urls[0] || ''} onChange={(event) => onChange(event.target.value ? [event.target.value] : [])} /></label>}
     {multiple && <p className="cms-help">{urls.length}/10 imágenes. Cambia el orden con las flechas; así aparecerán en la galería pública.</p>}
     {error && <p className="form-error" role="alert">{error}</p>}
   </fieldset>
@@ -85,8 +85,8 @@ function ImagePicker({ label, urls, multiple = false, onChange, onBusy }) {
 function ContentForm({ kind, record, destinations, onClose, onSaved }) {
   const isDestination = kind === 'destinos'
   const [form, setForm] = useState(() => isDestination
-    ? { nombre: '', slug: '', descripcion: '', imagen_url: '', ...record }
-    : { destino_id: String(destinations[0]?.id || ''), titulo: '', slug: '', descripcion_corta: '', descripcion_larga: '', precio: '', duracion: '', imagen_principal_url: '', galeria_urls: [], ubicacion: '', incluye: [], itinerario: '', activo: true, ...record })
+    ? { nombre: '', slug: '', descripcion: '', imagen_url: '', imagen_fondo_url: '', ...record }
+    : { destino_id: String(destinations[0]?.id || ''), titulo: '', slug: '', descripcion_corta: '', descripcion_larga: '', precio: '', duracion: '', imagen_principal_url: '', imagen_fondo_url: '', galeria_urls: [], ubicacion: '', incluye: [], itinerario: '', activo: true, ...record })
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState({})
@@ -135,6 +135,8 @@ function ContentForm({ kind, record, destinations, onClose, onSaved }) {
         <ImagePicker label={isDestination ? 'Portada del destino' : 'Imagen principal'} urls={(isDestination ? form.imagen_url : form.imagen_principal_url) ? [isDestination ? form.imagen_url : form.imagen_principal_url] : []}
           onChange={(urls) => update(isDestination ? 'imagen_url' : 'imagen_principal_url', urls[0] || '')} onBusy={(value) => setUploading((current) => ({ ...current, principal: value }))} />
         {!isDestination && <ImagePicker label="Galería de la promoción" urls={form.galeria_urls} multiple onChange={(urls) => update('galeria_urls', urls)} onBusy={(value) => setUploading((current) => ({ ...current, gallery: value }))} />}
+        <ImagePicker label="Imagen de fondo de la página (opcional)" required={false} urls={form.imagen_fondo_url ? [form.imagen_fondo_url] : []} onChange={(urls) => update('imagen_fondo_url', urls[0] || '')} onBusy={(value) => setUploading((current) => ({ ...current, fondo: value }))} />
+        <p className="cms-help">Una fotografía horizontal se verá mejor detrás del contenido. El velo y la transparencia se adaptan al tema. Si no eliges fondo, se utiliza {isDestination ? 'la portada' : 'el fondo del destino o la imagen principal'}.</p>
         <div className="cms-template-note"><MapPin size={19} /><strong>Una página lista para explorar</strong><p>{isDestination ? 'La portada aparecerá en Inicio, en el menú y en la página de este destino.' : 'La plantilla presenta tu información junto a una imagen principal y una galería panorámica debajo.'}</p></div>
       </aside></div>
       <div className="cms-form-footer">{error && <p className="form-error" role="alert">{error}</p>}<button type="button" className="button button--quiet" onClick={close} disabled={busy}>Cancelar</button><button type="submit" className="button button--primary" disabled={busy}><Check size={16} />{saving ? 'Guardando…' : busy ? 'Subiendo imágenes…' : record ? 'Guardar cambios' : 'Crear y publicar'}</button></div>

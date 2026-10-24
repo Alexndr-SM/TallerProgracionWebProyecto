@@ -48,7 +48,7 @@ test('migraciones PostgreSQL en una base nueva', sqlOptions, async () => {
     const pool = adapter(db);
     await migrate(pool);
     await migrate(pool);
-    assert.equal((await db.query('SELECT count(*)::int AS total FROM cms_migrations')).rows[0].total, 2);
+    assert.equal((await db.query('SELECT count(*)::int AS total FROM cms_migrations')).rows[0].total, 3);
     assert.equal((await db.query('SELECT * FROM promociones')).rows.length, 0);
     await db.query("INSERT INTO destinos (nombre,slug) VALUES ('Temporal','temporal')");
     await db.query("DELETE FROM destinos WHERE slug='temporal'");
@@ -179,7 +179,7 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
   });
   let destinationId;
   let promotionId;
-  const destinationBody = { nombre: 'Selva', imagen_url: 'https://example.com/selva.jpg', descripcion: 'Un destino para descubrir.' };
+  const destinationBody = { nombre: 'Selva', imagen_url: 'https://example.com/selva.jpg', descripcion: 'Un destino para descubrir.', imagen_fondo_url: 'https://example.com/fondo-selva.jpg' };
   let promotionBody;
   await t.test('CRUD de destinos, slugs únicos y lecturas públicas', sqlOptions, async () => {
     const created = await request('/api/destinos', 'POST', destinationBody, 3);
@@ -187,6 +187,7 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
     destinationId = created.data.destino.id;
     assert.equal(created.data.destino.slug, 'selva');
     assert.equal(created.data.destino.descripcion, destinationBody.descripcion);
+    assert.equal(created.data.destino.imagen_fondo_url, destinationBody.imagen_fondo_url);
     assert.equal((await request('/api/destinos', 'POST', destinationBody, 1)).status, 409);
     assert.equal((await request(`/api/destinos/${destinationId}`)).data.destino.nombre, 'Selva');
     assert.equal((await request('/api/destinos/slug/selva')).status, 200);
@@ -198,7 +199,7 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
     promotionBody = { destino_id: destinationId, titulo: 'Aventura Selva', descripcion_corta: 'Una aventura única',
       descripcion_larga: 'Día 1: recorrido. Día 2: regreso.', precio: '180.50', duracion: '2 días',
       imagen_principal_url: 'https://example.com/main.png', galeria_urls: ['https://example.com/gallery.png'],
-      ubicacion: 'Iquitos', incluye: ['Guía', 'Transporte'], itinerario: 'Día 1: recorrido.' };
+      ubicacion: 'Iquitos', incluye: ['Guía', 'Transporte'], itinerario: 'Día 1: recorrido.', imagen_fondo_url: 'https://example.com/fondo-tour.jpg' };
     const result = await request('/api/promociones', 'POST', promotionBody, 3);
     assert.equal(result.status, 201);
     promotionId = result.data.promotion.id;
@@ -207,6 +208,7 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
     assert.deepEqual(result.data.promotion.incluye, promotionBody.incluye);
     assert.equal(result.data.promotion.ubicacion, 'Iquitos');
     assert.equal(result.data.promotion.itinerario, 'Día 1: recorrido.');
+    assert.equal(result.data.promotion.imagen_fondo_url, promotionBody.imagen_fondo_url);
     assert.equal((await request('/api/promociones?destino_slug=selva')).data.promotions.length, 1);
     assert.equal((await request(`/api/promociones?destino_id=${destinationId}`)).data.promotions.length, 1);
     assert.equal((await request('/api/promociones/slug/aventura-selva')).status, 200);
@@ -220,12 +222,17 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
     for (const galeria_urls of [{}, [null], Array(11).fill('https://example.com/a.png')]) {
       assert.equal((await request('/api/promociones', 'POST', { ...promotionBody, galeria_urls }, 1)).status, 400);
     }
+    for (const imagen_fondo_url of ['javascript:alert(1)', 'http://example.com/fondo.jpg', 'https://u:p@example.com/a.jpg']) {
+      assert.equal((await request('/api/promociones', 'POST', { ...promotionBody, imagen_fondo_url }, 1)).status, 400);
+      assert.equal((await request('/api/destinos', 'POST', { ...destinationBody, imagen_fondo_url }, 1)).status, 400);
+    }
     assert.equal((await request('/api/promociones', 'POST', { ...promotionBody, destino_id: 999999 }, 1)).status, 404);
   });
   await t.test('edita contenido y mantiene las inactivas solo en el catálogo administrativo', sqlOptions, async () => {
     const updated = await request(`/api/promociones/${promotionId}`, 'PUT', { ...promotionBody, titulo: 'Selva renovada', activo: false }, 3);
     assert.equal(updated.status, 200);
     assert.equal(updated.data.promotion.nombre, 'Selva renovada');
+    assert.equal(updated.data.promotion.imagen_fondo_url, promotionBody.imagen_fondo_url);
     assert.equal((await request(`/api/promociones/${promotionId}`)).status, 404);
     assert.equal((await request('/api/promociones?destino_slug=selva')).data.promotions.length, 0);
     const admin = await request('/api/admin/promociones', 'GET', undefined, 1);

@@ -1,0 +1,45 @@
+/* Reserva y carrito: colores y cristal compartidos con el sitio público. */
+.checkout-page { margin-top: 0; padding-block: 46px 80px; min-height: 75vh; }
+.checkout-page [hidden] { display: none !important; }
+.checkout-heading { padding-bottom: 36px; }
+.checkout-eyebrow { color: var(--seafoam); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; font-weight: 600; }
+.checkout-heading h1 { font-size: clamp(42px,5vw,66px); max-width: 700px; margin: 14px 0 18px; letter-spacing: -.025em; }
+.checkout-heading > p,.checkout-history-heading p { font-size: 13px; color: var(--text-soft); }
+.checkout-steps { padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 26px; margin: 28px 0 0; }
+.checkout-steps li { display: flex; gap: 10px; align-items: center; color: var(--text-soft); font-size: 11px; }
+.checkout-steps li[aria-current] { color: var(--seafoam); }
+.checkout-steps span { display: grid; place-items: center; width: 31px; height: 31px; border-radius: 50%; border: 1px solid var(--line); font-size: 10px; }
+.checkout-steps li[aria-current] span { border-color: var(--seafoam); background: var(--glass); }
+.checkout-demo { display: inline-flex; gap: 8px; align-items: center; color: var(--seafoam); border: 1px solid var(--line); border-radius: 30px; padding: 8px 13px; font-size: 10px; background: var(--glass); }
+.checkout-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px; align-items: start; }
+.checkout-card { min-width: 0; background: var(--glass-strong); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-md); }
+.checkout-form { padding: clamp(22px,3vw,36px); }
+.checkout-section-title { margin-bottom: 28px; }.checkout-section-title h2,.checkout-summary h2,.checkout-history h2 { font-size: 34px; margin: 10px 0 0; }
+.checkout-page fieldset { padding: 0; margin: 0; border: 0; min-width: 0; }
+.checkout-page label { display: block; margin-bottom: 8px; font-size: 11px; color: var(--text); }
+.checkout-page input,.checkout-page select { width: 100%; min-width: 0; min-height: 46px; padding: 12px; margin: 8px 0 19px; font: 12px var(--font-body); color: var(--text); background: var(--glass); border: 1px solid var(--line); border-radius: 7px; color-scheme: dark; }
+.checkout-page select option { background: var(--abyss); color: var(--text); }
+.checkout-page input:focus-visible,.checkout-page select:focus-visible,.checkout-button:focus-visible { outline: 2px solid var(--seafoam); outline-offset: 3px; }
+.checkout-page input[readonly] { opacity: .75; }
+.checkout-page input:disabled,.checkout-page select:disabled { opacity: .55; }
+.checkout-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.checkout-fields small { display: block; margin-top: -12px; color: var(--text-soft); font-size: 10px; }
+.checkout-help { font-size: 10px; line-height: 1.8; color: var(--text-soft); }
+.checkout-button { display: inline-flex; justify-content: center; align-items: center; gap: 12px; min-height: 44px; padding: 13px 18px; border: 1px solid var(--line); border-radius: 7px; background: var(--glass); color: var(--text); font: 600 10px var(--font-body); letter-spacing: .035em; cursor: pointer; transition: transform .2s,background .2s,border-color .2s; }
+.checkout-button:hover { transform: translateY(-2px); border-color: var(--seafoam); }.checkout-button:disabled { opacity: .55; cursor: wait; transform: none; }
+.checkout-button--primary { background: var(--seafoam); color: var(--deep); border-color: transparent; }.checkout-button--primary:hover { background: var(--sand); }
+.checkout-button--quiet { background: transparent; }.checkout-button--danger { color: #ffd0c7; border-color: #ffd0c755; }
+#confirmar-reserva { width: 100%; margin-top: 12px; justify-content: space-between; }
+.checkout-summary { position: sticky; top: calc(var(--header-h) + 24px); }.checkout-preview { height: 230px; position: relative; overflow: hidden; }.checkout-preview img { width: 100%; height: 100%; object-fit: cover; }
+.checkout-preview::after { content: ''; position: absolute; inset: 30% 0 0; background: linear-gradient(transparent,rgba(2,14,20,.8)); }.checkout-preview span { position: absolute; bottom: 19px; left: 26px; z-index: 1; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: white; }
+.checkout-summary-body { padding: 28px; }.checkout-summary h2 { font-size: 30px; }.checkout-summary h3 { margin: 18px 0; font-size: 24px; color: var(--seafoam); }
+.checkout-breakdown { margin: 23px 0; display: grid; gap: 15px; }.checkout-breakdown > div { display: flex; justify-content: space-between; gap: 18px; font-size: 11px; }.checkout-breakdown dt { color: var(--text-soft); }.checkout-breakdown dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+.checkout-total { border-block: 1px solid var(--line); padding-block: 17px; display: flex; justify-content: space-between; align-items: center; gap: 15px; }.checkout-total span { font-size: 12px; }.checkout-total strong { font-size: 28px; font-weight: 500; }
+.checkout-experience-link { display: inline-block; font-size: 11px; margin-top: 14px; }.checkout-notice { background: var(--glass); border: 1px solid var(--line); border-radius: 8px; padding: 15px; font-size: 12px; line-height: 1.8; margin-top: 20px; }
+.checkout-notice[data-error="true"] { border-color: #ffd0c7; color: #ffd0c7; }.checkout-saved h3 { font-size: 34px; margin-top: 12px; }.checkout-saved > p { font-size: 12px; }.checkout-action-row { display: flex; flex-wrap: wrap; gap: 10px; margin-block: 24px 16px; }
+.checkout-history { padding-top: 60px; }.checkout-history-heading { display: flex; justify-content: space-between; gap: 20px; align-items: end; margin-bottom: 25px; }.checkout-reservations { display: grid; gap: 15px; grid-template-columns: repeat(2,minmax(0,1fr)); }
+.checkout-reservation { padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--glass-strong); backdrop-filter: blur(10px); }.checkout-reservation h3 { font-size: 26px; margin: 12px 0; }.checkout-reservation p { font-size: 11px; color: var(--text-soft); }.checkout-reservation .checkout-button { margin-top: 10px; }.checkout-badge { display: inline-flex; border: 1px solid var(--line); border-radius: 30px; padding: 5px 10px; font-size: 9px; color: var(--seafoam); }
+.checkout-dialog { width: min(460px,calc(100vw - 32px)); margin: auto; padding: 30px; border: 1px solid var(--line); border-radius: 15px; color: var(--text); background: var(--menu-bg); box-shadow: var(--shadow-lg); }.checkout-dialog::backdrop { background: rgba(2,14,20,.7); backdrop-filter: blur(8px); }.checkout-dialog h2 { font-size: 34px; margin-top: 15px; }.checkout-dialog p { font-size: 12px; line-height: 1.9; }
+.checkout-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media(max-width:760px) { .checkout-page { padding-top: 30px; }.checkout-grid { grid-template-columns: 1fr; }.checkout-summary { position: static; }.checkout-fields { grid-template-columns: 1fr; gap: 0; }.checkout-reservations { grid-template-columns: 1fr; }.checkout-history-heading { display: block; }.checkout-steps { gap: 15px; }.checkout-steps li { font-size: 10px; }.checkout-preview { height: 200px; } }
+@media(prefers-reduced-motion:reduce) { .checkout-button { transition: none; }.checkout-button:hover { transform: none; } }
