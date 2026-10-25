@@ -54,6 +54,20 @@ Las galerías y mini carruseles son automáticos y circulares. Las flechas está
 
 Después de **Sigue descubriendo** se muestran hasta cuatro promociones aleatorias publicadas, sin repetir la promoción actual. En los destinos se priorizan las promociones de otros destinos. Si hay menos contenido disponible, se muestra únicamente el existente.
 
+## Resumen administrativo y herramientas del panel
+
+El resumen tiene temas oscuro y claro, arte tropical local, tarjetas navegables, gráficos interactivos y períodos de 7, 30 o 90 días. El gráfico diario alterna reservas/ingresos, permite fijar un día con clic o teclado y exporta un CSV. La distribución por método permite seleccionar una categoría. También aparecen estados, viajeros, destinos más reservados, importe pendiente y próximas salidas.
+
+**GET /api/admin/analytics?days=30** está protegido para `admin`, `registrador` y `soporte`, igual que el resumen existente. `editor` conserva su panel de contenido y no puede consultar esta analítica. La consulta agrega todas las reservas en PostgreSQL, independientemente del límite de los listados recientes. Rellena días sin actividad con cero, compara períodos de igual duración y calcula los límites en `America/Lima`. No requiere una migración nueva.
+
+Los ingresos del período son la suma de reservas **creadas en ese período** que actualmente tienen pago confirmado; no representan la fecha en que se realizó cada pago. El importe pendiente es histórico y excluye cancelaciones. Los pagos siguen siendo de demostración. No se inventan porcentajes de crecimiento cuando el período anterior es cero.
+
+La búsqueda (Ctrl/Cmd + K) abre secciones y encuentra promociones, destinos, clientes o reservas entre los registros cargados y permitidos por el rol. Los avisos muestran hasta ocho reservas pendientes recientes, permiten abrir su registro exacto y guardar su lectura por usuario en este navegador. No son notificaciones push. El panel consulta de nuevo cada 60 segundos mientras está visible, al volver a la pestaña y al pulsar Actualizar; muestra la hora de sincronización o un error recuperable. El listado de pedidos también exporta sus filas filtradas a CSV, con protección frente a fórmulas en texto.
+
+Los nuevos componentes son `AdminDashboard.jsx`, `AdminHeader.jsx`, `dashboardUtils.js` y `AdminTheme.css`. El arte y los prompts de generación están en `Frontend/assets/admin/README.md`. No se modificó el flujo de autenticación JWT.
+
+En el sitio público, Destinos se despliega al pasar un puntero de precisión. Conserva clic, tacto y teclado; Escape y clic fuera lo cierran. No muestra flecha y comparte exactamente el degradado y el difuminado del encabezado.
+
 ## Despliegue
 
 Backend (desde `Backend/`):

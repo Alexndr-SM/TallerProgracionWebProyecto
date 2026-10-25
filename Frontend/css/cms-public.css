@@ -1,5 +1,6 @@
 /* Piezas del catálogo compartidas por Inicio y las plantillas públicas. */
 /* Los fondos, encabezado, pie y paneles heredan los tokens del index. */
+.nav-links .cms-destination-menu summary::after { display: none; }
 :root { --cms-bg: var(--abyss); --cms-surface: var(--glass); --cms-text: var(--text); --cms-muted: var(--text-soft); --cms-border: var(--line); --cms-accent: var(--seafoam); }
 .cms-mini-track > .cms-photo-button { display: block; flex: 0 0 100%; height: 240px; border-radius: 0; scroll-snap-align: start; }
 .cms-page > [data-cms-header] { position: sticky; top: 0; z-index: 100; }
@@ -33,6 +34,8 @@
 @media(prefers-reduced-motion:reduce) { .cms-reveal,.cms-destination-card,.cms-destination-media img,.cms-offer-card,.cms-photo-button img,.cms-button { animation: none; transition: none; transform: none; }.cms-reveal:not(.cms-visible) { opacity: 1; transform: none; }.cms-film-track,.cms-mini-track { scroll-behavior: auto; } }
 
 /* Cristal y controles con los mismos colores y transparencias de Inicio. */
+.cms-destination-menu details[open]::after { content: ''; position: absolute; top: 100%; left: -20px; width: calc(100% + 60px); height: 12px; }
+.cms-dropdown { background: linear-gradient(180deg,var(--header-top,rgba(5,40,48,.62)),var(--header-bottom,rgba(5,40,48,.28))); border-color: rgba(255,255,255,.14); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .cms-page .header-inner { max-width: 1360px; padding-inline: 1.5rem; }
 .cms-page .cms-promotion-info,.cms-page .cms-destination-intro {
   padding: clamp(22px,3vw,38px); border: 1px solid var(--line);

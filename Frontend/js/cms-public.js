@@ -49,11 +49,19 @@
     if (nav) {
       const first = el('li'); first.append(anchor('Inicio', url('index.html')));
       const menuItem = el('li', 'cms-destination-menu');
-      const details = el('details'); const summary = el('summary', '', 'Destinos'); summary.append(el('span', '', '⌄'));
+      const details = el('details'); const summary = el('summary', '', 'Destinos');
       const list = el('ul', 'cms-dropdown');
       if (!destinations.length) { const item = el('li'); item.append(anchor('Explorar destinos', url('index.html#destinos'))); list.append(item); }
       destinations.forEach((destination) => { const item = el('li'); const a = anchor(destination.nombre, link('destino', destination.slug)); if (destination.slug === slug) a.setAttribute('aria-current', 'page'); item.append(a); list.append(item); });
       details.append(summary, list); menuItem.append(details);
+      let closeTimer;
+      details.addEventListener('pointerenter', (event) => {
+        clearTimeout(closeTimer);
+        if (event.pointerType !== 'touch' && window.matchMedia('(hover: hover) and (pointer: fine)').matches) details.open = true;
+      });
+      details.addEventListener('pointerleave', () => {
+        closeTimer = setTimeout(() => { if (!details.contains(document.activeElement)) details.open = false; }, 160);
+      });
       details.addEventListener('keydown', (event) => { if (event.key === 'Escape') { details.open = false; summary.focus(); } });
       list.addEventListener('click', () => { details.open = false; nav.classList.remove('active'); const button = document.querySelector('#hamburger'); if (button) { button.classList.remove('active'); button.setAttribute('aria-expanded', 'false'); } });
       const contact = el('li'); contact.append(anchor('Contacto', url('html/contacto.html')));

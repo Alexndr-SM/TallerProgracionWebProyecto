@@ -136,15 +136,15 @@ function ContentForm({ kind, record, destinations, onClose, onSaved }) {
   </dialog>
 }
 
-export default function CmsPanel({ kind, onCatalogChange }) {
+export default function CmsPanel({ kind, onCatalogChange, initialQuery = '', initialDestination = '' }) {
   const isDestination = kind === 'destinos'
   const [destinations, setDestinations] = useState([])
   const [promotions, setPromotions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
-  const [query, setQuery] = useState('')
-  const [destinationFilter, setDestinationFilter] = useState('')
+  const [query, setQuery] = useState(initialQuery)
+  const [destinationFilter, setDestinationFilter] = useState(initialDestination)
   const [modal, setModal] = useState(null)
   const [deleting, setDeleting] = useState(null)
   const [revision, setRevision] = useState(0)
