@@ -5,6 +5,7 @@
 
 // Espera a que el HTML esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
+  const defaultAvatarUrl = 'https://res.cloudinary.com/plhejhea/image/upload/v1792620223/Person.svg';
   const headerActions = document.querySelector('.header-actions');
   let navUser = document.getElementById('navUser');
 
@@ -21,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     guestArea.id = 'guestArea';
     guestArea.innerHTML = `
       <button type="button" class="user-btn" id="userBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true">
-        <img src="${new URL('../assets/Person.png', scriptUrl).href}" alt="">
+        <img src="${defaultAvatarUrl}" alt="">
         <span>Cuenta</span><span class="chevron" aria-hidden="true">▾</span>
       </button>
       <div class="user-dropdown" id="userDropdown">
@@ -35,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     userArea.hidden = true;
     userArea.innerHTML = `
       <button type="button" class="user-btn" id="userProfileBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true">
-        <img src="${new URL('../assets/Person.png', scriptUrl).href}" alt="">
+        <img src="${defaultAvatarUrl}" alt="">
         <span id="userNameDisplay">Usuario</span><span class="chevron" aria-hidden="true">▾</span>
       </button>
       <div class="user-dropdown" id="userProfileDropdown">
@@ -232,6 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (user && userNameDisplay) {
         userNameDisplay.textContent = user.nombre || 'Mi cuenta';
       }
+      const userAvatar = document.querySelector('#userProfileBtn img');
+      if (userAvatar) userAvatar.src = user?.foto_perfil_url || defaultAvatarUrl;
 
       // Asegurar que el enlace a "Mi Perfil" esté presente arriba de "Cerrar sesión"
       const profileDropdown = document.getElementById('userProfileDropdown');

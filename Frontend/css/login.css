@@ -92,7 +92,7 @@ body.auth-page::before {
   z-index: -1;
   background:
     linear-gradient(180deg, var(--a-veil-top) 0%, var(--a-veil-bottom) 100%),
-    url('../assets/imagenplaya.jpg') center / cover no-repeat;
+    url('https://res.cloudinary.com/plhejhea/image/upload/v1792338022/imagenplaya.jpg') center / cover no-repeat;
 }
 
 /* Tarjeta de cristal */

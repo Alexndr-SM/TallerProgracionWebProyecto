@@ -1,5 +1,5 @@
 .destination-page { margin-top: calc(var(--header-h) * -1); }
-.destination-offers { min-height: 80vh; padding: calc(var(--header-h) + 4.5rem) 0 5rem; background: linear-gradient(180deg, rgba(4,31,39,.52), rgba(4,31,39,.76)), url("../../../assets/imagencultura.jpg") center / cover fixed; }
+.destination-offers { min-height: 80vh; padding: calc(var(--header-h) + 4.5rem) 0 5rem; background: linear-gradient(180deg, rgba(4,31,39,.52), rgba(4,31,39,.76)), url("https://res.cloudinary.com/plhejhea/image/upload/v1792338022/imagencultura.jpg") center / cover fixed; }
 .destination-eyebrow { margin: 0 auto .75rem; color: var(--seafoam); text-align: center; font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; }
 .destination-offers .section-title { max-width: 850px; }
 .destination-intro { max-width: 680px; margin: -1rem auto 2.5rem; color: var(--text-soft); text-align: center; }

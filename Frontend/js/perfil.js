@@ -346,10 +346,12 @@
     const equiv = Math.floor(p.puntos / PUNTOS_POR_SOL);
     setEl('puntosEquiv', `Equivale a S/ ${equiv.toFixed(2)} en descuentos`);
 
-    if (p.foto_perfil_url) {
-      const avatar = document.getElementById('perfilAvatar');
-      if (avatar) avatar.src = p.foto_perfil_url;
-    }
+    const defaultAvatarUrl = 'https://res.cloudinary.com/plhejhea/image/upload/v1792620223/Person.svg';
+    const avatarUrl = p.foto_perfil_url || defaultAvatarUrl;
+    const avatar = document.getElementById('perfilAvatar');
+    if (avatar) avatar.src = avatarUrl;
+    const headerAvatar = document.querySelector('#userProfileBtn img');
+    if (headerAvatar) headerAvatar.src = avatarUrl;
   }
 
   async function cargarReservas() {

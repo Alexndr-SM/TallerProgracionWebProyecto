@@ -58,12 +58,12 @@
     $('resumen-metodo').textContent = labels[active?.metodo_pago || method.value] || 'Por elegir';
     $('reserva-total').textContent = active ? stateLabel(active) : promotion ? 'El total se confirma al guardar la reserva. Pago de prueba, sin cargos reales.' : 'Selecciona una experiencia para calcular el total.';
     const image = $('resumen-imagen');
-    image.src = promotion?.imagen_principal_url || window.IcaCMS?.imageFor(promotion || {}) || '../assets/imagendunas.jpg';
+    image.src = promotion?.imagen_principal_url || window.IcaCMS?.imageFor(promotion || {}) || 'https://res.cloudinary.com/plhejhea/image/upload/v1792338022/imagendunas.jpg';
     image.alt = promotion?.titulo || 'Paisaje de Ica';
     $('resumen-destino').textContent = promotion?.destino_nombre || 'Ica, Perú';
     const link = $('ver-experiencia'); link.href = promotion ? `promocion.html?slug=${encodeURIComponent(promotion.slug)}` : '../index.html#destinos'; link.textContent = promotion ? 'Ver experiencia ↗' : 'Explorar experiencias ↗';
   }
-  $('resumen-imagen').addEventListener('error', function () { if (!this.src.endsWith('/assets/imagendunas.jpg')) this.src = '../assets/imagendunas.jpg'; });
+  $('resumen-imagen').addEventListener('error', function () { if (!this.src.endsWith('/https://res.cloudinary.com/plhejhea/image/upload/v1792338022/imagendunas.jpg')) this.src = 'https://res.cloudinary.com/plhejhea/image/upload/v1792338022/imagendunas.jpg'; });
   function showReservation(reservation, scroll = false) {
     active = reservation; remember(reservation.id);
     form.hidden = true; $('reserva-guardada').hidden = false;

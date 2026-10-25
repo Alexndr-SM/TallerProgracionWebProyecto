@@ -115,7 +115,7 @@ body::before {
   z-index: -1;
   background:
     linear-gradient(180deg, var(--veil-top) 0%, var(--veil-bottom) 100%),
-    url('../assets/imagenplaya.jpg') center / cover no-repeat;
+    url('https://res.cloudinary.com/plhejhea/image/upload/v1792338022/imagenplaya.jpg') center / cover no-repeat;
 }
 
 /* Títulos: serif ligera */
@@ -913,7 +913,7 @@ main { margin-top: calc(var(--header-h) * -1); }
 .about-content {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
+  align-items: stretch;
   gap: clamp(2rem, 6vw, 5rem);
 }
 
@@ -980,6 +980,7 @@ main { margin-top: calc(var(--header-h) * -1); }
 .about-image-inner {
   position: relative;
   display: block;
+  height: 100%;
   min-height: 360px;
   border-radius: inherit;
   cursor: pointer;

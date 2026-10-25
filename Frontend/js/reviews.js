@@ -2,7 +2,7 @@ const reviewsScriptUrl = document.currentScript?.src || new URL('js/reviews.js',
 
 document.addEventListener('DOMContentLoaded', () => {
   const scriptUrl = reviewsScriptUrl;
-  const placeholderImage = new URL('../assets/Person.png', scriptUrl).href;
+  const placeholderImage = 'https://res.cloudinary.com/plhejhea/image/upload/v1792620223/Person.svg';
   const loginUrl = new URL('../html/login.html', scriptUrl).href;
   const apiUrl = (path) => `${(window.API_URL || '').replace(/\/$/, '')}${path}`;
   const list = document.querySelector('[data-reviews-limit]');

@@ -1,4 +1,4 @@
-.cultural-detail { padding: calc(var(--header-h) + 2rem) 0 4rem; background: linear-gradient(180deg,rgba(4,31,39,.64),rgba(4,31,39,.78)), url("../../../assets/imagencultura.jpg") center / cover fixed; }
+.cultural-detail { padding: calc(var(--header-h) + 2rem) 0 4rem; background: linear-gradient(180deg,rgba(4,31,39,.64),rgba(4,31,39,.78)), url("https://res.cloudinary.com/plhejhea/image/upload/v1792338022/imagencultura.jpg") center / cover fixed; }
 .detail-back { display: inline-block; margin-bottom: 1.4rem; color: var(--seafoam); }
 .detail-hero { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); overflow: hidden; background: var(--glass-strong); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-lg); }
 .detail-copy { padding: clamp(1.5rem,4vw,3.5rem); }

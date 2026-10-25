@@ -30,7 +30,7 @@ div:has(> iframe[src*="chatbase.co"]) {
 }
 
 body.home-page #chatbase-bubble-button[aria-expanded="false"] > div {
-  background: url("../assets/chatbot.png") center / contain no-repeat !important;
+  background: url("https://res.cloudinary.com/plhejhea/image/upload/v1792512034/icaturismo/perfiles/1-f8fbdddf-bcb5-4ff0-97b5-c64524a6d63f.png") center / contain no-repeat !important;
 }
 
 body.home-page #chatbase-bubble-button[aria-expanded="false"] svg {

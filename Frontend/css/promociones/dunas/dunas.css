@@ -1,7 +1,7 @@
 .destination-page { margin-top: calc(var(--header-h) * -1); }
 .destination-offers {
   min-height: 80vh; padding: calc(var(--header-h) + 4.5rem) 0 5rem;
-  background: linear-gradient(180deg, rgba(4,31,39,.52), rgba(4,31,39,.76)), url("../../../assets/imagendunas.jpg") center / cover fixed;
+  background: linear-gradient(180deg, rgba(4,31,39,.52), rgba(4,31,39,.76)), url("https://res.cloudinary.com/plhejhea/image/upload/v1792338022/imagendunas.jpg") center / cover fixed;
 }
 .destination-eyebrow { margin: 0 auto .75rem; color: var(--seafoam); text-align: center; font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; }
 .destination-offers .section-title { max-width: 850px; }

@@ -420,7 +420,7 @@ export default function App({ user }) {
 
   return <div className={`admin-island ${dark ? 'admin-island--dark' : 'admin-island--light'}`} style={{ '--dash-oasis-image': `url("${new URL('../assets/admin/oasis-sunset.jpg', window.location.href).href}")`, '--dash-coast-image': `url("${new URL('../assets/admin/coastal-sunset.jpg', window.location.href).href}")` }}>
     <aside className={`sidebar ${mobileNav ? 'sidebar--open' : ''}`}>
-      <a className="sidebar-brand" href="../index.html"><img src="../assets/logoIcaTurismo.png" alt="" /><span>IcaTurismo<small>ADMINISTRACIÓN</small></span></a>
+      <a className="sidebar-brand" href="../index.html"><img src="../assets/logoIcaTurismo.svg" alt="" /><span>IcaTurismo<small>ADMINISTRACIÓN</small></span></a>
       <button type="button" className="workspace-switch" onClick={() => navigate(isEditor ? 'destinos' : 'dashboard')}><span className="workspace-avatar"><Compass size={19} /></span><span><strong>IcaTurismo</strong><small>Panel de control</small></span><ChevronRight size={15} /></button>
       <nav className="side-nav" aria-label="Navegación del panel">
         {visibleNav.map((group) => <div className="nav-group" key={group.label}><span className="nav-group__label">{group.label}</span>{group.items.map(({ id, label, icon: Icon, count }) => <button className={`nav-link ${activePage === id ? 'nav-link--active' : ''}`} key={id} onClick={() => navigate(id)}><Icon size={17} strokeWidth={1.8} /><span>{label}</span>{count && <span className="nav-count">{count}</span>}</button>)}</div>)}

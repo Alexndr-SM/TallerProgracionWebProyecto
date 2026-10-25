@@ -9,9 +9,9 @@ if (gridPromociones) {
   const category = Object.entries(categoryByPath)
     .find(([path]) => window.location.pathname.includes(`/${path}/`))?.[1];
   const categoryImages = {
-    Naturaleza: '../../../assets/imagenplaya.jpg',
-    Aventura: '../../../assets/imagendunas.jpg',
-    Cultura: '../../../assets/imagencultura.jpg',
+    Naturaleza: 'https://res.cloudinary.com/plhejhea/image/upload/v1792338022/imagenplaya.jpg',
+    Aventura: 'https://res.cloudinary.com/plhejhea/image/upload/v1792338022/imagendunas.jpg',
+    Cultura: 'https://res.cloudinary.com/plhejhea/image/upload/v1792338022/imagencultura.jpg',
   };
   const price = (amount) => new Intl.NumberFormat('es-PE', {
     style: 'currency',
