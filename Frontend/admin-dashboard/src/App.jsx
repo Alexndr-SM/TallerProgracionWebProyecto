@@ -1,16 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
-  Activity,
   ArrowRight,
-  Bell,
   Check,
-  ChevronDown,
   ChevronRight,
-  CircleHelp,
   Compass,
-  CreditCard,
   Download,
-  Ellipsis,
   ExternalLink,
   Images,
   LayoutDashboard,
@@ -18,18 +12,23 @@ import {
   Menu,
   Package,
   Plus,
+  RefreshCw,
   Search,
   Settings,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
-  Star,
   Users,
   X,
 } from 'lucide-react'
 import './App.css'
 import CmsPanel from './CmsPanel.jsx'
 import MediaLibrary from './MediaLibrary.jsx'
+import AdminDashboard from './AdminDashboard.jsx'
+import AdminHeader from './AdminHeader.jsx'
+import { cmsRequest } from './cmsApi.js'
+import { downloadCSV, limaDate } from './dashboardUtils.js'
+import './AdminTheme.css'
 
 const navGroups = [
   {
@@ -76,9 +75,10 @@ function money(value) {
   return `S/ ${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
-async function loadAdminResource(path) {
+async function loadAdminResource(path, options = {}) {
   const base = (window.API_URL || '').replace(/\/$/, '')
   const response = await fetch(`${base}/api/admin${path}`, {
+    signal: options.signal, cache: 'no-store',
     headers: { Authorization: `Bearer ${window.Auth?.getToken() || ''}` },
   })
   const result = await response.json().catch(() => ({}))
@@ -101,33 +101,6 @@ async function updateAdminResource(path, body, method = 'PATCH') {
   return result
 }
 
-function reservationSeries(reservations, period) {
-  const days = Number(period)
-  const today = new Date()
-  today.setUTCHours(0, 0, 0, 0)
-  const counts = Array(days).fill(0)
-  reservations.forEach((reservation) => {
-    const createdAt = new Date(reservation.created_at)
-    const dayIndex = Math.floor((today.getTime() - Date.UTC(createdAt.getUTCFullYear(), createdAt.getUTCMonth(), createdAt.getUTCDate())) / 86400000)
-    if (dayIndex >= 0 && dayIndex < days) counts[days - dayIndex - 1] += 1
-  })
-
-  const max = Math.max(...counts, 1)
-  const points = counts.map((count, index) => ({
-    x: (index / Math.max(days - 1, 1)) * 720,
-    y: 190 - (count / max) * 150,
-  }))
-  const line = points.map(({ x, y }, index) => `${index ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ')
-  const area = `${line} L720 192 L0 192 Z`
-  const labelIndices = [0, Math.floor((days - 1) / 4), Math.floor((days - 1) / 2), Math.floor(((days - 1) * 3) / 4), days - 1]
-  const labels = [...new Set(labelIndices)].map((index) => {
-    const date = new Date(today)
-    date.setUTCDate(date.getUTCDate() - (days - index - 1))
-    return date.toLocaleDateString('es-PE', { day: '2-digit', month: 'short', timeZone: 'UTC' })
-  })
-  return { counts, line, area, labels, max }
-}
-
 function Avatar({ initials, tone = 'mint', size = '' }) {
   return <span className={`avatar avatar--${tone} ${size ? `avatar--${size}` : ''}`}>{initials}</span>
 }
@@ -143,149 +116,6 @@ function SectionHeading({ eyebrow, title, description, action }) {
       {action}
     </div>
   )
-}
-
-function DashboardHome({ user, products, onNavigate, period, setPeriod, summary, reservations, loading, error }) {
-  const firstName = user?.nombre?.split(' ')[0] || 'Admin'
-  const productsWithReservations = products.map((product) => ({
-    ...product,
-    reservationsCount: reservations.filter((reservation) => Number(reservation.promocion_id) === Number(product.id)).length,
-  }))
-  const bestSellers = [...productsWithReservations].sort((a, b) => b.reservationsCount - a.reservationsCount).slice(0, 3)
-  const today = new Date().toISOString().slice(0, 10)
-  const upcomingReservations = reservations
-    .filter((reservation) => String(reservation.fecha_tour).slice(0, 10) >= today && reservation.estado !== 'cancelada')
-    .sort((a, b) => String(a.fecha_tour).localeCompare(String(b.fecha_tour)))
-    .slice(0, 3)
-  const methodLabels = { tarjeta: 'Tarjeta', paypal: 'PayPal', yape: 'Yape / Plin' }
-  const series = reservationSeries(reservations, period)
-  const methodCounts = ['tarjeta', 'paypal', 'yape'].map((method) => ({
-    method,
-    count: reservations.filter((reservation) => reservation.metodo_pago === method).length,
-  }))
-  const methodTotal = methodCounts.reduce((total, item) => total + item.count, 0)
-  let methodStop = 0
-  const methodGradient = methodTotal ? methodCounts.map(({ count }, index) => {
-    const start = methodStop
-    methodStop += methodTotal ? (count / methodTotal) * 100 : 0
-    const color = ['var(--admin-accent-bright)', 'var(--admin-blue)', 'var(--admin-peach)'][index]
-    return `${color} ${start}% ${methodStop}%`
-  }).join(', ') : 'var(--admin-border) 0% 100%'
-  const donutBackground = `conic-gradient(${methodGradient})`
-  const recentReservations = reservations.slice(0, 3).map((reservation) => ({
-    id: `#${reservation.id}`,
-    customer: reservation.nombre,
-    item: reservation.promocion_nombre || 'Reserva de tour',
-    date: new Date(reservation.created_at).toLocaleDateString('es-PE'),
-    total: reservation.total,
-    status: ({ pendiente: 'Pendiente', confirmada: 'Confirmada', cancelada: 'Cancelada' })[reservation.estado] || reservation.estado,
-    statusClass: reservation.estado,
-    initials: reservation.nombre.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase(),
-    tone: 'mint',
-  }))
-  return (
-    <>
-      <SectionHeading
-        eyebrow={new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-        title={`¡Hola, ${firstName}!`}
-        description={error || 'Actividad real registrada en la base de datos.'}
-        action={<span className="data-live"><i /> Datos en vivo</span>}
-      />
-
-      <div className="stat-grid">
-        <article className="stat-card stat-card--highlight">
-          <div className="stat-card__top"><span>Reservas</span><span className="stat-icon"><ShoppingBag size={17} /></span></div>
-          <strong>{loading ? '—' : Number(summary?.reservations?.total || 0).toLocaleString('es-PE')}</strong>
-          <div className="stat-card__bottom">Total registrado</div>
-        </article>
-        <article className="stat-card">
-          <div className="stat-card__top"><span>Por atender</span><span className="stat-icon"><Activity size={17} /></span></div>
-          <strong>{loading ? '—' : Number(summary?.reservations?.pendientes || 0).toLocaleString('es-PE')}</strong>
-          <div className="stat-card__bottom">Requieren atención</div>
-        </article>
-        <article className="stat-card">
-          <div className="stat-card__top"><span>Clientes activos</span><span className="stat-icon"><Users size={17} /></span></div>
-          <strong>{loading ? '—' : Number(summary?.customers?.activos || 0).toLocaleString('es-PE')}</strong>
-          <div className="stat-card__bottom">Cuentas habilitadas</div>
-        </article>
-        <article className="stat-card">
-          <div className="stat-card__top"><span>Equipo activo</span><span className="stat-icon"><ShieldCheck size={17} /></span></div>
-          <strong>{loading ? '—' : Number(summary?.employees?.total || 0).toLocaleString('es-PE')}</strong>
-          <div className="stat-card__bottom">Cuentas de personal</div>
-        </article>
-        <article className="stat-card">
-          <div className="stat-card__top"><span>Ingresos pagados</span><span className="stat-icon"><CreditCard size={17} /></span></div>
-          <strong>{loading ? '—' : money(summary?.paid_sales || 0)}</strong>
-          <div className="stat-card__bottom">Solo pagos confirmados</div>
-        </article>
-      </div>
-
-      <div className="dashboard-grid">
-        <section className="panel sales-panel">
-          <div className="panel-heading">
-            <div><h2>Reservas en el periodo</h2><p>Solicitudes registradas por día</p></div>
-            <select className="select select--small" value={period} onChange={(event) => setPeriod(event.target.value)} aria-label="Periodo de ventas">
-              <option value="7">Últimos 7 días</option><option value="30">Últimos 30 días</option><option value="90">Últimos 90 días</option>
-            </select>
-          </div>
-          <div className="chart-summary"><strong>{series.counts.reduce((sum, count) => sum + count, 0).toLocaleString('es-PE')}</strong><span>reservas</span></div>
-          <div className="chart-wrap">
-            <div className="chart-y-labels"><span>{series.max}</span><span>{Math.ceil(series.max * .75)}</span><span>{Math.ceil(series.max * .5)}</span><span>{Math.ceil(series.max * .25)}</span><span>0</span></div>
-            <svg className="sales-chart" viewBox="0 0 720 210" preserveAspectRatio="none" role="img" aria-label={`Gráfico de reservas durante los últimos ${period} días`}>
-              <defs><linearGradient id="salesFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="var(--admin-accent-bright)" stopOpacity=".24" /><stop offset="100%" stopColor="var(--admin-accent-bright)" stopOpacity="0" /></linearGradient></defs>
-              {[20, 63, 106, 149, 192].map((y) => <line key={y} x1="0" x2="720" y1={y} y2={y} className="chart-gridline" />)}
-              <path className="chart-area" d={series.area} />
-              <path className="chart-line" d={series.line} />
-            </svg>
-          </div>
-          <div className="chart-x-labels">{series.labels.map((label) => <span key={label}>{label}</span>)}</div>
-        </section>
-        <section className="panel channel-panel">
-          <div className="panel-heading"><div><h2>Reservas por método</h2><p>Distribución de pagos seleccionados</p></div></div>
-          <div className="donut-wrap"><div className="donut" role="img" aria-label={`Reservas por método de pago: ${methodTotal} en total`} style={{ background: donutBackground }}><div><strong>{methodTotal.toLocaleString('es-PE')}</strong><span>reservas</span></div></div></div>
-          <div className="legend">
-            {methodCounts.map(({ method, count }, index) => <span key={method}><i className={`legend-dot legend-dot--${['mint', 'blue', 'peach'][index]}`} />{methodLabels[method]} <b>{methodTotal ? Math.round((count / methodTotal) * 100) : 0}%</b></span>)}
-          </div>
-        </section>
-      </div>
-
-      <div className="dashboard-grid dashboard-grid--lower">
-        <section className="panel orders-panel">
-          <div className="panel-heading"><div><h2>Pedidos recientes</h2><p>Las últimas reservas de tus clientes</p></div><button className="text-link" onClick={() => onNavigate('pedidos')}>Ver todos <ArrowRight size={15} /></button></div>
-          <OrderList items={recentReservations} compact />
-        </section>
-        <section className="panel best-panel">
-          <div className="panel-heading"><div><h2>Productos estrella</h2><p>Los favoritos de este mes</p></div><button className="text-link" onClick={() => onNavigate('productos')}>Ver catálogo <ArrowRight size={15} /></button></div>
-          <div className="best-list">
-            {bestSellers.map((product, index) => <div className="best-item" key={product.id}><span className="product-thumb product-thumb--sea"><Compass size={18} /></span><div className="best-item__name"><strong>{product.name}</strong><span>{product.reservationsCount} reservas</span></div><span className="best-item__rank"><Star size={13} fill="currentColor" /> #{index + 1}</span></div>)}
-            {bestSellers.length === 0 && <p className="empty-state">No hay productos registrados.</p>}
-          </div>
-        </section>
-      </div>
-
-      <div className="dashboard-grid dashboard-grid--lower">
-        <section className="panel renewals-panel">
-          <div className="panel-heading"><div><h2>Próximos eventos</h2><p>Salidas y experiencias programadas</p></div><button className="text-link" onClick={() => onNavigate('pedidos')}>Calendario <ArrowRight size={15} /></button></div>
-          {upcomingReservations.map((reservation) => <div className="event-row" key={reservation.id}><span className="event-date"><b>{String(reservation.fecha_tour).slice(8, 10)}</b><small>{new Date(`${String(reservation.fecha_tour).slice(0, 10)}T00:00:00`).toLocaleDateString('es-PE', { month: 'short' }).toUpperCase()}</small></span><div><strong>{reservation.promocion_nombre || 'Reserva de tour'}</strong><span>{reservation.asistentes} viajeros · {reservation.nombre}</span></div><span className="event-status">{new Date(`${String(reservation.fecha_tour).slice(0, 10)}T00:00:00`).toLocaleDateString('es-PE', { day: 'numeric', month: 'short' })}</span></div>)}
-          {upcomingReservations.length === 0 && <p className="empty-state">No hay próximas salidas reservadas.</p>}
-        </section>
-        <section className="panel loyalty-preview">
-          <div className="loyalty-preview__icon"><Sparkles size={20} /></div>
-          <p className="eyebrow">Muy pronto</p><h2>Un viaje, más recompensas</h2>
-          <p>Estamos preparando un programa de puntos para agradecer cada aventura que tus clientes vivan con IcaTurismo.</p>
-          <button className="text-link" onClick={() => onNavigate('puntos')}>Explorar beneficios <ArrowRight size={15} /></button>
-          <span className="loyalty-orbit loyalty-orbit--one" /><span className="loyalty-orbit loyalty-orbit--two" />
-        </section>
-      </div>
-    </>
-  )
-}
-
-function OrderList({ items, compact = false }) {
-  if (!items.length) return <p className="empty-state">Todavía no hay reservas registradas.</p>
-  return <div className={`order-list ${compact ? 'order-list--compact' : ''}`}>
-    {items.map((order) => <div className="order-row" key={order.id}><Avatar initials={order.initials} tone={order.tone} /><div className="order-person"><strong>{order.customer}</strong><span>{order.item}</span></div><span className="order-date">{order.date}</span><span className={`status status--${order.statusClass || order.status.toLowerCase()}`}>{order.status}</span><strong className="order-total">{money(order.total)}</strong></div>)}
-  </div>
 }
 
 function ProductsPage({ products, reservations, onAdd, onEdit, onToggle }) {
@@ -334,8 +164,8 @@ function CustomerPointsControl({ customer, onSave }) {
   </form>
 }
 
-function CustomersPage({ customers, onNavigate, onStatusChange, onPointsChange, canManage, loading }) {
-  const [search, setSearch] = useState('')
+function CustomersPage({ customers, onNavigate, onStatusChange, onPointsChange, canManage, loading, initialQuery = '' }) {
+  const [search, setSearch] = useState(initialQuery)
   const filtered = customers.filter((customer) => `${customer.nombre} ${customer.email}`.toLowerCase().includes(search.trim().toLowerCase()))
   const currentMonth = new Date()
   const newThisMonth = customers.filter((customer) => {
@@ -353,20 +183,20 @@ function CustomersPage({ customers, onNavigate, onStatusChange, onPointsChange, 
   </>
 }
 
-function OrdersPage({ reservations }) {
-  const [query, setQuery] = useState('')
-  const [status, setStatus] = useState('todas')
+function OrdersPage({ reservations, initialTarget = {}, onRefresh, onClear }) {
+  const [query, setQuery] = useState(initialTarget.query || '')
+  const [status, setStatus] = useState(initialTarget.status || 'todas')
   const [departure, setDeparture] = useState('todas')
-  const today = new Date().toISOString().slice(0, 10)
+  const today = limaDate()
   const filtered = reservations.filter((reservation) => {
     const searchable = `${reservation.id} ${reservation.nombre} ${reservation.email} ${reservation.promocion_nombre || ''}`.toLowerCase()
     const tourDate = String(reservation.fecha_tour).slice(0, 10)
-    return searchable.includes(query.trim().toLowerCase())
+    return (!initialTarget.id || Number(reservation.id) === Number(initialTarget.id)) && searchable.includes(query.trim().toLowerCase())
       && (status === 'todas' || reservation.estado === status)
       && (departure === 'todas' || (departure === 'proximas' ? tourDate >= today : tourDate < today))
   })
   return <>
-    <SectionHeading eyebrow="Actividad" title="Reservas" description="Consulta las reservas registradas y su estado." action={<button className="button button--quiet" onClick={() => window.location.reload()}><Download size={16} /> Actualizar</button>} />
+    <SectionHeading eyebrow="Actividad" title="Reservas" description="Consulta las reservas recientes y su estado. Los gráficos del resumen incluyen todo el histórico." action={<div className="table-filters"><button className="button button--quiet" onClick={onRefresh}><RefreshCw size={16} />Actualizar</button><button className="button button--quiet" onClick={() => downloadCSV(`reservas-${today}.csv`, [['Código', 'Cliente', 'Experiencia', 'Fecha de salida', 'Total PEN', 'Estado', 'Pago'], ...filtered.map((r) => [r.id, r.nombre, r.promocion_nombre, String(r.fecha_tour).slice(0, 10), r.total, r.estado, r.estado_pago])])}><Download size={16} />CSV</button>{initialTarget.id && <button className="button button--quiet" onClick={onClear}>Ver todas las reservas</button>}</div>} />
     <div className="catalog-summary"><div><span>Reservas registradas</span><strong>{reservations.length}</strong></div><div><span>Por atender</span><strong>{reservations.filter((reservation) => reservation.estado === 'pendiente').length}</strong></div><div><span>Ingresos pagados</span><strong>{money(reservations.filter((reservation) => reservation.estado_pago === 'pagado').reduce((sum, reservation) => sum + Number(reservation.total || 0), 0))}</strong></div></div>
     <section className="panel table-panel"><div className="table-toolbar"><div><h2>Reservas de viajeros</h2><span>{filtered.length} de {reservations.length} registros</span></div><div className="table-filters"><label className="search-box"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar cliente, tour o código..." /></label><select className="select select--small" value={status} onChange={(event) => setStatus(event.target.value)} aria-label="Filtrar reservas por estado"><option value="todas">Todos los estados</option><option value="pendiente">Pendientes</option><option value="confirmada">Confirmadas</option><option value="cancelada">Canceladas</option></select><select className="select select--small" value={departure} onChange={(event) => setDeparture(event.target.value)} aria-label="Filtrar por fecha de salida"><option value="todas">Todas las salidas</option><option value="proximas">Próximas salidas</option><option value="pasadas">Salidas pasadas</option></select></div></div><div className="table-scroll"><table><thead><tr><th>Reserva</th><th>Cliente</th><th>Experiencia</th><th>Fecha del tour</th><th>Total</th><th>Estado</th><th>Pago</th></tr></thead><tbody>{filtered.map((reservation) => <tr key={reservation.id}><td className="table-strong">#{reservation.id}</td><td><div className="table-person"><strong>{reservation.nombre}</strong><small>{reservation.email}</small></div></td><td>{reservation.promocion_nombre || 'Reserva de tour'}</td><td>{new Date(`${String(reservation.fecha_tour).slice(0, 10)}T00:00:00`).toLocaleDateString('es-PE')}</td><td className="table-strong">{money(reservation.total)}</td><td><span className={`status status--${reservation.estado}`}>{reservation.estado}</span></td><td><span className={`status status--${reservation.estado_pago}`}>{reservation.estado_pago}</span></td></tr>)}</tbody></table>{filtered.length === 0 && <p className="empty-state">No hay reservas que coincidan con estos filtros.</p>}</div></section>
   </>
@@ -430,6 +260,12 @@ function EmployeeModal({ onClose, onSave }) {
 export default function App({ user }) {
   const [activePage, setActivePage] = useState(user?.rol === 'editor' ? 'destinos' : 'dashboard')
   const [products, setProducts] = useState([])
+  const [destinations, setDestinations] = useState([])
+  const [navigationTarget, setNavigationTarget] = useState({})
+  const [navigationVersion, setNavigationVersion] = useState(0)
+  const [refreshVersion, setRefreshVersion] = useState(0)
+  const [refreshing, setRefreshing] = useState(false)
+  const [updatedAt, setUpdatedAt] = useState(null)
   const [employees, setEmployees] = useState([])
   const [customers, setCustomers] = useState([])
   const [productModal, setProductModal] = useState(null)
@@ -452,6 +288,14 @@ export default function App({ user }) {
   }) })).filter((group) => group.items.length)
   const currentNav = navGroups.flatMap((group) => group.items).find((item) => item.id === activePage)
   const PageIcon = currentNav?.icon || LayoutDashboard
+  const refresh = useCallback(() => setRefreshVersion((value) => value + 1), [])
+  const navigate = useCallback((page, target = {}) => { setActivePage(page); setNavigationTarget(target); setNavigationVersion((value) => value + 1); setMobileNav(false); window.scrollTo({ top: 0, behavior: 'instant' }) }, [])
+  useEffect(() => {
+    const timer = setInterval(() => { if (!document.hidden) refresh() }, 60000)
+    const visible = () => { if (!document.hidden) refresh() }
+    document.addEventListener('visibilitychange', visible)
+    return () => { clearInterval(timer); document.removeEventListener('visibilitychange', visible) }
+  }, [refresh])
 
   useEffect(() => {
     if (!notice) return undefined
@@ -460,38 +304,30 @@ export default function App({ user }) {
   }, [notice])
 
   useEffect(() => {
-    let current = true
-    Promise.all([
-      isEditor ? Promise.resolve({ summary: null }) : loadAdminResource('/summary'),
-      isEditor ? Promise.resolve({ reservations: [] }) : loadAdminResource('/reservas'),
-      isEditor ? Promise.resolve({ customers: [] }) : loadAdminResource('/clientes'),
-      isAdmin ? loadAdminResource('/empleados') : Promise.resolve({ employees: [] }),
-      canManageCatalog ? loadAdminResource('/promociones') : Promise.resolve({ promotions: [] }),
-    ])
-      .then(([summaryResult, reservationResult, customerResult, employeeResult, productResult]) => {
-        if (!current) return
-        setSummary(summaryResult.summary)
-        setReservations(reservationResult.reservations || [])
-        setCustomers(customerResult.customers || [])
-        setEmployees(employeeResult.employees || [])
-        setProducts((productResult.promotions || []).map((product) => ({
-          id: product.id,
-          name: product.nombre,
-          description: product.descripcion,
-          category: product.categoria,
-          price: Number(product.precio),
-          active: product.activo,
-        })))
-        setDashboardError('')
-      })
-      .catch((error) => {
-        if (current) setDashboardError(error.message || 'No se pudieron cargar las métricas.')
-      })
-      .finally(() => {
-        if (current) setDashboardLoading(false)
-      })
-    return () => { current = false }
-  }, [canManageCatalog, isAdmin, isEditor])
+    const controller = new AbortController(); let current = true
+    setRefreshing(true)
+    const actions = [
+      ...(!isEditor ? [
+        { name: 'Resumen', request: () => loadAdminResource('/summary', { signal: controller.signal }), apply: (result) => setSummary(result.summary) },
+        { name: 'Reservas', request: () => loadAdminResource('/reservas', { signal: controller.signal }), apply: (result) => setReservations(result.reservations || []) },
+        { name: 'Clientes', request: () => loadAdminResource('/clientes', { signal: controller.signal }), apply: (result) => setCustomers(result.customers || []) },
+      ] : []),
+      ...(isAdmin ? [{ name: 'Equipo', request: () => loadAdminResource('/empleados', { signal: controller.signal }), apply: (result) => setEmployees(result.employees || []) }] : []),
+      ...(canManageCatalog ? [
+        { name: 'Promociones', request: () => loadAdminResource('/promociones', { signal: controller.signal }), apply: (result) => setProducts((result.promotions || []).map((product) => ({ id: product.id, name: product.nombre, description: product.descripcion, category: product.categoria, price: Number(product.precio), active: product.activo }))) },
+        { name: 'Destinos', request: () => cmsRequest('/destinos', { signal: controller.signal }), apply: (result) => setDestinations(result.destinos || []) },
+      ] : []),
+    ]
+    Promise.allSettled(actions.map((action) => action.request())).then((results) => {
+      if (!current) return
+      const failures = []
+      results.forEach((result, index) => { if (result.status === 'fulfilled') actions[index].apply(result.value); else if (result.reason?.name !== 'AbortError') failures.push(`${actions[index].name}: ${result.reason?.message || 'no disponible'}`) })
+      setDashboardError(failures.join(' · '))
+      if (results.some((result) => result.status === 'fulfilled')) setUpdatedAt(Date.now())
+      setDashboardLoading(false); setRefreshing(false)
+    })
+    return () => { current = false; controller.abort() }
+  }, [canManageCatalog, isAdmin, isEditor, refreshVersion])
 
   async function changeCustomerStatus(id, estado_cuenta) {
     try {
@@ -541,15 +377,15 @@ export default function App({ user }) {
   }
 
   const pageContent = useMemo(() => {
-    const changePage = (page) => { setActivePage(page); setMobileNav(false) }
+    const changePage = navigate
     if (activePage === 'medios' && canManageCatalog) return <MediaLibrary />
-    if (['destinos', 'productos'].includes(activePage) && canManageCatalog) return <CmsPanel key={activePage} kind={activePage === 'destinos' ? 'destinos' : 'promociones'} onCatalogChange={(rows) => setProducts(rows.map((record) => ({ id: record.id, name: record.nombre, description: record.descripcion, category: record.categoria, price: Number(record.precio), active: record.activo })))} />
-    if (activePage === 'pedidos') return <OrdersPage reservations={reservations} />
-    if (activePage === 'clientes') return <CustomersPage customers={customers} onNavigate={changePage} onStatusChange={changeCustomerStatus} onPointsChange={changeCustomerPoints} canManage={isAdmin} loading={dashboardLoading} />
+    if (['destinos', 'productos'].includes(activePage) && canManageCatalog) return <CmsPanel key={`${activePage}-${navigationVersion}`} initialQuery={navigationTarget.query || ''} initialDestination={navigationTarget.destino_id || ''} kind={activePage === 'destinos' ? 'destinos' : 'promociones'} onCatalogChange={(rows) => setProducts(rows.map((record) => ({ id: record.id, name: record.nombre, description: record.descripcion, category: record.categoria, price: Number(record.precio), active: record.activo })))} />
+    if (activePage === 'pedidos') return <OrdersPage key={`orders-${navigationVersion}`} reservations={reservations} initialTarget={navigationTarget} onRefresh={refresh} onClear={() => navigate('pedidos')} />
+    if (activePage === 'clientes') return <CustomersPage key={`customers-${navigationVersion}`} initialQuery={navigationTarget.query || ''} customers={customers} onNavigate={changePage} onStatusChange={changeCustomerStatus} onPointsChange={changeCustomerPoints} canManage={isAdmin} loading={dashboardLoading} />
     if (activePage === 'equipo') return <EmployeesPage employees={employees} onAdd={() => setEmployeeModal(true)} onUpdate={changeEmployee} currentUserId={user?.id} loading={dashboardLoading} />
     if (activePage === 'puntos') return <PointsPage customers={customers} />
-    return <DashboardHome user={user} products={products} onNavigate={changePage} period={period} setPeriod={setPeriod} summary={summary} reservations={reservations} loading={dashboardLoading} error={dashboardError} />
-  }, [activePage, canManageCatalog, customers, dashboardError, dashboardLoading, employees, isAdmin, period, products, reservations, summary, user])
+    return <AdminDashboard user={user} products={products} onNavigate={changePage} period={period} setPeriod={setPeriod} summary={summary} reservations={reservations} loading={dashboardLoading} error={dashboardError} refreshVersion={refreshVersion} onRefresh={refresh} />
+  }, [activePage, canManageCatalog, customers, dashboardError, dashboardLoading, employees, isAdmin, period, products, reservations, summary, user, navigationTarget, navigationVersion, navigate, refresh, refreshVersion])
 
   async function saveProduct(product) {
     try {
@@ -582,12 +418,12 @@ export default function App({ user }) {
     }
   }
 
-  return <div className={`admin-island ${dark ? 'admin-island--dark' : 'admin-island--light'}`}>
+  return <div className={`admin-island ${dark ? 'admin-island--dark' : 'admin-island--light'}`} style={{ '--dash-oasis-image': `url("${new URL('../assets/admin/oasis-sunset.jpg', window.location.href).href}")`, '--dash-coast-image': `url("${new URL('../assets/admin/coastal-sunset.jpg', window.location.href).href}")` }}>
     <aside className={`sidebar ${mobileNav ? 'sidebar--open' : ''}`}>
       <a className="sidebar-brand" href="../index.html"><img src="../assets/logoIcaTurismo.png" alt="" /><span>IcaTurismo<small>ADMINISTRACIÓN</small></span></a>
-      <div className="workspace-switch"><span className="workspace-avatar">I</span><span><strong>IcaTurismo</strong><small>Panel de control</small></span><ChevronDown size={15} /></div>
+      <button type="button" className="workspace-switch" onClick={() => navigate(isEditor ? 'destinos' : 'dashboard')}><span className="workspace-avatar"><Compass size={19} /></span><span><strong>IcaTurismo</strong><small>Panel de control</small></span><ChevronRight size={15} /></button>
       <nav className="side-nav" aria-label="Navegación del panel">
-        {visibleNav.map((group) => <div className="nav-group" key={group.label}><span className="nav-group__label">{group.label}</span>{group.items.map(({ id, label, icon: Icon, count }) => <button className={`nav-link ${activePage === id ? 'nav-link--active' : ''}`} key={id} onClick={() => { setActivePage(id); setMobileNav(false) }}><Icon size={17} strokeWidth={1.8} /><span>{label}</span>{count && <span className="nav-count">{count}</span>}</button>)}</div>)}
+        {visibleNav.map((group) => <div className="nav-group" key={group.label}><span className="nav-group__label">{group.label}</span>{group.items.map(({ id, label, icon: Icon, count }) => <button className={`nav-link ${activePage === id ? 'nav-link--active' : ''}`} key={id} onClick={() => navigate(id)}><Icon size={17} strokeWidth={1.8} /><span>{label}</span>{count && <span className="nav-count">{count}</span>}</button>)}</div>)}
       </nav>
       <div className="sidebar-bottom">{!isEditor && <div className="sidebar-promo"><Sparkles size={17} /><span><strong>Un programa de puntos</strong><small>Fideliza a tus viajeros.</small></span><button onClick={() => setActivePage('puntos')} aria-label="Ver programa de puntos"><ArrowRight size={16} /></button></div>}<a className="nav-link sidebar-help" href="../index.html" target="_blank" rel="noopener noreferrer"><ExternalLink size={17} /><span>Ver sitio público</span></a><div className="sidebar-user"><Avatar initials={user?.nombre?.split(' ').map((part) => part[0]).slice(0, 2).join('') || 'AD'} tone="mint" /><span><strong>{user?.nombre || 'Equipo'}</strong><small>{({ admin: 'Administrador', editor: 'Editor', soporte: 'Soporte', registrador: 'Registrador' })[user?.rol] || 'Equipo'}</small></span><button className="icon-button" title="Cerrar sesión" onClick={() => window.Auth?.logout()}><LogOut size={16} /></button></div></div>
     </aside>
@@ -598,26 +434,10 @@ export default function App({ user }) {
           <button className="mobile-menu icon-button" onClick={() => setMobileNav(true)} aria-label="Abrir menú"><Menu size={19} /></button>
           <span className="breadcrumb"><span>Panel</span><ChevronRight size={14} /><PageIcon size={15} />{currentNav?.label || 'Resumen'}</span>
         </div>
-        <div className="topbar-actions">
-          <label className="global-search"><Search size={16} /><input placeholder="Buscar..." aria-label="Buscar" /><kbd>⌘ K</kbd></label>
-          <button
-            className="icon-button theme-button"
-            onClick={() => {
-              const next = !dark
-              setDark(next)
-              setNotice(saveSaved('icat_admin_theme', next) ? '' : 'No se pudo guardar el tema en este navegador.')
-            }}
-            aria-label={dark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
-          >
-            {dark ? <Sparkles size={17} /> : <Activity size={17} />}
-          </button>
-          <button className="icon-button notification-button" aria-label="Notificaciones"><Bell size={17} /><i /></button>
-          <span className="topbar-divider" />
-          <Avatar initials={user?.nombre?.split(' ').map((part) => part[0]).slice(0, 2).join('') || 'AD'} tone="mint" />
-        </div>
+        <AdminHeader user={user} navigation={visibleNav} products={products} reservations={reservations} customers={customers} destinations={destinations} onNavigate={navigate} onRefresh={refresh} busy={refreshing} dark={dark} updatedAt={updatedAt} onTheme={() => { const next = !dark; setDark(next); setNotice(saveSaved('icat_admin_theme', next) ? '' : 'No se pudo guardar el tema en este navegador.') }} />
       </header>
-      <div className="page-content" key={activePage}>{pageContent}</div>
-      <footer className="dashboard-footer"><span>© 2026 IcaTurismo · Panel de administración</span><span><span className="online-dot" /> Todos los sistemas operativos</span></footer>
+      <div className="page-content" key={`${activePage}-${navigationVersion}`}>{pageContent}</div>
+      <footer className="dashboard-footer"><span>© 2026 IcaTurismo · Panel de administración</span><span><span className={`online-dot ${dashboardError ? 'is-error' : ''}`} />{refreshing ? 'Actualizando datos…' : dashboardError ? 'Sincronización parcial' : updatedAt ? `Actualizado ${new Date(updatedAt).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Lima' })} · cada 60 s` : 'Conectando…'}</span></footer>
     </main>
     {productModal && <ProductModal product={productModal.product} onClose={() => setProductModal(null)} onSave={saveProduct} />}
     {employeeModal && <EmployeeModal onClose={() => setEmployeeModal(false)} onSave={saveEmployee} />}

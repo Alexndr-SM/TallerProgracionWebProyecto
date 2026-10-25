@@ -2,12 +2,14 @@ const express = require('express');
 const controller = require('../controllers/adminController');
 const cmsPromotions = require('../controllers/promotionController');
 const { getMedia } = require('../controllers/mediaController');
+const { getAnalytics } = require('../controllers/analyticsController');
 const { requireAuth, requireRole } = require('../middleware/auth.middleware');
 
 const router = express.Router();
 router.use(requireAuth);
 
 router.get('/summary', requireRole('admin', 'registrador', 'soporte'), controller.getSummary);
+router.get('/analytics', requireRole('admin', 'registrador', 'soporte'), getAnalytics);
 router.get('/reservas', requireRole('admin', 'registrador', 'soporte'), controller.listReservations);
 router.post('/reservas', requireRole('admin', 'registrador'), controller.createLocalReservation);
 router.patch('/reservas/:id', requireRole('admin', 'registrador'), controller.updateReservation);
