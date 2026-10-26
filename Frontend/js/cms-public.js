@@ -168,13 +168,15 @@
     return [...new Set([imageFor(promotion), ...(Array.isArray(promotion.galeria_urls) ? promotion.galeria_urls.filter((src) => /^https:\/\//i.test(src)) : [])])];
   }
   function lightbox(images, selected, title) {
+    const origin = document.activeElement;
     const dialog = el('dialog', 'cms-lightbox'); const close = el('button', 'cms-lightbox-close', '×'); close.type = 'button'; close.setAttribute('aria-label', 'Cerrar imagen');
     const image = photo(images[selected], title, true); const caption = el('p'); const controls = el('div', 'cms-carousel-controls');
     const prev = el('button', '', '←'); const next = el('button', '', '→'); prev.type = next.type = 'button'; prev.setAttribute('aria-label', 'Imagen anterior'); next.setAttribute('aria-label', 'Imagen siguiente');
     function update(delta) { selected = (selected + delta + images.length) % images.length; image.src = images[selected]; image.alt = `${title} · imagen ${selected + 1}`; caption.textContent = `${title} · ${selected + 1} / ${images.length}`; }
     update(0); prev.addEventListener('click', () => update(-1)); next.addEventListener('click', () => update(1)); close.addEventListener('click', () => dialog.close());
     dialog.addEventListener('keydown', (event) => { if (event.key === 'ArrowLeft') update(-1); if (event.key === 'ArrowRight') update(1); });
-    controls.append(prev, caption, next); dialog.append(close, image, controls); document.body.append(dialog); dialog.showModal(); dialog.addEventListener('close', () => dialog.remove(), { once: true });
+    controls.append(prev, caption, next); dialog.append(close, image, controls); document.body.append(dialog); dialog.showModal(); dialog.addEventListener('close', () => { dialog.remove(); if (origin?.isConnected && typeof origin.focus === 'function') origin.focus({ preventScroll: true }); }, { once: true });
+    return dialog;
   }
   function breadcrumb(...items) {
     const nav = el('nav', 'cms-breadcrumb'); nav.setAttribute('aria-label', 'Ruta de navegación'); nav.append(anchor('Inicio', url('index.html')));
@@ -222,7 +224,10 @@
     const media = el('div', 'cms-promotion-cover'); media.append(photo(imageFor(promotion), promotion.titulo, true)); const tag = el('div', 'cms-image-caption'); tag.append(el('span', '', 'Vive el momento'), el('small', '', promotion.ubicacion || destination?.nombre || 'Ica, Perú')); media.append(tag);
     hero.append(reveal(info), reveal(media));
     const gallerySection = el('section', 'cms-gallery-section'); const galleryTitle = el('div', 'wrap cms-section-heading'); galleryTitle.append(el('span', 'cms-eyebrow', 'Un vistazo a lo que te espera'), el('h2', '', 'Imagina estar aquí'), el('p', '', 'Desliza, explora y guarda el recuerdo.'));
-    gallerySection.append(galleryTitle, carousel(imagesFor(promotion), promotion.titulo));
+    const galleryImages = imagesFor(promotion);
+    const panorama = window.IcaCircularCarousel?.create({ images: galleryImages, title: promotion.titulo, photo, onOpen: (index) => lightbox(galleryImages, index, promotion.titulo) });
+    if (panorama) carouselCleanups.add(panorama.destroy);
+    gallerySection.append(galleryTitle, panorama?.element || carousel(galleryImages, promotion.titulo));
     const extras = el('section', 'wrap cms-promotion-extras');
     if (promotion.itinerario) { const itinerary = el('div', 'cms-itinerary'); itinerary.append(el('span', 'cms-eyebrow', 'Cada momento cuenta'), el('h2', '', 'Así será tu experiencia'), el('p', '', promotion.itinerario)); extras.append(reveal(itinerary)); }
     const back = el('div', 'cms-more'); back.append(el('h2', '', 'Sigue descubriendo'), el('p', '', `Hay más historias esperándote en ${destination?.nombre || 'Ica'}.`), anchor('Ver todas las experiencias →', destinationLink, 'cms-button cms-button--outline')); extras.append(back);

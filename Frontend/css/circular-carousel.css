@@ -1,0 +1,38 @@
+/* Panorama curvo adaptado de CircularCarousel / React Bits. Ver ../licenses/react-bits.md. */
+.cms-gallery-section:has(.cms-circular-gallery) { padding-top: 48px; padding-bottom: 42px; }
+.cms-gallery-section:has(.cms-circular-gallery) > .cms-section-heading { text-align: center; margin-bottom: 4px; }
+.cms-gallery-section:has(.cms-circular-gallery) > .cms-section-heading p { margin-inline: auto; max-width: 560px; line-height: 1.8; }
+.cms-circular-gallery { --cc-fade: var(--abyss,#071f28); --cc-radius: 12px; color: var(--cms-text); position: relative; width: 100%; }
+.circular-carousel { position: relative; width: 100%; height: clamp(330px,40vw,560px); overflow: hidden; outline: none; touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+.circular-carousel[data-draggable] { cursor: grab; }.circular-carousel[data-dragging] { cursor: grabbing; }
+.circular-carousel:focus-visible { outline: 2px solid var(--cms-accent); outline-offset: -6px; border-radius: 12px; }
+.circular-carousel__view { position: absolute; inset: 0; mask-image: linear-gradient(to right,transparent,#000 12%,#000 88%,transparent); -webkit-mask-image: linear-gradient(to right,transparent,#000 12%,#000 88%,transparent); }
+.circular-carousel__stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .45s ease; }
+.circular-carousel[data-ready] .circular-carousel__stage { opacity: 1; }
+.circular-carousel__camera,.circular-carousel__ring,.circular-carousel__card { width: 0; height: 0; transform-style: preserve-3d; }
+.circular-carousel__camera { position: relative; }.circular-carousel__ring,.circular-carousel__card { position: absolute; left: 0; top: 0; }
+.circular-carousel__tile { position: absolute; outline: 1px solid transparent; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.circular-carousel__frame { position: absolute; left: 0; top: 0; width: 100%; overflow: hidden; background: var(--cms-surface); }
+.circular-carousel__photo { position: absolute; display: block; max-width: none; object-fit: cover; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.circular-carousel__shade { position: absolute; inset: 0; pointer-events: none; background: var(--cc-fade); opacity: var(--cc-depth,0); }
+.circular-carousel__arrows { position: absolute; z-index: 3; inset: 0; display: flex; align-items: center; justify-content: space-between; padding-inline: clamp(12px,3.5vw,56px); pointer-events: none; }
+.circular-carousel__arrows[hidden] { display: none; }
+.circular-carousel__arrows > button,.circular-carousel__pause { display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; padding: 0; border: 1px solid var(--cms-border); border-radius: 50%; background: var(--glass-strong,var(--cms-surface)); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--cms-text); font: 20px var(--font-body,Arial,sans-serif); cursor: pointer; pointer-events: auto; box-shadow: 0 4px 20px #0002; transition: transform .2s,background .2s,border-color .2s; }
+.circular-carousel__arrows > button:hover,.circular-carousel__pause:hover { transform: scale(1.08); border-color: var(--cms-accent); background: var(--cms-surface); }
+.circular-carousel__caption { display: flex; flex-direction: column; align-items: center; gap: 12px; padding-inline: 22px; text-align: center; }
+.circular-carousel__status { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 15px; }
+.circular-carousel__count { color: var(--cms-text); font: 500 11px var(--font-body,Arial,sans-serif); font-variant-numeric: tabular-nums; letter-spacing: .14em; min-width: 62px; }
+.circular-carousel__pause { width: 34px; height: 34px; font-size: 13px; }.circular-carousel__pause[hidden] { display: none; }
+.circular-carousel__open { border: 0; border-bottom: 1px solid var(--cms-border); padding: 6px 0; background: transparent; color: var(--cms-text); font: 500 10px var(--font-body,Arial,sans-serif); letter-spacing: .03em; cursor: pointer; transition: color .2s,border-color .2s; }.circular-carousel__open:hover { color: var(--cms-accent); border-color: currentColor; }
+.cms-page .circular-carousel__hint { margin: 0; max-width: 560px; color: var(--cms-muted); font-size: 10px; line-height: 1.8; text-align: center; }
+.circular-carousel__live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.cms-lightbox p { text-align: center; }
+/* Una única foto no se duplica ni gira; los navegadores sin 3D conservan una tira táctil. */
+.is-flat .circular-carousel__view { position: static; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: var(--cms-border) transparent; }
+.is-flat .circular-carousel__stage,.is-flat .circular-carousel__camera,.is-flat .circular-carousel__ring { position: static; width: 100%; height: 100%; transform: none; }
+.is-flat .circular-carousel__ring { display: flex; gap: 25px; align-items: center; padding-inline: max(25px,calc((100% - 300px)/2)); width: max-content; min-width: 100%; box-sizing: border-box; }
+.is-flat .circular-carousel__card { position: relative; width: clamp(190px,60vw,300px); height: 85%; flex-shrink: 0; scroll-snap-align: center; }
+.is-flat .circular-carousel__tile,.is-flat .circular-carousel__frame,.is-flat .circular-carousel__photo { inset: 0; width: 100%; height: 100%; border-radius: var(--cc-radius); }.is-flat .circular-carousel__card { cursor: zoom-in; }
+.is-single .circular-carousel__view { mask-image: none; -webkit-mask-image: none; overflow: hidden; }.is-single .circular-carousel__ring { width: 100%; justify-content: center; padding-inline: 24px; }
+@media(max-width:760px) { .cms-gallery-section:has(.cms-circular-gallery) { padding-top: 32px; padding-bottom: 32px; }.circular-carousel { height: 340px; }.circular-carousel__view { mask-image: linear-gradient(to right,transparent,#000 8%,#000 92%,transparent); -webkit-mask-image: linear-gradient(to right,transparent,#000 8%,#000 92%,transparent); }.circular-carousel__arrows > button { width: 36px; height: 36px; font-size: 18px; }.circular-carousel__caption { gap: 10px; }.cms-page .circular-carousel__hint { font-size: 9px; } }
+@media(prefers-reduced-motion:reduce) { .circular-carousel__stage,.circular-carousel__arrows > button,.circular-carousel__pause,.circular-carousel__open { transition: none; }.circular-carousel__arrows > button:hover,.circular-carousel__pause:hover { transform: none; }.is-flat .circular-carousel__view { scroll-behavior: auto; } }
