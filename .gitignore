@@ -1,0 +1,8 @@
+# Instalaciones y compilaciones reproducibles
+node_modules/
+Frontend/admin-dashboard/dist/
+/package-lock.json
+*.log
+.env
+.env.*
+!.env.example

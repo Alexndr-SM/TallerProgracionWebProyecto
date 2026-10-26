@@ -14,7 +14,6 @@ import {
   Plus,
   RefreshCw,
   Search,
-  Settings,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
@@ -118,28 +117,6 @@ function SectionHeading({ eyebrow, title, description, action }) {
   )
 }
 
-function ProductsPage({ products, reservations, onAdd, onEdit, onToggle }) {
-  const [query, setQuery] = useState('')
-  const [availability, setAvailability] = useState('todos')
-  const filtered = products.filter((product) => {
-    const matchesQuery = `${product.name} ${product.category} ${product.id}`.toLowerCase().includes(query.trim().toLowerCase())
-    return matchesQuery && (availability === 'todos' || (availability === 'activos' ? product.active : !product.active))
-  })
-  const reservationCount = (productId) => reservations.filter((reservation) => Number(reservation.promocion_id) === Number(productId)).length
-  return <>
-    <SectionHeading eyebrow="Catálogo" title="Productos y experiencias" description="Administra tus experiencias, precios y disponibilidad." action={<button className="button button--primary" onClick={() => onAdd()}><Plus size={16} /> Nuevo producto</button>} />
-    <div className="catalog-summary">
-      <div><span>Productos registrados</span><strong>{products.length}</strong></div><div><span>Productos activos</span><strong>{products.filter((product) => product.active).length}</strong></div><div><span>Reservas asociadas</span><strong>{reservations.length}</strong></div>
-    </div>
-    <section className="panel table-panel">
-      <div className="table-toolbar"><div><h2>Experiencias y paquetes</h2><span>{filtered.length} de {products.length} experiencias</span></div><div className="table-filters"><label className="search-box"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar destino o paquete..." /></label><select className="select select--small" value={availability} onChange={(event) => setAvailability(event.target.value)} aria-label="Filtrar experiencias por disponibilidad"><option value="todos">Todos</option><option value="activos">Disponibles</option><option value="inactivos">No disponibles</option></select></div></div>
-      <div className="table-scroll"><table><thead><tr><th>Experiencia</th><th>Categoría</th><th>Precio</th><th>Reservas</th><th>Estado</th><th /></tr></thead><tbody>
-        {filtered.map((product) => <tr key={product.id}><td><div className="table-product"><span className="product-thumb product-thumb--sea"><Compass size={17} /></span><div><strong>{product.name}</strong><small>{product.description || `Producto #${product.id}`}</small></div></div></td><td>{product.category}</td><td className="table-strong">{money(product.price)}</td><td>{reservationCount(product.id)}</td><td><span className={`status ${product.active ? 'status--confirmado' : 'status--inactivo'}`}>{product.active ? 'Activo' : 'Inactivo'}</span></td><td><div className="row-actions"><button className="icon-button" onClick={() => onEdit(product)} aria-label={`Editar ${product.name}`}><Settings size={15} /></button><button className="icon-button" onClick={() => onToggle(product)} aria-label={`${product.active ? 'Desactivar' : 'Activar'} ${product.name}`} title={product.active ? 'Desactivar' : 'Activar'}>{product.active ? <X size={15} /> : <Check size={15} />}</button></div></td></tr>)}
-      </tbody></table>{filtered.length === 0 && <p className="empty-state">{query ? 'No encontramos productos con esa búsqueda.' : 'Todavía no hay productos registrados.'}</p>}</div>
-    </section>
-  </>
-}
-
 function EmployeesPage({ employees, onAdd, onUpdate, currentUserId, loading }) {
   const roleLabels = { admin: 'Administrador', registrador: 'Registrador', soporte: 'Soporte', editor: 'Editor' }
   return <>
@@ -212,23 +189,6 @@ function PointsPage({ customers }) {
   </>
 }
 
-function ProductModal({ product, onClose, onSave }) {
-  const [form, setForm] = useState(product || { name: '', description: '', category: 'Aventura', price: '' })
-  const update = (key, value) => setForm((current) => ({ ...current, [key]: value }))
-  function submit(event) {
-    event.preventDefault()
-    if (!form.name.trim() || Number(form.price) <= 0) return
-    onSave({ ...form, id: product?.id, name: form.name.trim(), description: form.description.trim(), price: Number(form.price) })
-  }
-  return <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}><form className="modal" onSubmit={submit}>
-    <div className="modal-heading"><div><span className="eyebrow">{product ? 'Catálogo' : 'Nueva experiencia'}</span><h2>{product ? 'Editar producto' : 'Agregar producto'}</h2></div><button type="button" className="icon-button" onClick={onClose} aria-label="Cerrar"><X size={18} /></button></div>
-    <label className="field-label">Nombre de la experiencia<input required autoFocus value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="Ej. Tour al oasis de Huacachina" /></label>
-    <label className="field-label">Descripción<textarea rows="3" maxLength="2000" value={form.description} onChange={(event) => update('description', event.target.value)} placeholder="Describe la experiencia" /></label>
-    <div className="form-grid"><label className="field-label">Categoría<select value={form.category} onChange={(event) => update('category', event.target.value)}><option>Aventura</option><option>Cultura</option><option>Naturaleza</option><option>Gastronomía</option></select></label><label className="field-label">Precio (S/)<input required min="0.01" max="99999999.99" type="number" step="0.01" value={form.price} onChange={(event) => update('price', event.target.value)} placeholder="120.00" /></label></div>
-    <div className="modal-actions"><button type="button" className="button button--quiet" onClick={onClose}>Cancelar</button><button className="button button--primary" type="submit"><Check size={16} /> {product ? 'Guardar cambios' : 'Crear producto'}</button></div>
-  </form></div>
-}
-
 function EmployeeModal({ onClose, onSave }) {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'editor' })
   const [error, setError] = useState('')
@@ -268,7 +228,6 @@ export default function App({ user }) {
   const [updatedAt, setUpdatedAt] = useState(null)
   const [employees, setEmployees] = useState([])
   const [customers, setCustomers] = useState([])
-  const [productModal, setProductModal] = useState(null)
   const [employeeModal, setEmployeeModal] = useState(false)
   const [period, setPeriod] = useState('30')
   const [notice, setNotice] = useState('')
@@ -359,23 +318,6 @@ export default function App({ user }) {
     }
   }
 
-  async function toggleProduct(product) {
-    try {
-      const result = await updateAdminResource(`/promociones/${product.id}`, {
-        nombre: product.name,
-        descripcion: product.description || '',
-        categoria: product.category,
-        precio: product.price,
-        activo: !product.active,
-      })
-      const updated = { ...product, active: result.promotion.activo }
-      setProducts((current) => current.map((item) => item.id === product.id ? updated : item))
-      setNotice(updated.active ? 'Producto activado.' : 'Producto desactivado.')
-    } catch (error) {
-      setNotice(error.message)
-    }
-  }
-
   const pageContent = useMemo(() => {
     const changePage = navigate
     if (activePage === 'medios' && canManageCatalog) return <MediaLibrary />
@@ -386,26 +328,6 @@ export default function App({ user }) {
     if (activePage === 'puntos') return <PointsPage customers={customers} />
     return <AdminDashboard user={user} products={products} onNavigate={changePage} period={period} setPeriod={setPeriod} summary={summary} reservations={reservations} loading={dashboardLoading} error={dashboardError} refreshVersion={refreshVersion} onRefresh={refresh} />
   }, [activePage, canManageCatalog, customers, dashboardError, dashboardLoading, employees, isAdmin, period, products, reservations, summary, user, navigationTarget, navigationVersion, navigate, refresh, refreshVersion])
-
-  async function saveProduct(product) {
-    try {
-      const editing = Boolean(product.id)
-      const result = await updateAdminResource(editing ? `/promociones/${product.id}` : '/promociones', {
-        nombre: product.name,
-        descripcion: product.description,
-        categoria: product.category,
-        precio: product.price,
-        activo: product.active ?? true,
-      }, editing ? 'PATCH' : 'POST')
-      const record = result.promotion
-      const saved = { id: record.id, name: record.nombre, description: record.descripcion, category: record.categoria, price: Number(record.precio), active: record.activo }
-      setProducts((current) => editing ? current.map((item) => item.id === saved.id ? saved : item) : [saved, ...current])
-      setProductModal(null)
-      setNotice(editing ? 'Producto actualizado.' : 'Producto creado.')
-    } catch (error) {
-      setNotice(error.message)
-    }
-  }
 
   async function saveEmployee(data) {
     try {
@@ -439,7 +361,6 @@ export default function App({ user }) {
       <div className="page-content" key={`${activePage}-${navigationVersion}`}>{pageContent}</div>
       <footer className="dashboard-footer"><span>© 2026 IcaTurismo · Panel de administración</span><span><span className={`online-dot ${dashboardError ? 'is-error' : ''}`} />{refreshing ? 'Actualizando datos…' : dashboardError ? 'Sincronización parcial' : updatedAt ? `Actualizado ${new Date(updatedAt).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Lima' })} · cada 60 s` : 'Conectando…'}</span></footer>
     </main>
-    {productModal && <ProductModal product={productModal.product} onClose={() => setProductModal(null)} onSave={saveProduct} />}
     {employeeModal && <EmployeeModal onClose={() => setEmployeeModal(false)} onSave={saveEmployee} />}
     {notice && <div className="toast" role="status"><Check size={16} />{notice}<button onClick={() => setNotice('')} aria-label="Cerrar notificación"><X size={15} /></button></div>}
   </div>
