@@ -13,6 +13,37 @@ document.addEventListener('DOMContentLoaded', () => {
   const photoPreview = document.getElementById('review-photo-preview');
   let previewUrl;
 
+  const ratingGroup = form?.querySelector('.review-rating-stars');
+  if (ratingGroup) {
+    const radios = [...ratingGroup.querySelectorAll('input[type="radio"]')];
+    const feedback = document.createElement('output');
+    feedback.id = 'review-rating-value'; feedback.className = 'review-rating-value';
+    feedback.setAttribute('aria-live', 'polite'); feedback.setAttribute('aria-atomic', 'true');
+    ratingGroup.setAttribute('aria-describedby', feedback.id);
+    radios.forEach((radio) => radio.setAttribute('aria-label', `${radio.value} ${radio.value === '1' ? 'estrella' : 'estrellas'}`));
+    ratingGroup.after(feedback);
+    const descriptions = ['Selecciona de 1 a 5 estrellas', 'Necesita mejorar', 'Regular', 'Buena', 'Muy buena', 'Excelente'];
+    function updateRating() {
+      const value = Number(radios.find((radio) => radio.checked)?.value || 0);
+      feedback.textContent = value ? `${value} de 5 · ${descriptions[value]}` : descriptions[0];
+    }
+    ratingGroup.addEventListener('change', updateRating);
+    ratingGroup.addEventListener('pointermove', () => { ratingGroup.dataset.input = 'pointer'; });
+    ratingGroup.addEventListener('pointerdown', () => { ratingGroup.dataset.input = 'pointer'; });
+    ratingGroup.addEventListener('focusin', (event) => { if (event.target.matches(':focus-visible')) ratingGroup.dataset.input = 'keyboard'; });
+    ratingGroup.addEventListener('keydown', (event) => {
+      if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) return;
+      event.preventDefault();
+      ratingGroup.dataset.input = 'keyboard';
+      const value = Number(radios.find((radio) => radio.checked)?.value || 0);
+      const next = event.key === 'Home' ? 1 : event.key === 'End' ? 5 : Math.min(5, Math.max(1, value + (['ArrowRight', 'ArrowUp'].includes(event.key) ? 1 : -1)));
+      const radio = radios.find((item) => Number(item.value) === next);
+      radio.checked = true; radio.focus(); radio.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    form.addEventListener('reset', () => queueMicrotask(updateRating));
+    updateRating();
+  }
+
   function showLoginPrompt() {
     if (!formStatus) return;
     formStatus.replaceChildren(document.createTextNode('Para publicar, '));

@@ -68,7 +68,7 @@
       });
       details.addEventListener('keydown', (event) => { if (event.key === 'Escape') { details.open = false; summary.focus(); } });
       list.addEventListener('click', () => { details.open = false; nav.classList.remove('active'); const button = document.querySelector('#hamburger'); if (button) { button.classList.remove('active'); button.setAttribute('aria-expanded', 'false'); } });
-      const contact = el('li'); contact.append(anchor('Contacto', url('html/contacto.html')));
+      const contact = el('li'); const contactLink = anchor('Contacto', url('html/contacto.html')); if (new URL(contactLink.href).pathname === location.pathname) contactLink.setAttribute('aria-current', 'page'); contact.append(contactLink);
       nav.replaceChildren(first, menuItem, contact);
     }
     document.querySelectorAll('[data-cms-footer-destinations], .footer-column').forEach((container) => {

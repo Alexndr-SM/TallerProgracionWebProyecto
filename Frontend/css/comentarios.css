@@ -47,12 +47,7 @@
   border-radius: 50%;
   object-fit: cover;
 }
-.review-stars,
-.review-rating-stars label {
-  color: var(--peach);
-  letter-spacing: 0.12em;
-  white-space: nowrap;
-}
+.review-stars { color: var(--review-gold,#e7b33f); letter-spacing: .12em; white-space: nowrap; }
 .review-card p {
   margin: 0;
   max-width: none;
@@ -112,36 +107,21 @@
 .review-form-fields textarea { min-height: 7rem; }
 .review-form-fields input::placeholder,
 .review-form-fields textarea::placeholder { color: var(--text-soft); }
-.review-rating {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: var(--text);
-  font-size: 0.85rem;
+/* Interacción inspirada en Uiverse.io / PriyanshuGupta28; radios nativos accesibles. */
+.reviews-section { --review-gold: #e7b33f; --review-empty: #83999a; }
+.review-rating { display: flex; align-items: center; flex-wrap: wrap; gap: .8rem; color: var(--text); font-size: .85rem; }
+.review-rating-stars { position: relative; display: inline-flex; flex-direction: row-reverse; gap: 2px; isolation: isolate; }
+.review-rating-stars input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.review-rating-stars label { display: grid; place-items: center; width: 35px; height: 40px; padding: 0; font-size: 32px; line-height: 1; letter-spacing: 0; color: var(--review-empty); cursor: pointer; border-radius: 7px; transition: color .2s,transform .2s,text-shadow .2s; }
+.review-rating-stars input:checked ~ label { color: var(--review-gold); text-shadow: 0 0 12px #d8a72a20; }
+.review-rating-stars input:focus-visible + label { outline: 2px solid var(--review-gold); outline-offset: 2px; }
+.review-rating-value { color: var(--text-soft); font-size: 11px; line-height: 1.6; min-width: 110px; }
+@media(hover:hover) {
+  .review-rating-stars:not([data-input="keyboard"]):has(label:hover) label { color: var(--review-empty); text-shadow: none; }
+  .review-rating-stars:not([data-input="keyboard"]):has(label:hover) label:hover,.review-rating-stars:not([data-input="keyboard"]):has(label:hover) label:hover ~ label { color: var(--review-gold); text-shadow: 0 0 12px #d8a72a30; }
+  .review-rating-stars label:hover { transform: translateY(-2px) scale(1.08); }
 }
-.review-rating-stars {
-  display: inline-flex;
-  flex-direction: row-reverse;
-}
-.review-rating-stars input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-}
-.review-rating-stars label {
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-.review-rating-stars input:checked ~ label,
-.review-rating-stars label:hover,
-.review-rating-stars label:hover ~ label { color: var(--peach); }
-.review-rating-stars input:focus-visible + label {
-  outline: 2px solid var(--peach);
-  outline-offset: 3px;
-}
+@media(prefers-reduced-motion:reduce) { .review-rating-stars label { transition: none; }.review-rating-stars label:hover { transform: none; } }
 .review-form-actions {
   display: flex;
   align-items: center;
