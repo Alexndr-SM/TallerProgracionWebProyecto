@@ -1,7 +1,12 @@
-import { StrictMode } from 'react'
+import { StrictMode, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import '@fontsource-variable/geist'
 import App from './App.jsx'
+
+export function MountedDashboard({ user }) {
+  useEffect(() => { container.dispatchEvent(new Event('admin:mounted')) }, [])
+  return <App user={user} />
+}
 
 const container = document.querySelector('[data-admin-dashboard]')
 
@@ -13,10 +18,9 @@ if (container) {
     root = createRoot(container)
     root.render(
       <StrictMode>
-        <App user={user} />
+        <MountedDashboard user={user} />
       </StrictMode>,
     )
-    container.dispatchEvent(new Event('admin:mounted'))
   }
 
   function mountFromPage() {

@@ -1,0 +1,55 @@
+/* Self-contained SVG/CSS scenery: no image download or UI framework required. */
+html.ica-loading-active { overflow: hidden; }
+.ica-loading {
+  --il-bg: #f2f3e9; --il-ink: #183d43; --il-muted: #506c70; --il-accent: #317f7c;
+  --il-sun: #dfab58; --il-back: #b8cdbf; --il-front: #8fb8ad; --il-water: #548e99;
+  position: fixed; inset: 0; z-index: 2147483000; display: grid; place-items: center;
+  box-sizing: border-box; overflow: auto; padding: 32px 20px 60px; isolation: isolate;
+  background: radial-gradient(ellipse at 50% 44%, color-mix(in srgb, var(--il-accent) 9%, transparent), transparent 65%), var(--il-bg);
+  color: var(--il-ink); font: 400 14px/1.6 Inter, 'Segoe UI', sans-serif;
+  opacity: 1; transition: opacity .32s ease, visibility .32s; overscroll-behavior: contain;
+}
+[data-theme="dark"] .ica-loading:not([data-theme="light"]), .ica-loading[data-theme="dark"] {
+  --il-bg: #071b24; --il-ink: #f2eee4; --il-muted: #a1babd; --il-accent: #9fd3c8;
+  --il-sun: #e4b76d; --il-back: #234953; --il-front: #14343e; --il-water: #71b7b4;
+}
+.ica-loading *, .ica-loading *::before, .ica-loading *::after { box-sizing: border-box; }
+.ica-loading.is-leaving { opacity: 0; visibility: hidden; pointer-events: none; }
+.ica-loading__content { width: min(100%, 600px); text-align: center; margin: auto; }
+.ica-loading__eyebrow { margin: 0 0 8px; color: var(--il-accent); font-size: 10px; font-weight: 600; letter-spacing: .24em; }
+.ica-loading__eyebrow span { margin: 0 8px; }
+.ica-loading__scene { display: block; width: 100%; height: auto; max-height: 260px; overflow: visible; }
+.ica-loading__halo { stroke: var(--il-sun); stroke-width: .7; stroke-dasharray: 2 8; opacity: .35; transform-origin: 280px 112px; animation: ica-orbit 50s linear infinite; }
+.ica-loading__sun { transform-origin: 280px 112px; animation: ica-sun 5s ease-in-out infinite; }
+.ica-loading__sun circle { fill: var(--il-sun); }
+.ica-loading__sun path { stroke: var(--il-sun); stroke-width: 1.4; stroke-linecap: round; }
+.ica-loading__ridge { stroke: var(--il-accent); stroke-width: .8; opacity: .3; }
+.ica-loading__dune--back { fill: var(--il-back); }
+.ica-loading__dune--front { fill: var(--il-front); }
+.ica-loading__water { fill: var(--il-water); opacity: .35; transform-origin: 304px 235px; animation: ica-water 4s ease-in-out infinite; }
+.ica-loading__ripple { stroke: var(--il-accent); stroke-width: .8; opacity: .65; }
+.ica-loading__palm { transform-origin: 389px 226px; animation: ica-palm 5s ease-in-out infinite; }
+.ica-loading__palm path:first-child { stroke: var(--il-accent); stroke-width: 3; }
+.ica-loading__palm path:last-child { fill: var(--il-accent); opacity: .8; }
+.ica-loading__route { stroke: var(--il-sun); stroke-width: 1.4; stroke-dasharray: 3 6; animation: ica-route 2s linear infinite; }
+.ica-loading__point { fill: var(--il-sun); }
+.ica-loading__brand { margin: 14px 0 0; font: 500 clamp(38px, 7vw, 58px)/1.1 'Cormorant Garamond', Georgia, serif; letter-spacing: -.035em; }
+.ica-loading__brand span { color: var(--il-accent); }
+.ica-loading__title { margin: 12px 0 20px; color: var(--il-ink); font: 400 clamp(16px, 3vw, 20px)/1.4 Georgia, serif; }
+.ica-loading__status { display: flex; justify-content: center; align-items: center; gap: 10px; min-height: 42px; max-width: 440px; margin: 0 auto; color: var(--il-muted); font-size: 12px; }
+.ica-loading__status i { display: block; width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: var(--il-accent); animation: ica-pulse 1.5s ease-in-out infinite; }
+.ica-loading__places { display: flex; justify-content: center; align-items: center; gap: 24px; margin-top: 24px; font-size: 9px; letter-spacing: .24em; color: var(--il-muted); }
+.ica-loading__places b { color: var(--il-sun); font-weight: 400; }
+.ica-loading__skip { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 8px 18px; margin-top: 24px; border: 1px solid color-mix(in srgb, var(--il-accent) 28%, transparent); border-radius: 999px; background: transparent; color: var(--il-muted); font: inherit; font-size: 11px; cursor: pointer; transition: background .2s, color .2s; }
+.ica-loading__skip:hover { background: color-mix(in srgb, var(--il-accent) 12%, transparent); color: var(--il-ink); }
+.ica-loading__skip:focus-visible { outline: 2px solid var(--il-accent); outline-offset: 5px; }
+.ica-loading__signature { position: absolute; bottom: 22px; left: 0; right: 0; text-align: center; font-size: 8px; letter-spacing: .3em; color: var(--il-muted); }
+@keyframes ica-orbit { to { transform: rotate(360deg); } }
+@keyframes ica-sun { 50% { transform: translateY(-7px); } }
+@keyframes ica-water { 50% { transform: scaleX(.82); opacity: .55; } }
+@keyframes ica-palm { 50% { transform: rotate(2deg); } }
+@keyframes ica-route { to { stroke-dashoffset: -18; } }
+@keyframes ica-pulse { 50% { opacity: .3; } }
+@media (max-height: 650px) { .ica-loading { grid-template-rows: 1fr auto; padding-bottom: 20px; } .ica-loading__scene { max-height: 160px; } .ica-loading__places { margin-top: 12px; } .ica-loading__skip { margin-top: 14px; } .ica-loading__signature { position: static; margin-top: 24px; } }
+@media (max-width: 480px) { .ica-loading__eyebrow { font-size: 8px; letter-spacing: .16em; } .ica-loading__places { gap: 16px; } }
+@media (prefers-reduced-motion: reduce) { .ica-loading, .ica-loading * { animation: none !important; transition: none !important; } }
