@@ -109,3 +109,15 @@ npm test
 ```
 
 Las pruebas SQL utilizan PostgreSQL efímero en memoria y las de imágenes simulan Cloudinary. No usan la base de producción. El frontend se verifica con `npm run build` dentro de `Frontend/admin-dashboard` y con pruebas del navegador en escritorio y móvil. La conexión real a Cloudinary debe comprobarse con las credenciales del despliegue.
+
+## Galería panorámica de promociones
+
+La sección «Imagina estar aquí» utiliza un panorama circular 3D adaptado a JavaScript Vanilla del CircularCarousel compartido por el cliente (React Bits). La cabecera y los controles tienen texto centrado; las fotos conservan su color y heredan los velos y colores claro/oscuro del sitio. Se carga únicamente en `promocion.html`, sin añadir React ni dependencias shadcn al sitio público.
+
+Cada promoción usa su imagen principal y `galeria_urls`, sin repetir URLs en el conjunto editorial. Para crear o cambiar el carrusel basta con editar esas imágenes en el panel; no hay campos, migraciones ni subidas nuevas. Las copias necesarias para el anillo son visuales, no recursos nuevos de Cloudinary, y no se anuncian repetidamente a lectores de pantalla. Una sola imagen se muestra estática y puede ampliarse.
+
+El panorama tiene introducción de giro, desplazamiento continuo circular, profundidad y curvatura por segmentos; permite arrastrar con ratón o tacto, usar las flechas laterales, Home/End y abrir la imagen centrada con Enter o «Ampliar imagen». Pulsar otra foto la centra. La rueda vertical conserva el desplazamiento de la página; el gesto horizontal controla la galería. Las flechas quedan sobre los extremos desvanecidos, fuera de la máscara. El botón de pausa y el contador permanecen centrados.
+
+La reproducción se pausa al pasar el mouse, enfocar la galería, abrir una foto, ocultar la pestaña o salir del área visible. Con movimiento reducido comienza pausada, no tiene introducción ni paralaje y la navegación manual es inmediata. Se liberan observadores, eventos, animaciones y temporizadores al actualizar el catálogo. Los mini carruseles de tarjetas de destinos y recomendaciones conservan su comportamiento previo.
+
+Archivos: `Frontend/js/circular-carousel.js`, `Frontend/css/circular-carousel.css`, integración en `cms-public.js` y `html/promocion.html`. El aviso de autor y la licencia de React Bits están en `Frontend/licenses/react-bits.md`. Solo hay que publicar estos archivos con el frontend; este cambio no requiere recompilar el panel.
