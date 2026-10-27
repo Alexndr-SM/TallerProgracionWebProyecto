@@ -97,7 +97,7 @@
 
         // Si ya hay sesión, redirigir según el rol
         if (window.Auth && Auth.isLoggedIn()) {
-            window.location.href = Auth.isStaff() ? 'admin.html' : '../index.html';
+            window.location.href = Auth.dashboardUrl();
         }
 
         // Enviar login al backend
@@ -112,7 +112,7 @@
             btn.textContent = 'Entrando...';
             try {
                 await Auth.login(email, password);
-                window.location.href = Auth.isStaff() ? 'admin.html' : '../index.html';
+                window.location.href = Auth.dashboardUrl();
             } catch (err) {
                 alert(err.message || 'Error al iniciar sesión');
                 btn.disabled = false;

@@ -92,6 +92,7 @@
       return null;
     }
     const data = await res.json();
+    if (data.user) localStorage.setItem(USER_KEY, JSON.stringify(data.user));
     return data.user || null;
   }
 
@@ -100,7 +101,12 @@
     window.location.href = '/index.html';
   }
 
+  function dashboardUrl() {
+    const role = getUser()?.rol;
+    return ({ editor: 'editor.html', soporte: 'soporte.html', registrador: 'registrador.html', admin: 'admin.html' })[role] || '../index.html';
+  }
   window.Auth = {
+    dashboardUrl,
     login,
     register,
     me,

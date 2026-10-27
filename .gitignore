@@ -1,6 +1,8 @@
 # Instalaciones y compilaciones reproducibles
 node_modules/
 Frontend/admin-dashboard/dist/
+Frontend/editor-dashboard/dist/
+.qa/
 /package-lock.json
 *.log
 .env

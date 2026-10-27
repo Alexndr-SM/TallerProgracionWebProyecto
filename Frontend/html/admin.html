@@ -26,6 +26,7 @@
 
     <script>
         (async function () {
+            if (Auth.isStaff() && Auth.getUser()?.rol !== 'admin') { window.location.replace(Auth.dashboardUrl()); return; }
             const loginUrl = 'login.html';
             const status = document.getElementById('adminStatus');
             const retryButton = document.getElementById('adminRetry');

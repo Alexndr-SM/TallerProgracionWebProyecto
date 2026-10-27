@@ -64,6 +64,7 @@ app.use('/api/destinos', destinationRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/perfil', perfilRoutes);
+app.use('/api/equipo', require('./routes/team.routes'));
 
 // Crear tabla usuarios al arrancar (si no existe)
 async function ensureTable() {
