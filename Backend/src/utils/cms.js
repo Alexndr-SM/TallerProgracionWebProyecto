@@ -62,7 +62,7 @@ function promotion(body) {
 function handleError(res, error) {
   if (error instanceof CmsError) return res.status(error.status).json({ ok: false, message: error.message });
   if (error.code === '23505') return res.status(409).json({ ok: false, message: 'Ya existe un registro con ese slug.' });
-  if (error.code === '23503') return res.status(409).json({ ok: false, message: 'El destino no existe o tiene promociones asociadas.' });
+  if (['23503', '23001'].includes(error.code)) return res.status(409).json({ ok: false, message: 'El destino no existe o tiene promociones asociadas.' });
   console.error('CMS:', error.message);
   return res.status(500).json({ ok: false, message: 'No se pudo completar la operación.' });
 }

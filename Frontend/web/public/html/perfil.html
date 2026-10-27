@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Perfil — IcaTurismo</title>
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0a2c33">
+
+  <!-- Tema claro/oscuro: se carga en head para evitar parpadeos -->
+  <script src="../js/theme.js"></script>
+    <script src="/js/i18n-dict.js"></script>
+    <script src="/js/i18n.js"></script>
+
+  <!-- Fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/perfil.css" />
+
+  <!-- Librería para generar el PDF de la Boleta -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+  <!-- ===================== HEADER ===================== -->
+  <header>
+    <div class="header-inner wrap">
+      <div class="logo">
+        <a href="/"><img src="../assets/logoIcaTurismo.png" alt="IcaTurismo" class="logo-img" /></a>
+        <h1 class="logo-name">IcaTurismo<span>Descubre Ica</span></h1>
+      </div>
+
+      <nav class="site-nav" aria-label="Navegación principal">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="/#servicios">Servicios</a></li>
+          <li><a href="/#destinos">Destinos</a></li>
+          <li><a href="/#nosotros">Nosotros</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="nav-user" id="navUser">
+          <div id="guestArea">
+            <button type="button" class="user-btn" id="userBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true">
+              <img src="../assets/Person.png" alt="">
+              <span>Cuenta</span>
+              <span class="chevron" aria-hidden="true">▾</span>
+            </button>
+            <div class="user-dropdown" id="userDropdown">
+              <a href="login.html">Iniciar sesión</a>
+              <a href="registro.html">Registrarse</a>
+            </div>
+          </div>
+          <div id="userArea" class="is-hidden" hidden>
+            <button type="button" class="user-btn" id="userProfileBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true">
+              <img src="../assets/Person.png" alt="">
+              <span id="userNameDisplay">Usuario</span>
+              <span class="chevron" aria-hidden="true">▾</span>
+            </button>
+            <div class="user-dropdown" id="userProfileDropdown">
+              <a href="perfil.html" id="miPerfilLink">Mi Perfil</a>
+              <a href="#" id="logoutAction">Cerrar sesión</a>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Cambiar tema" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="perfil-main">
+    <div class="wrap">
+
+      <!-- Redirige si no hay sesión (lo maneja perfil.js) -->
+      <div id="perfilApp" class="perfil-app" hidden>
+
+        <!-- ── COLUMNA IZQUIERDA: Datos del usuario ── -->
+        <aside class="perfil-sidebar">
+          <div class="perfil-avatar-wrap">
+            <img id="perfilAvatar" src="../assets/Person.png" alt="Foto de perfil" class="perfil-avatar" />
+          </div>
+
+          <div class="perfil-info">
+            <h2 id="perfilNombre" class="perfil-nombre">Cargando…</h2>
+            <p id="perfilEmail" class="perfil-email"></p>
+            <p class="perfil-meta">DNI: <span id="perfilDni">—</span></p>
+            <p class="perfil-meta">Teléfono: <span id="perfilTelefono">—</span></p>
+            <p class="perfil-meta">Miembro desde <span id="perfilDesde">—</span></p>
+            <p class="perfil-meta">Último acceso <span id="perfilUltimo">—</span></p>
+          </div>
+
+          <!-- Tarjeta de puntos -->
+          <div class="puntos-card" aria-label="Mis puntos de fidelización">
+            <div class="puntos-icono" aria-hidden="true">★</div>
+            <div class="puntos-info">
+              <span class="puntos-label">Puntos acumulados</span>
+              <span id="perfilPuntos" class="puntos-valor">0</span>
+            </div>
+          </div>
+
+          <div class="puntos-equiv" id="puntosEquiv">Equivale a S/ 0 en descuentos</div>
+
+          <!-- Navegación interna del perfil -->
+          <nav class="perfil-nav" aria-label="Secciones del perfil">
+            <button class="perfil-nav-btn active" data-tab="reservas">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              Mis Reservas
+            </button>
+            <button class="perfil-nav-btn" data-tab="puntos">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Historial de Puntos
+            </button>
+            <button class="perfil-nav-btn" data-tab="editar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Editar Perfil
+            </button>
+          </nav>
+        </aside>
+
+        <!-- ── COLUMNA DERECHA: Contenido dinámico ── -->
+        <section class="perfil-content">
+
+          <!-- ── TAB: Reservas ── -->
+          <div id="tabReservas" class="perfil-tab active">
+            <div class="perfil-tab-header">
+              <h3 class="perfil-tab-titulo">Mis Reservas</h3>
+              <a href="compras.html" class="btn-nueva-reserva">+ Nueva reserva</a>
+            </div>
+
+            <!-- Filtros -->
+            <div class="reservas-filtros" role="group" aria-label="Filtrar reservas">
+              <button class="filtro-btn active" data-filtro="todas">Todas</button>
+              <button class="filtro-btn" data-filtro="pendiente">Pendientes</button>
+              <button class="filtro-btn" data-filtro="confirmada">Confirmadas</button>
+              <button class="filtro-btn" data-filtro="cancelada">Canceladas</button>
+            </div>
+
+            <!-- Lista de reservas -->
+            <div id="reservasList" class="reservas-list" aria-live="polite">
+              <div class="perfil-loading">
+                <div class="spinner" aria-hidden="true"></div>
+                <p>Cargando reservas…</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TAB: Historial de Puntos ── -->
+          <div id="tabPuntos" class="perfil-tab" hidden>
+            <div class="perfil-tab-header">
+              <h3 class="perfil-tab-titulo">Historial de Puntos</h3>
+              <div class="puntos-resumen-header">
+                <span class="puntos-label">Saldo actual:</span>
+                <span id="puntosActualesTab" class="puntos-valor-sm">0 pts</span>
+              </div>
+            </div>
+
+            <!-- Cómo funcionan los puntos -->
+            <div class="puntos-info-box">
+              <h4>¿Cómo funcionan los puntos?</h4>
+              <ul>
+                <li>🌟 Ganas <strong>1 punto por cada S/ 10</strong> gastados en reservas.</li>
+                <li>❌ Si cancelas una reserva, los puntos ganados por esa reserva se revierten.</li>
+                <li>🎁 Los puntos se pueden canjear por descuentos en futuras reservas.</li>
+                <li>📋 El historial muestra los últimos 100 movimientos.</li>
+              </ul>
+            </div>
+
+            <!-- Lista de movimientos -->
+            <div id="puntosList" class="puntos-list" aria-live="polite">
+              <div class="perfil-loading">
+                <div class="spinner" aria-hidden="true"></div>
+                <p>Cargando historial…</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TAB: Editar Perfil ── -->
+          <div id="tabEditar" class="perfil-tab" hidden>
+            <div class="perfil-tab-header">
+              <h3 class="perfil-tab-titulo">Editar Perfil</h3>
+            </div>
+
+            <div class="perfil-edit-grid">
+              <!-- Tarjeta 1: Información Personal -->
+              <section class="perfil-card-form">
+                <div class="perfil-card-form-header">
+                  <h4 class="form-title">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Información Personal
+                  </h4>
+                  <p class="form-subtitle">Actualiza tus datos de contacto y documentación para tus reservas.</p>
+                </div>
+
+                <form id="formPerfilDatos" class="perfil-form" novalidate>
+                  <div class="form-group">
+                    <label for="editNombre" class="form-label">Nombre completo *</label>
+                    <input type="text" id="editNombre" name="nombre" class="form-input" required maxlength="120" placeholder="Tu nombre completo" autocomplete="name" />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="editEmail" class="form-label">Correo electrónico</label>
+                    <input type="email" id="editEmail" name="email" class="form-input form-input-disabled" disabled readonly title="El correo no se puede modificar" />
+                    <span class="form-help">El correo electrónico está vinculado a tu cuenta y no se puede modificar.</span>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="editTelefono" class="form-label">Número de teléfono</label>
+                      <input type="tel" id="editTelefono" name="telefono" class="form-input" maxlength="20" placeholder="Ej. 987654321" autocomplete="tel" />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="editDni" class="form-label">DNI / Documento de identidad</label>
+                      <input type="text" id="editDni" name="dni" class="form-input" maxlength="20" placeholder="Ej. 72345678" />
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" id="btnGuardarDatos" class="btn-guardar">
+                      Guardar información
+                    </button>
+                  </div>
+                </form>
+              </section>
+
+              <!-- Tarjeta 2: Cambiar Contraseña -->
+              <section class="perfil-card-form">
+                <div class="perfil-card-form-header">
+                  <h4 class="form-title">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Seguridad y Contraseña
+                  </h4>
+                  <p class="form-subtitle">Para proteger tu cuenta, utiliza una contraseña segura de al menos 8 caracteres.</p>
+                </div>
+
+                <form id="formPerfilPassword" class="perfil-form" novalidate>
+                  <div class="form-group">
+                    <label for="passActual" class="form-label">Contraseña actual *</label>
+                    <input type="password" id="passActual" name="password_actual" class="form-input" required placeholder="Tu contraseña actual" autocomplete="current-password" />
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="passNueva" class="form-label">Nueva contraseña *</label>
+                      <input type="password" id="passNueva" name="password_nueva" class="form-input" required minlength="8" placeholder="Mínimo 8 caracteres" autocomplete="new-password" />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="passConfirmar" class="form-label">Confirmar nueva contraseña *</label>
+                      <input type="password" id="passConfirmar" name="password_confirmar" class="form-input" required minlength="8" placeholder="Repite la nueva contraseña" autocomplete="new-password" />
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" id="btnGuardarPass" class="btn-guardar btn-guardar-pass">
+                      Actualizar contraseña
+                    </button>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+
+        </section>
+      </div>
+
+      <!-- Pantalla de carga inicial -->
+      <div id="perfilCargando" class="perfil-fullscreen-loading">
+        <div class="spinner spinner-lg" aria-hidden="true"></div>
+        <p>Verificando sesión…</p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── MODAL de confirmación ── -->
+  <div id="modalConfirm" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-box">
+      <h4 id="modalTitle" class="modal-title"></h4>
+      <p id="modalMsg" class="modal-msg"></p>
+      <div class="modal-actions">
+        <button id="modalCancel" class="btn-modal-cancel">Cancelar</button>
+        <button id="modalConfirmBtn" class="btn-modal-confirm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL FLOTANTE DE LA BOLETA ELECTRÓNICA ── -->
+  <div id="modalBoleta" class="boleta-modal-overlay" style="display: none;">
+    <div class="boleta-card" id="boletaContent">
+      <button type="button" class="boleta-close-btn" id="btnCerrarX" onclick="cerrarBoleta()">&times;</button>
+      
+      <!-- ÁREA QUE SE IMPRIME/CONVIERTE A PDF -->
+      <div id="areaImpresionBoleta" style="background: #ffffff; color: #1a202c; padding: 10px;">
+        <!-- Encabezado de la Boleta -->
+        <div class="boleta-header">
+          <div class="boleta-empresa">
+            <h2 style="color: #0f172a; font-size: 1.2rem; margin: 0;">ICATURISMO S.A.C.</h2>
+            <p style="color: #64748b; font-size: 0.8rem; margin: 2px 0;">RUC: 20601234567</p>
+            <p style="color: #64748b; font-size: 0.8rem; margin: 2px 0;">Calle Los Turistas 123, Ica - Perú</p>
+            <p style="color: #64748b; font-size: 0.8rem; margin: 2px 0;">info@icaturismo.dev | (056) 123-456</p>
+          </div>
+          <div class="boleta-box">
+            <h3>BOLETA DE VENTA</h3>
+            <p>ELECTRÓNICA</p>
+            <span id="bolNumero">B001-000482</span>
+          </div>
+        </div>
+
+        <div class="boleta-divider"></div>
+
+        <!-- Datos del Cliente -->
+        <div class="boleta-datos-cliente">
+          <p><strong>CLIENTE:</strong> <span id="bolCliente">Cliente</span></p>
+          <p><strong>FECHA EMISIÓN:</strong> <span>21 de octubre de 2026</span></p>
+          <p><strong>FECHA DEL TOUR:</strong> <span id="bolFechaTour">—</span></p>
+        </div>
+
+        <!-- Tabla Detalle -->
+        <table class="boleta-tabla">
+          <thead>
+            <tr>
+              <th>CANT.</th>
+              <th>DESCRIPCIÓN</th>
+              <th>P. UNIT</th>
+              <th>TOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="bolCant">1 persona(s)</td>
+              <td id="bolDesc">Tour</td>
+              <td id="bolPU">S/ 0.00</td>
+              <td id="bolTotalFila">S/ 0.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Totales -->
+        <div class="boleta-totales">
+          <p>OP. GRAVADA: <span id="bolOpGravada">S/ 0.00</span></p>
+          <p>I.G.V. (18%): <span id="bolIgv">S/ 0.00</span></p>
+          <h3 class="boleta-monto-total">TOTAL: <span id="bolTotalFinal">S/ 0.00</span></h3>
+        </div>
+      </div>
+
+      <!-- Acciones de Descarga -->
+      <div class="boleta-footer-actions">
+        <button type="button" id="btnDescargarPdf" class="btn-imprimir" onclick="descargarBoletaPDF()">📄 Descargar PDF</button>
+        <button type="button" id="btnCerrarModal" class="btn-cancelar" onclick="cerrarBoleta()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TOAST de notificación ── -->
+  <div id="toastContainer" class="toast-container" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div class="wrap footer-content">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <a class="footer-logo" href="/#inicio" aria-label="IcaTurismo, volver al inicio">
+                    <img src="../assets/logoIcaTurismo.png" alt="">
+                    <span>IcaTurismo</span>
+                </a>
+            </div>
+            <div class="footer-payment-banner">
+                <img src="../assets/FormaPago/FormasDePago.png" alt="Formas de pago aceptadas" loading="lazy">
+            </div>
+        </div>
+        <div class="footer-main">
+            <div class="footer-column">
+                <h2>Explora</h2>
+                <ul>
+                    <li><a href="/#inicio">Inicio</a></li>
+                    <li><a href="/#destinos">Nuestros destinos</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h2>Destinos</h2>
+                <ul>
+                    <li><a href="promociones/playas/playas.html">Playas</a></li>
+                    <li><a href="promociones/dunas/dunas.html">Dunas</a></li>
+                    <li><a href="promociones/cultura/cultura.html">Cultura</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h2>Contacto</h2>
+                <address>
+                    Calle Los Turistas 123, Ica<br>
+                    <a href="tel:+51056123456">(056) 123-456</a><br>
+                    <a href="mailto:info@icaturismo.dev">info@icaturismo.dev</a>
+                </address>
+                <a class="footer-back-to-top" href="#contenido">Volver arriba ↑</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 IcaTurismo · Empresa de turismo con sede en Ica</p>
+        </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/config.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/Script.js"></script>
+  <script src="../js/perfil.js"></script>
+</body>
+</html>

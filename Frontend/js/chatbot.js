@@ -1,4 +1,14 @@
 (() => {
+  const supportLink = document.createElement('a');
+  supportLink.className = 'human-support-link';
+  supportLink.textContent = 'Atención humana';
+  // Calcula la ruta desde este script, también en páginas anidadas de promociones.
+  supportLink.href = new URL('../html/atencion.html', document.currentScript.src).href;
+  const supportStyle = document.createElement('link');
+  supportStyle.rel = 'stylesheet';
+  supportStyle.href = new URL('../css/widgets-publicos.css', document.currentScript.src).href;
+  document.head.append(supportStyle);
+  document.body.append(supportLink);
   const chatbotId = 'Yucf-9M0JIumrBRzc_1rh';
   const domain = 'www.chatbase.co';
 

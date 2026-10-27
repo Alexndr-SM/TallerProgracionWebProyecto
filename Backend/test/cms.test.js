@@ -46,9 +46,11 @@ test('migraciones PostgreSQL en una base nueva', sqlOptions, async () => {
   const db = new PGlite();
   try {
     const pool = adapter(db);
+    // El arranque crea primero usuarios; las migraciones del equipo la referencian.
+    await db.exec('CREATE TABLE usuarios (id SERIAL PRIMARY KEY)');
     await migrate(pool);
     await migrate(pool);
-    assert.equal((await db.query('SELECT count(*)::int AS total FROM cms_migrations')).rows[0].total, 3);
+    assert.equal((await db.query('SELECT count(*)::int AS total FROM cms_migrations')).rows[0].total, 4);
     assert.equal((await db.query('SELECT * FROM promociones')).rows.length, 0);
     await db.query("INSERT INTO destinos (nombre,slug) VALUES ('Temporal','temporal')");
     await db.query("DELETE FROM destinos WHERE slug='temporal'");

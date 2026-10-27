@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (scriptEl) {
           const panelLink = document.createElement('a');
           panelLink.id = 'editorPanelLink';
-          panelLink.href = new URL('../html/admin.html', scriptEl.src).href;
+          panelLink.href = new URL('../html/' + Auth.dashboardUrl(), scriptEl.src).href;
           panelLink.textContent = 'Panel del equipo';
           profileDropdown.prepend(panelLink);
         }

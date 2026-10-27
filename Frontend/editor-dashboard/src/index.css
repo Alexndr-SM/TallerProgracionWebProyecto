@@ -1,0 +1,39 @@
+@import '@fontsource-variable/geist';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+  font-family: 'Geist Variable', system-ui, -apple-system, sans-serif;
+  background: #061218;
+  color: #e8f1f4;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(111, 208, 214, 0.28);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1d3f4c transparent;
+}
