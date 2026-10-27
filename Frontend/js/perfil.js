@@ -354,6 +354,59 @@
     if (headerAvatar) headerAvatar.src = avatarUrl;
   }
 
+  function initProfilePhoto() {
+    const button = document.getElementById('cambiarFotoPerfil');
+    const input = document.getElementById('archivoFotoPerfil');
+    const status = document.getElementById('estadoFotoPerfil');
+    if (!button || !input || !status) return;
+
+    button.addEventListener('click', () => input.click());
+    input.addEventListener('change', async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        status.textContent = 'Elige una imagen JPG, PNG o WebP.';
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        status.textContent = 'La foto no puede superar los 5 MB.';
+        return;
+      }
+
+      button.disabled = true;
+      status.textContent = 'Actualizando foto…';
+      const body = new FormData();
+      body.append('fotoPerfil', file);
+      try {
+        const response = await fetch(`${API()}/api/perfil/foto`, {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + TOKEN() },
+          body,
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.ok) {
+          throw new Error(data.message || 'No se pudo actualizar la foto de perfil.');
+        }
+
+        const avatar = document.getElementById('perfilAvatar');
+        if (avatar) avatar.src = data.foto_perfil_url;
+        const headerAvatar = document.querySelector('#userProfileBtn img');
+        if (headerAvatar) headerAvatar.src = data.foto_perfil_url;
+        try {
+          const stored = JSON.parse(localStorage.getItem('icat_user') || '{}');
+          stored.foto_perfil_url = data.foto_perfil_url;
+          localStorage.setItem('icat_user', JSON.stringify(stored));
+        } catch (_) {}
+        status.textContent = data.message;
+      } catch (error) {
+        status.textContent = error.message || 'No se pudo actualizar la foto de perfil.';
+      } finally {
+        button.disabled = false;
+        input.value = '';
+      }
+    });
+  }
+
   async function cargarReservas() {
     const container = document.getElementById('reservasList');
     if (container) {
@@ -652,7 +705,7 @@
     try {
       await cargarPerfil();
       await cargarReservas();
-
+      initProfilePhoto();
       initTabs();
       initFiltros();
       initEditarPerfil();

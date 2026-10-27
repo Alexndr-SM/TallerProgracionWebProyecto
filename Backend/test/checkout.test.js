@@ -26,6 +26,7 @@ test('carrito: reserva, pago ficticio, cancelación y propiedad de los datos', {
   const app = express(); app.use(express.json());
   app.use('/api/reservas', require('../src/routes/reservation.routes'));
   app.use('/api/perfil', require('../src/routes/perfil.routes'));
+  app.use('/api/comentarios', require('../src/routes/comment.routes'));
   const server = app.listen(0, '127.0.0.1'); await once(server, 'listening');
   t.after(async () => { await new Promise((resolve) => server.close(resolve)); await db.close(); });
   const base = `http://127.0.0.1:${server.address().port}`;
@@ -47,6 +48,10 @@ test('carrito: reserva, pago ficticio, cancelación y propiedad de los datos', {
   });
   await t.test('solo el propietario puede consultar, pagar o cancelar su reserva', async () => {
     assert.equal((await request('/api/perfil/reservas', 'GET', undefined, 2)).data.reservas.length, 0);
+    assert.equal((await request('/api/perfil/foto', 'POST', undefined, null)).status, 401);
+    const missingPhoto = await request('/api/perfil/foto', 'POST');
+    assert.equal(missingPhoto.status, 400);
+    assert.match(missingPhoto.data.message, /Selecciona una imagen/);
     for (const action of ['confirmar-pago', 'cancelar']) assert.equal((await request(`/api/perfil/reservas/${reservation.id}/${action}`, 'PATCH', undefined, 2)).status, 404);
     const list = (await request('/api/perfil/reservas')).data.reservas;
     assert.equal(list[0].id, reservation.id); assert.equal(list[0].promocion_id, promotion.id);
@@ -66,5 +71,25 @@ test('carrito: reserva, pago ficticio, cancelación y propiedad de los datos', {
     assert.equal((await request(`/api/perfil/reservas/${pending.id}/confirmar-pago`, 'PATCH')).status, 400);
     assert.equal((await request(`/api/perfil/reservas/${pending.id}/cancelar`, 'PATCH')).status, 400);
     assert.equal((await request('/api/perfil/reservas')).data.reservas.find((row) => row.id === pending.id).estado, 'cancelada');
+  });
+  await t.test('el canje descuenta el total y los puntos usados vuelven al cancelar', async () => {
+    await query('UPDATE usuarios SET puntos = 100 WHERE id = 1');
+    assert.equal((await request('/api/reservas', 'POST', { ...payload, puntos_usados: 101 })).status, 400);
+    assert.equal((await request('/api/reservas', 'POST', { ...payload, puntos_usados: 1.5 })).status, 400);
+    const result = await request('/api/reservas', 'POST', { ...payload, puntos_usados: 50 });
+    assert.equal(result.status, 201);
+    assert.equal(Number(result.data.reserva.total), Number(promotion.precio) * 2 - 5);
+    assert.equal(result.data.reserva.puntos_usados, 50);
+    assert.equal(Number((await query('SELECT puntos FROM usuarios WHERE id = 1')).rows[0].puntos), 50 + Math.floor(Number(result.data.reserva.total) / 10));
+    const cancellation = await request(`/api/perfil/reservas/${result.data.reserva.id}/cancelar`, 'PATCH');
+    assert.equal(cancellation.status, 200);
+    assert.equal(cancellation.data.puntos_devueltos, 50);
+    assert.equal(Number(cancellation.data.puntos_actuales), 100);
+  });
+  await t.test('los comentarios se publican sin subir fotos de perfil', async () => {
+    const result = await request('/api/comentarios', 'POST', { contenido: 'Comentario de prueba', calificacion: 5 });
+    assert.equal(result.status, 201);
+    assert.equal(result.data.comment.foto_perfil_url, null);
+    assert.equal((await request('/api/comentarios')).data.comments[0].contenido, 'Comentario de prueba');
   });
 });

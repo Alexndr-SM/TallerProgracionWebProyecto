@@ -95,6 +95,7 @@
               <label for="promocion">Experiencia</label><select id="promocion" name="promocion" required disabled><option value="">Cargando experiencias…</option></select>
               <div class="checkout-fields"><label>Fecha del tour<input type="date" id="fecha" name="fecha" required></label><label>Viajeros<input type="number" id="personas" name="personas" min="1" max="15" required value="1"><small>De 1 a 15 personas.</small></label></div>
               <label for="pago">Método de pago</label><select id="pago" name="pago" required><option value="" disabled selected>Selecciona una opción</option><option value="tarjeta">Tarjeta de crédito / débito</option><option value="paypal">PayPal</option><option value="yape">Yape / Plin</option></select>
+              <label for="puntos-usar">Puntos para descontar</label><input type="number" id="puntos-usar" name="puntos_usados" min="0" step="1" value="0" disabled><small id="puntos-disponibles" class="checkout-help">Cargando tus puntos…</small>
               <p class="checkout-help">Puedes guardar la reserva y completar la confirmación de tu pago después.</p>
               <button type="submit" class="checkout-button checkout-button--primary" id="confirmar-reserva">Guardar mi reserva <span aria-hidden="true">↗</span></button>
             </fieldset>
@@ -110,7 +111,7 @@
         <aside class="checkout-card checkout-summary" aria-labelledby="resumen-titulo">
           <div class="checkout-preview"><img id="resumen-imagen" src="https://res.cloudinary.com/plhejhea/image/upload/v1792338022/imagendunas.jpg" alt="Paisaje de Ica"><span id="resumen-destino">Ica, Perú</span></div>
           <div class="checkout-summary-body"><span class="checkout-eyebrow">Un viaje que vas a recordar</span><h2 id="resumen-titulo">Tu escapada, de un vistazo</h2><h3 id="resumen-promocion">Elige tu experiencia</h3>
-            <dl class="checkout-breakdown"><div><dt>Fecha</dt><dd id="resumen-fecha">Por elegir</dd></div><div><dt>Viajeros</dt><dd id="resumen-personas">1 persona</dd></div><div><dt>Precio por persona</dt><dd id="resumen-unitario">—</dd></div><div><dt>Método de pago</dt><dd id="resumen-metodo">Por elegir</dd></div></dl>
+            <dl class="checkout-breakdown"><div><dt>Fecha</dt><dd id="resumen-fecha">Por elegir</dd></div><div><dt>Viajeros</dt><dd id="resumen-personas">1 persona</dd></div><div><dt>Precio por persona</dt><dd id="resumen-unitario">—</dd></div><div id="resumen-descuento-fila" hidden><dt>Descuento por puntos</dt><dd id="resumen-descuento"></dd></div><div><dt>Método de pago</dt><dd id="resumen-metodo">Por elegir</dd></div></dl>
             <div class="checkout-total"><span>Total de tu viaje</span><strong id="resumen-total">—</strong></div><p class="checkout-help" id="reserva-total" aria-live="polite">Selecciona una experiencia para calcular el total.</p><a class="checkout-experience-link" id="ver-experiencia" href="../index.html#destinos">Explorar experiencias ↗</a>
           </div>
         </aside>

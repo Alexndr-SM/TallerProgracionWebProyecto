@@ -90,8 +90,13 @@
         <!-- ── COLUMNA IZQUIERDA: Datos del usuario ── -->
         <aside class="perfil-sidebar">
           <div class="perfil-avatar-wrap">
-            <img id="perfilAvatar" src="https://res.cloudinary.com/plhejhea/image/upload/v1792620223/Person.svg" alt="Foto de perfil" class="perfil-avatar" />
+            <button type="button" class="perfil-avatar-button" id="cambiarFotoPerfil" aria-label="Cambiar foto de perfil">
+              <img id="perfilAvatar" src="https://res.cloudinary.com/plhejhea/image/upload/v1792620223/Person.svg" alt="Foto de perfil" class="perfil-avatar" />
+              <span aria-hidden="true">Cambiar foto</span>
+            </button>
+            <input id="archivoFotoPerfil" type="file" accept="image/jpeg,image/png,image/webp" hidden>
           </div>
+          <p id="estadoFotoPerfil" class="perfil-avatar-status" role="status" aria-live="polite"></p>
 
           <div class="perfil-info">
             <h2 id="perfilNombre" class="perfil-nombre">Cargando…</h2>

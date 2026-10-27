@@ -4,12 +4,13 @@
   const $ = (id) => document.getElementById(id);
   const form = $('form-reserva'), fields = $('reserva-campos'), select = $('promocion');
   const guests = $('personas'), date = $('fecha'), method = $('pago'), notice = $('reserva-mensaje');
+  const pointsInput = $('puntos-usar');
   const user = window.Auth.getUser(), params = new URLSearchParams(location.search);
   const promotions = new Map(), reservations = new Map();
   const storageKey = `icat_checkout_reservation_${user?.id || user?.email || 'guest'}`;
   const money = (value) => new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(Number(value));
   const labels = { tarjeta: 'Tarjeta · demostración', paypal: 'PayPal · demostración', yape: 'Yape / Plin · demostración' };
-  let active = null, busy = false, listing = false;
+  let active = null, busy = false, listing = false, puntosDisponibles = 0;
   function node(tag, cls, text) { const item = document.createElement(tag); if (cls) item.className = cls; if (text !== undefined) item.textContent = text; return item; }
   function message(text, error = false) { notice.hidden = !text; notice.textContent = text; notice.dataset.error = String(error); }
   function remember(id) { try { if (id) sessionStorage.setItem(storageKey, String(id)); else sessionStorage.removeItem(storageKey); } catch { /* La API sigue siendo la fuente del estado. */ } }
@@ -49,14 +50,24 @@
     const promotion = promotions.get(Number(active ? active.promocion_id : select.value));
     const count = active ? Number(active.asistentes) : Number(guests.value);
     const unit = active ? Number(active.precio_unitario) : Number(promotion?.precio || 0);
-    const total = active ? Number(active.total) : Math.round(unit * 100) * (Number.isInteger(count) && count > 0 ? count : 0) / 100;
+    const subtotalCentimos = Math.round(unit * 100) * (Number.isInteger(count) && count > 0 ? count : 0);
+    const maxPoints = Math.min(puntosDisponibles, Math.floor(subtotalCentimos / 10));
+    if (!active) {
+      pointsInput.max = String(maxPoints);
+      if (Number(pointsInput.value) > maxPoints) pointsInput.value = String(maxPoints);
+    }
+    const pointsUsed = active ? Number(active.puntos_usados || 0) : Number(pointsInput.value) || 0;
+    const discount = pointsUsed / 10;
+    const total = active ? Number(active.total) : Math.max(0, subtotalCentimos / 100 - discount);
+    $('resumen-descuento-fila').hidden = pointsUsed <= 0;
+    $('resumen-descuento').textContent = `−${money(discount)} (${pointsUsed} pts)`;
     $('resumen-promocion').textContent = active?.promocion_nombre || promotion?.titulo || promotion?.nombre || 'Elige tu experiencia';
     $('resumen-fecha').textContent = friendlyDate(active?.fecha_tour || date.value);
     $('resumen-personas').textContent = `${count || 0} ${count === 1 ? 'persona' : 'personas'}`;
     $('resumen-unitario').textContent = unit ? money(unit) : '—';
     $('resumen-total').textContent = unit ? money(total) : '—';
     $('resumen-metodo').textContent = labels[active?.metodo_pago || method.value] || 'Por elegir';
-    $('reserva-total').textContent = active ? stateLabel(active) : promotion ? 'El total se confirma al guardar la reserva. Pago de prueba, sin cargos reales.' : 'Selecciona una experiencia para calcular el total.';
+    $('reserva-total').textContent = active ? stateLabel(active) : promotion ? 'El total y el saldo de puntos se confirman al guardar. Pago de prueba, sin cargos reales.' : 'Selecciona una experiencia para calcular el total.';
     const image = $('resumen-imagen');
     image.src = promotion?.imagen_principal_url || window.IcaCMS?.imageFor(promotion || {}) || 'https://res.cloudinary.com/plhejhea/image/upload/v1792338022/imagendunas.jpg';
     image.alt = promotion?.titulo || 'Paisaje de Ica';
@@ -116,6 +127,7 @@
       const data = await api(`/perfil/reservas/${reservation.id}/${action}`, { method: 'PATCH' });
       const updated = data.reserva || { ...reservation, estado: 'cancelada' };
       reservations.set(Number(reservation.id), updated); showReservation(updated); renderReservations();
+      await loadPoints();
       message(paid ? `Pago ficticio completado: ${money(updated.total)}. Tu reserva #${updated.id} está confirmada. ¡Nos vemos en Ica!` : 'Reserva cancelada. Puedes elegir otra experiencia cuando quieras.');
     } catch (error) { message(error.message, true); try { await loadReservations(); } catch { /* Se conserva el error de la operación. */ } }
     finally { setBusy(false); }
@@ -127,13 +139,27 @@
     document.querySelectorAll('.checkout-steps li').forEach((item, index) => { item.removeAttribute('aria-current'); if (!index) item.setAttribute('aria-current', 'step'); }); summary(); select.focus();
   });
   $('actualizar-reservas').addEventListener('click', async () => { if (busy || listing) return; setBusy(true); try { await loadReservations(); message('Reservas actualizadas.'); } catch (error) { message(error.message, true); } finally { setBusy(false); } });
+  async function loadPoints() {
+    try {
+      const data = await api('/perfil/puntos');
+      puntosDisponibles = Number(data.puntos_actuales) || 0;
+      $('puntos-disponibles').textContent = `Tienes ${puntosDisponibles} puntos. Cada 10 puntos descuentan S/ 1.00.`;
+      pointsInput.disabled = puntosDisponibles < 1;
+    } catch (error) {
+      $('puntos-disponibles').textContent = `No se pudo consultar tu saldo de puntos: ${error.message}`;
+      pointsInput.disabled = true;
+    }
+    summary();
+  }
+  pointsInput.addEventListener('input', summary);
   form.addEventListener('submit', async (event) => {
     event.preventDefault(); if (busy || active || !form.reportValidity()) return;
     if (!promotions.has(Number(select.value))) return message('Selecciona una experiencia disponible.', true);
     setBusy(true); message('Guardando tu reserva…');
     try {
-      const data = await api('/reservas', { method: 'POST', body: { fecha_tour: date.value, asistentes: Number(guests.value), metodo_pago: method.value, promocion_id: Number(select.value) } });
+      const data = await api('/reservas', { method: 'POST', body: { fecha_tour: date.value, asistentes: Number(guests.value), metodo_pago: method.value, promocion_id: Number(select.value), puntos_usados: Number(pointsInput.value) } });
       reservations.set(Number(data.reserva.id), data.reserva); showReservation(data.reserva); renderReservations(); message('Reserva guardada. Ahora puedes simular el pago o cancelarla desde aquí.');
+      await loadPoints();
     } catch (error) { message(error.message, true); }
     finally { setBusy(false); }
   });
@@ -151,6 +177,7 @@
       summary();
     } catch (error) { select.replaceChildren(new Option('No se pudieron cargar las experiencias', '')); message(error.message, true); }
     try { await loadReservations(true); } catch (error) { message(`No pudimos consultar tus reservas: ${error.message}`, true); }
+    await loadPoints();
   }
   start();
 })();

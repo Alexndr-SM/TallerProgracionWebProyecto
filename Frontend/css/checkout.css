@@ -24,6 +24,8 @@
 .checkout-page input:disabled,.checkout-page select:disabled { opacity: .55; }
 .checkout-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .checkout-fields small { display: block; margin-top: -12px; color: var(--text-soft); font-size: 10px; }
+.checkout-page #puntos-usar { margin-bottom: 5px; }
+.checkout-page #puntos-disponibles { display: block; margin: 0 0 18px; }
 .checkout-help { font-size: 10px; line-height: 1.8; color: var(--text-soft); }
 .checkout-button { display: inline-flex; justify-content: center; align-items: center; gap: 12px; min-height: 44px; padding: 13px 18px; border: 1px solid var(--line); border-radius: 7px; background: var(--glass); color: var(--text); font: 600 10px var(--font-body); letter-spacing: .035em; cursor: pointer; transition: transform .2s,background .2s,border-color .2s; }
 .checkout-button:hover { transform: translateY(-2px); border-color: var(--seafoam); }.checkout-button:disabled { opacity: .55; cursor: wait; transform: none; }

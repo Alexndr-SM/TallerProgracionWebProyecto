@@ -128,7 +128,6 @@
   flex-wrap: wrap;
   gap: 0.75rem;
 }
-.review-photo-button,
 .review-submit {
   padding: 0.75rem 1.1rem;
   border: 1px solid var(--line);
@@ -138,40 +137,12 @@
   font: inherit;
   cursor: pointer;
 }
-.review-photo-button:hover,
 .review-submit:hover:not(:disabled) {
   background: var(--glass-strong);
 }
 .review-submit:disabled {
   cursor: wait;
   opacity: 0.7;
-}
-.review-photo-input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-}
-.review-photo-input:focus-visible + .review-photo-button {
-  outline: 2px solid var(--peach);
-  outline-offset: 3px;
-}
-.review-photo-preview {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  color: var(--text-soft);
-  font-size: 0.8rem;
-  overflow-wrap: anywhere;
-}
-.review-photo-preview[hidden] { display: none; }
-.review-photo-preview img {
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 50%;
-  object-fit: cover;
 }
 .review-status {
   margin: 0;

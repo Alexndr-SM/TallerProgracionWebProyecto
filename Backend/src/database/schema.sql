@@ -86,6 +86,7 @@ CREATE TABLE IF NOT EXISTS reservas (
   promocion_nombre VARCHAR(180),
   precio_unitario NUMERIC(10, 2) NOT NULL DEFAULT 0,
   total           NUMERIC(12, 2) NOT NULL DEFAULT 0,
+  puntos_usados   INTEGER NOT NULL DEFAULT 0 CHECK (puntos_usados >= 0),
   estado_pago     VARCHAR(20) NOT NULL DEFAULT 'pendiente'
                   CHECK (estado_pago IN ('pendiente', 'pagado', 'reembolsado')),
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -102,6 +103,7 @@ ALTER TABLE reservas
   ADD COLUMN IF NOT EXISTS promocion_nombre VARCHAR(180),
   ADD COLUMN IF NOT EXISTS precio_unitario NUMERIC(10, 2) NOT NULL DEFAULT 0,
   ADD COLUMN IF NOT EXISTS total NUMERIC(12, 2) NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS puntos_usados INTEGER NOT NULL DEFAULT 0 CHECK (puntos_usados >= 0),
   ADD COLUMN IF NOT EXISTS estado_pago VARCHAR(20) NOT NULL DEFAULT 'pendiente';
 ALTER TABLE reservas ALTER COLUMN total TYPE NUMERIC(12, 2);
 DO $$

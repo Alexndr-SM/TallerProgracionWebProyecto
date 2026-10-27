@@ -6,6 +6,7 @@ async function createReservation(req, res) {
   const asistentes = Number(req.body.asistentes);
   const metodoPago = req.body.metodo_pago;
   const promocionId = Number(req.body.promocion_id);
+  const puntosUsados = req.body.puntos_usados === undefined ? 0 : Number(req.body.puntos_usados);
   const fechaValida = /^\d{4}-\d{2}-\d{2}$/.test(fechaTour)
     && !Number.isNaN(Date.parse(`${fechaTour}T00:00:00Z`))
     && new Date(`${fechaTour}T00:00:00Z`).toISOString().slice(0, 10) === fechaTour;
@@ -23,13 +24,16 @@ async function createReservation(req, res) {
   if (!Number.isInteger(promocionId) || promocionId < 1) {
     return res.status(400).json({ ok: false, message: 'Selecciona una promoción disponible.' });
   }
+  if (!Number.isInteger(puntosUsados) || puntosUsados < 0) {
+    return res.status(400).json({ ok: false, message: 'La cantidad de puntos a usar no es válida.' });
+  }
 
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
 
     const account = await client.query(
-      'SELECT id, nombre, email FROM usuarios WHERE id = $1',
+      'SELECT id, nombre, email, puntos FROM usuarios WHERE id = $1 FOR UPDATE',
       [req.user.id]
     );
 
@@ -49,20 +53,33 @@ async function createReservation(req, res) {
     }
     const promotion = promotionResult.rows[0];
     const unitPrice = Math.round(Number(promotion.precio) * 100) / 100;
-    const total = (Math.round(unitPrice * 100) * asistentes) / 100;
+    const subtotalCentimos = Math.round(unitPrice * 100) * asistentes;
+    if (puntosUsados > Math.min(Number(user.puntos), Math.floor(subtotalCentimos / 10))) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ ok: false, message: 'No tienes suficientes puntos para aplicar ese descuento.' });
+    }
+    const total = (subtotalCentimos - puntosUsados * 10) / 100;
 
     const reservation = await client.query(
       `INSERT INTO reservas
          (usuario_id, nombre, email, fecha_tour, asistentes, metodo_pago, promocion_id,
-          promocion_nombre, precio_unitario, total, estado_pago)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pendiente')
+          promocion_nombre, precio_unitario, total, puntos_usados, estado_pago)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pendiente')
        RETURNING id, promocion_id, fecha_tour, asistentes, metodo_pago, estado, promocion_nombre,
-                 precio_unitario, total, estado_pago, created_at`,
+                 precio_unitario, total, puntos_usados, estado_pago, created_at`,
       [user.id, user.nombre, user.email, fechaTour, asistentes, metodoPago, promotion.id,
-        promotion.nombre, unitPrice, total]
+        promotion.nombre, unitPrice, total, puntosUsados]
     );
 
     const reserva = reservation.rows[0];
+    if (puntosUsados > 0) {
+      await client.query('UPDATE usuarios SET puntos = puntos - $1 WHERE id = $2', [puntosUsados, user.id]);
+      await client.query(
+        `INSERT INTO puntos_historial (usuario_id, reserva_id, tipo, puntos, descripcion)
+         VALUES ($1, $2, 'canjeado', $3, $4)`,
+        [user.id, reserva.id, puntosUsados, `Descuento aplicado a reserva: ${promotion.nombre}`]
+      );
+    }
 
     // Asignar puntos de fidelización: 1 punto por cada S/10 gastados
     const puntosGanados = calcularPuntos(total);

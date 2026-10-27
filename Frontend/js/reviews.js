@@ -9,9 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const listStatus = document.querySelector('[data-comments-status]');
   const form = document.getElementById('reviewForm');
   const formStatus = document.querySelector('[data-review-status]');
-  const photoInput = document.getElementById('review-photo');
-  const photoPreview = document.getElementById('review-photo-preview');
-  let previewUrl;
 
   const ratingGroup = form?.querySelector('.review-rating-stars');
   if (ratingGroup) {
@@ -128,29 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (photoInput && photoPreview) {
-    photoInput.addEventListener('change', () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-      previewUrl = undefined;
-      photoPreview.replaceChildren();
-
-      const file = photoInput.files?.[0];
-      if (!file) {
-        photoPreview.hidden = true;
-        return;
-      }
-
-      previewUrl = URL.createObjectURL(file);
-      const image = document.createElement('img');
-      image.src = previewUrl;
-      image.alt = 'Vista previa de la foto de perfil';
-      const fileName = document.createElement('span');
-      fileName.textContent = file.name;
-      photoPreview.append(image, fileName);
-      photoPreview.hidden = false;
-    });
-  }
-
   if (form) {
     if (!window.Auth?.getToken()) showLoginPrompt();
 
@@ -161,22 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const file = photoInput?.files?.[0];
-      if (file) {
-        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-          formStatus.textContent = 'La foto debe estar en formato JPG, PNG o WebP.';
-          formStatus.classList.add('is-error');
-          return;
-        }
-        if (file.size > 5 * 1024 * 1024) {
-          formStatus.textContent = 'La foto no puede superar los 5 MB.';
-          formStatus.classList.add('is-error');
-          return;
-        }
-      }
-
       const submitButton = form.querySelector('[type="submit"]');
-      const formData = new FormData(form);
       submitButton.disabled = true;
       submitButton.textContent = 'Publicando...';
       formStatus.textContent = '';
@@ -185,8 +144,11 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const response = await fetch(apiUrl('/api/comentarios'), {
           method: 'POST',
-          headers: { Authorization: `Bearer ${window.Auth.getToken()}` },
-          body: formData,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${window.Auth.getToken()}`,
+          },
+          body: JSON.stringify(Object.fromEntries(new FormData(form))),
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok || !data.ok) {
@@ -194,12 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         form.reset();
-        if (previewUrl) URL.revokeObjectURL(previewUrl);
-        previewUrl = undefined;
-        if (photoPreview) {
-          photoPreview.replaceChildren();
-          photoPreview.hidden = true;
-        }
         formStatus.textContent = data.message;
         formStatus.classList.add('is-success');
         await loadComments();

@@ -1,5 +1,7 @@
+const { randomUUID } = require('crypto');
 const bcrypt = require('bcryptjs');
 const { pool, query } = require('../config/database');
+const { cloudinary, configureCloudinary } = require('../config/cloudinary');
 
 // Puntos ganados por cada S/ 10 gastados
 const PUNTOS_POR_DECENA = 1;
@@ -50,7 +52,7 @@ async function getMisReservas(req, res) {
     const result = await query(
       `SELECT r.id, r.promocion_id, r.fecha_tour, r.asistentes, r.metodo_pago,
               r.estado, r.estado_pago, r.promocion_nombre, r.precio_unitario,
-              r.total, r.created_at,
+              r.total, r.puntos_usados, r.created_at,
               p.categoria AS promocion_categoria
        FROM reservas r
        LEFT JOIN promociones p ON p.id = r.promocion_id
@@ -106,7 +108,7 @@ async function cancelarReserva(req, res) {
 
     // Verificar que la reserva pertenece al usuario y está en estado cancelable
     const resResult = await client.query(
-      `SELECT id, estado, estado_pago, total, promocion_nombre
+      `SELECT id, estado, estado_pago, total, puntos_usados, promocion_nombre
        FROM reservas
        WHERE id = $1 AND usuario_id = $2
        FOR UPDATE`,
@@ -166,6 +168,15 @@ async function cancelarReserva(req, res) {
         ]
       );
     }
+    const puntosDevueltos = Number(reserva.puntos_usados) || 0;
+    if (puntosDevueltos > 0) {
+      await client.query('UPDATE usuarios SET puntos = puntos + $1 WHERE id = $2', [puntosDevueltos, req.user.id]);
+      await client.query(
+        `INSERT INTO puntos_historial (usuario_id, reserva_id, tipo, puntos, descripcion)
+         VALUES ($1, $2, 'ajuste', $3, $4)`,
+        [req.user.id, reservaId, puntosDevueltos, `Devolución de puntos por cancelación: ${reserva.promocion_nombre || 'Tour'}`]
+      );
+    }
 
     // Obtener puntos actualizados
     const puntosResult = await client.query(
@@ -179,6 +190,7 @@ async function cancelarReserva(req, res) {
       ok: true,
       message: 'Reserva cancelada correctamente.',
       puntos_revertidos: puntosGanados,
+      puntos_devueltos: puntosDevueltos,
       puntos_actuales: puntosResult.rows[0]?.puntos ?? 0,
     });
   } catch (err) {
@@ -202,7 +214,7 @@ async function confirmarPagoReserva(req, res) {
     await client.query('BEGIN');
 
     const resResult = await client.query(
-      `SELECT id, estado, estado_pago, total, promocion_nombre
+      `SELECT id, estado, estado_pago, total, puntos_usados, promocion_nombre
        FROM reservas
        WHERE id = $1 AND usuario_id = $2
        FOR UPDATE`,
@@ -265,7 +277,7 @@ async function reembolsarReserva(req, res) {
     await client.query('BEGIN');
 
     const resResult = await client.query(
-      `SELECT id, estado, estado_pago, total, promocion_nombre
+      `SELECT id, estado, estado_pago, total, puntos_usados, promocion_nombre
        FROM reservas
        WHERE id = $1 AND usuario_id = $2
        FOR UPDATE`,
@@ -303,7 +315,7 @@ async function reembolsarReserva(req, res) {
        SET estado = 'cancelada', estado_pago = 'reembolsado'
        WHERE id = $1
        RETURNING id, fecha_tour, asistentes, metodo_pago, estado, promocion_nombre,
-                 precio_unitario, total, estado_pago, created_at`,
+                 precio_unitario, total, puntos_usados, estado_pago, created_at`,
       [reservaId]
     );
 
@@ -327,6 +339,15 @@ async function reembolsarReserva(req, res) {
         ]
       );
     }
+    const puntosDevueltos = Math.round((Number(reserva.puntos_usados) || 0) * 0.90);
+    if (puntosDevueltos > 0) {
+      await client.query('UPDATE usuarios SET puntos = puntos + $1 WHERE id = $2', [puntosDevueltos, req.user.id]);
+      await client.query(
+        `INSERT INTO puntos_historial (usuario_id, reserva_id, tipo, puntos, descripcion)
+         VALUES ($1, $2, 'ajuste', $3, $4)`,
+        [req.user.id, reservaId, puntosDevueltos, `Devolución de puntos por reembolso: ${reserva.promocion_nombre || 'Tour'}`]
+      );
+    }
 
     const puntosResult = await client.query(
       'SELECT puntos FROM usuarios WHERE id = $1',
@@ -341,6 +362,7 @@ async function reembolsarReserva(req, res) {
       monto_reembolsado: montoReembolso,
       monto_retenido: montoRetenido,
       puntos_revertidos: puntosARevertir,
+      puntos_devueltos: puntosDevueltos,
       puntos_actuales: puntosResult.rows[0]?.puntos ?? 0,
       reserva: updated.rows[0],
     });
@@ -408,6 +430,96 @@ async function actualizarPerfil(req, res) {
   }
 }
 
+/** POST /api/perfil/foto — cambia la foto de perfil del cliente autenticado */
+async function actualizarFotoPerfil(req, res) {
+  if (!req.file) {
+    return res.status(400).json({ ok: false, message: 'Selecciona una imagen para tu foto de perfil.' });
+  }
+
+  let uploadedImage;
+  let client;
+  let transactionStarted = false;
+  try {
+    configureCloudinary();
+    client = await pool.connect();
+    await client.query('BEGIN');
+    transactionStarted = true;
+
+    const userResult = await client.query(
+      'SELECT foto_perfil_public_id FROM usuarios WHERE id = $1 FOR UPDATE',
+      [req.user.id]
+    );
+    if (!userResult.rows.length) {
+      await client.query('ROLLBACK');
+      transactionStarted = false;
+      return res.status(404).json({ ok: false, message: 'Usuario no encontrado.' });
+    }
+
+    uploadedImage = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream({
+        folder: 'icaturismo/perfiles',
+        public_id: `${req.user.id}-${randomUUID()}`,
+        resource_type: 'image',
+      }, (error, result) => {
+        if (error) return reject(error);
+        if (!result) return reject(new Error('Cloudinary no devolvió los datos de la imagen.'));
+        return resolve(result);
+      });
+      stream.end(req.file.buffer);
+    });
+
+    await client.query(
+      'UPDATE usuarios SET foto_perfil_url = $1, foto_perfil_public_id = $2 WHERE id = $3',
+      [uploadedImage.secure_url, uploadedImage.public_id, req.user.id]
+    );
+    await client.query('COMMIT');
+    transactionStarted = false;
+
+    const previousPublicId = userResult.rows[0].foto_perfil_public_id;
+    if (previousPublicId && previousPublicId !== uploadedImage.public_id) {
+      try {
+        await cloudinary.uploader.destroy(previousPublicId, { resource_type: 'image' });
+      } catch (cleanupError) {
+        console.error('No se pudo eliminar la foto de perfil anterior:', cleanupError.message);
+      }
+    }
+
+    return res.json({
+      ok: true,
+      message: 'Foto de perfil actualizada correctamente.',
+      foto_perfil_url: uploadedImage.secure_url,
+    });
+  } catch (err) {
+    if (transactionStarted && client) {
+      try {
+        await client.query('ROLLBACK');
+      } catch (rollbackError) {
+        console.error('actualizarFotoPerfil rollback:', rollbackError.message);
+      }
+    }
+    if (uploadedImage) {
+      try {
+        await cloudinary.uploader.destroy(uploadedImage.public_id, { resource_type: 'image' });
+      } catch (cleanupError) {
+        console.error('No se pudo limpiar la foto de perfil nueva:', cleanupError.message);
+      }
+    }
+
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error('actualizarFotoPerfil:', errorMessage);
+    const cloudinaryNotConfigured = errorMessage.startsWith('Configura CLOUDINARY_')
+      || errorMessage.startsWith('CLOUDINARY_URL');
+    return res.status(cloudinaryNotConfigured ? 503 : 500).json({
+      ok: false,
+      message: cloudinaryNotConfigured
+        ? 'La subida de fotos no está configurada en el servidor.'
+        : 'No se pudo actualizar la foto de perfil.',
+    });
+  } finally {
+    if (client) client.release();
+  }
+}
+
 /** PATCH /api/perfil/password — cambia la contraseña verificando la actual */
 async function cambiarPassword(req, res) {
   const passActual = typeof req.body.password_actual === 'string' ? req.body.password_actual : '';
@@ -470,7 +582,7 @@ module.exports = {
   confirmarPagoReserva,
   reembolsarReserva,
   actualizarPerfil,
+  actualizarFotoPerfil,
   cambiarPassword,
   calcularPuntos,
 };
-
