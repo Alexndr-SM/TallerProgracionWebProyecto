@@ -1,0 +1,385 @@
+/* =========================================================
+   IcaTurismo — registro.css
+   Estilos de la pantalla de registro.
+   Mismo lenguaje visual que style.css: foto de fondo con velo
+   marino, tarjeta de cristal, serif ligera + sans fina y
+   botones blancos con letras espaciadas.
+   ========================================================= */
+
+/* Fuentes (misma pareja que style.css) */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,500&family=Inter:wght@300;400;500&display=swap');
+
+/* ---------------------------------------------------------
+   1. VARIABLES
+   --------------------------------------------------------- */
+:root {
+  /* Paleta base */
+  --deep: #0f3f46;
+  --seafoam: #9fd3c8;
+  --sand: #f1e7d6;
+  --peach: #e6b996;
+
+  --radius: 4px;
+  --radius-lg: 10px;
+  --font-display: 'Cormorant Garamond', 'Cormorant', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* --- Tokens del tema CLARO (mar de día) --- */
+  --a-veil-top: rgba(10, 82, 92, 0.5);
+  --a-veil-bottom: rgba(6, 46, 56, 0.8);
+  --a-card: rgba(6, 40, 48, 0.66);
+  --a-card-border: rgba(255, 255, 255, 0.24);
+  --a-title: #ffffff;
+  --a-sub: rgba(246, 241, 232, 0.78);
+  --a-label: #f6f1e8;
+  --a-icon: rgba(246, 241, 232, 0.7);
+  --a-input-bg: rgba(255, 255, 255, 0.08);
+  --a-input-solid: #0f4048;            /* para el autocompletado del navegador */
+  --a-input-text: #ffffff;
+  --a-placeholder: rgba(246, 241, 232, 0.5);
+  --a-border: rgba(255, 255, 255, 0.3);
+  --a-border-strong: rgba(255, 255, 255, 0.55);
+  --a-divider: rgba(246, 241, 232, 0.65);
+  --a-social-hover: rgba(255, 255, 255, 0.14);
+  --a-social-hover-text: #ffffff;
+  --a-link: var(--seafoam);
+  --a-link-hover: #ffffff;
+  --a-shadow: 0 24px 56px rgba(2, 20, 26, 0.4);
+  --toggle-bg: rgba(6, 40, 48, 0.7);
+  color-scheme: dark;
+}
+
+/* --- Tokens del tema OSCURO (se activa con <html data-theme="dark">) --- */
+:root[data-theme="dark"] {
+  --a-veil-top: rgba(3, 22, 30, 0.7);
+  --a-veil-bottom: rgba(2, 12, 18, 0.9);
+  --a-card: rgba(3, 18, 25, 0.74);
+  --a-card-border: rgba(255, 255, 255, 0.16);
+  --a-input-solid: #0a2128;
+  --a-shadow: 0 24px 56px rgba(0, 0, 0, 0.55);
+  --toggle-bg: rgba(2, 14, 20, 0.8);
+}
+
+/* Reset */
+* { box-sizing: border-box; }
+
+/* ---------------------------------------------------------
+   2. PÁGINA
+   --------------------------------------------------------- */
+html { background: #0c3a41; }
+
+/* Página de registro: tarjeta centrada sobre la foto de fondo */
+body.auth-page {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  background: transparent;
+  color: var(--a-label);
+  padding: 2rem 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* FONDO PRINCIPAL: foto fija + velo marino (pseudo-elemento fixed, apto para móvil) */
+body.auth-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, var(--a-veil-top) 0%, var(--a-veil-bottom) 100%),
+    url('../assets/imagenplaya.jpg') center / cover no-repeat;
+}
+
+/* Tarjeta de cristal */
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--a-card);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  border-radius: var(--radius-lg);
+  padding: 2.6rem 2.2rem 2.2rem;
+  box-shadow: var(--a-shadow);
+  border: 1px solid var(--a-card-border);
+}
+
+/* Logo centrado en la parte superior */
+.auth-logo { text-align: center; margin-bottom: 1.6rem; }
+
+.auth-logo .logo-img {
+  height: 96px;
+  width: auto;
+  margin: 0 auto 0.8rem;
+  display: block;
+}
+
+/* Subtítulo "Promoción de destinos" */
+.auth-logo p {
+  color: var(--peach);
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Título del formulario */
+.auth-card h2 {
+  color: var(--a-title);
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-align: center;
+  font-size: 2.3rem;
+  margin: 0 0 0.35rem;
+  line-height: 1.1;
+}
+
+/* Frase secundaria */
+.auth-card .subtitle {
+  text-align: center;
+  color: var(--a-sub);
+  font-size: 0.92rem;
+  font-weight: 300;
+  margin: 0 0 1.9rem;
+}
+
+/* ---------------------------------------------------------
+   3. FORMULARIO
+   --------------------------------------------------------- */
+.form-group { margin-bottom: 1.15rem; }
+
+/* Etiqueta del campo */
+.form-group label {
+  display: block;
+  color: var(--a-label);
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.4rem;
+}
+
+/* Contenedor del input (icono a la izquierda, ojo a la derecha) */
+.input-wrap { position: relative; display: flex; align-items: center; }
+
+.input-wrap .icon-left {
+  position: absolute;
+  left: 14px;
+  color: var(--a-icon);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+/* Campo de texto: cristal con borde fino */
+.input-wrap input {
+  width: 100%;
+  padding: 0.85rem 1rem 0.85rem 2.6rem;
+  background: var(--a-input-bg);
+  border: 1px solid var(--a-border);
+  border-radius: var(--radius);
+  color: var(--a-input-text);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 300;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.input-wrap input::placeholder { color: var(--a-placeholder); }
+
+/* Foco: borde y halo verde agua */
+.input-wrap input:focus {
+  border-color: var(--seafoam);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(159, 211, 200, 0.22);
+}
+
+/* Botón del ojo (mostrar/ocultar contraseña) */
+.input-wrap .toggle-pass {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--a-icon);
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 4px;
+  line-height: 1;
+}
+.input-wrap .toggle-pass:hover { color: var(--a-link-hover); }
+
+/* Fila de opciones ("Recordarme" / "Olvidé contraseña") */
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  font-size: 0.86rem;
+}
+.form-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--a-sub);
+  cursor: pointer;
+  margin: 0;
+}
+.form-options input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--seafoam);
+  cursor: pointer;
+}
+.form-options a {
+  color: var(--a-link);
+  text-decoration: none;
+}
+.form-options a:hover {
+  color: var(--a-link-hover);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+
+/* Botón principal: blanco, letras espaciadas (igual que .btn-hero) */
+.btn-auth {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--deep);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.76rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(2, 24, 30, 0.25);
+  transition: transform 0.18s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-auth:hover {
+  background: var(--seafoam);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(2, 24, 30, 0.32);
+}
+.btn-auth:active { transform: translateY(0); }
+.btn-auth:disabled { opacity: 0.7; cursor: wait; transform: none; }
+
+/* Separador "o continúa con" */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.6rem 0;
+  color: var(--a-divider);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--a-border);
+}
+
+/* Botones sociales: contorno fino */
+.social-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.6rem;
+}
+.btn-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: 1px solid var(--a-border);
+  border-radius: var(--radius);
+  color: var(--a-label);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+}
+.btn-social:hover {
+  background: var(--a-social-hover);
+  border-color: var(--a-border-strong);
+  color: var(--a-social-hover-text);
+}
+
+/* Iconos de marca (tonos claros para que se lean sobre cristal oscuro) */
+.btn-social .g-icon  { color: #ff8a7a; font-weight: 700; font-size: 1.1rem; }
+.btn-social .fb-icon { color: #8ab4ff; font-weight: 700; font-size: 1.1rem; }
+
+/* Pie del formulario */
+.auth-footer {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--a-sub);
+  margin: 0;
+}
+.auth-footer a {
+  color: var(--a-link);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+.auth-footer a:hover { color: var(--a-link-hover); }
+
+/* "Volver al inicio" */
+.back-home {
+  display: block;
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--a-icon);
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.back-home:hover { color: var(--a-link-hover); }
+
+/* ---------------------------------------------------------
+   4. TEMA, FOCO Y AJUSTES
+   --------------------------------------------------------- */
+.theme-toggle--floating {
+  color: #fff;
+  border-color: var(--a-border);
+}
+.theme-toggle--floating:hover {
+  color: var(--seafoam);
+  border-color: var(--seafoam);
+  background: var(--toggle-bg);
+}
+
+/* Autocompletado del navegador respetando el tema */
+.input-wrap input:-webkit-autofill,
+.input-wrap input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--a-input-text);
+  caret-color: var(--a-input-text);
+  -webkit-box-shadow: 0 0 0 1000px var(--a-input-solid) inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+:focus-visible { outline: 2px solid var(--seafoam); outline-offset: 3px; }
+::selection { background: var(--seafoam); color: #0a2c33; }
+
+@media (max-width: 420px) {
+  .auth-card { padding: 2.2rem 1.4rem 1.8rem; }
+  .auth-card h2 { font-size: 2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

@@ -1,0 +1,210 @@
+---
+// Layout base: reproduce EXACTAMENTE el <head>, header, footer y scripts
+// de tu index.html original, para que style.css / theme.css / Script.js
+// encuentren los elementos y clases que esperan.
+import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import { t, homePath, legacy, hreflangLinks, type Locale } from '../lib/i18n';
+import { home } from '../lib/home';
+
+interface Props {
+  title: string;
+  description?: string;
+  locale: Locale;
+  currentPath: string;
+  bodyClass?: string;
+}
+
+const { title, description = '', locale, currentPath, bodyClass = 'home-page' } = Astro.props;
+const siteUrl = (Astro.site?.href ?? 'https://icaturismo.com').replace(/\/$/, '');
+const canonical = `${siteUrl}${currentPath}`;
+const hreflangs = hreflangLinks(siteUrl);
+const f = home[locale].footer;
+const h = homePath(locale);
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#0a2c33" />
+    <link rel="canonical" href={canonical} />
+    {hreflangs.map((l) => <link rel="alternate" hreflang={l.locale} href={l.href} />)}
+
+    <!-- Tema claro/oscuro: se carga primero para evitar parpadeos -->
+    <script is:inline src="/js/theme.js"></script>
+    <script is:inline src="/js/i18n-dict.js"></script>
+    <script is:inline src="/js/i18n.js"></script>
+    <link rel="stylesheet" href="/css/theme.css" />
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,500&family=Inter:wght@300;400;500&display=swap"
+    />
+
+    <!-- Estilos de tu página original (sin tocar) -->
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/comentarios.css" />
+    <link rel="stylesheet" href="/css/chatbot.css" />
+
+    <link rel="icon" href="/assets/logoIcaTurismo.png" type="image/png" />
+  </head>
+
+  <body class={bodyClass}>
+    <a class="skip-link" href="#contenido">{t('skip', locale)}</a>
+
+    <!-- ========== ENCABEZADO / NAV ========== -->
+    <header>
+      <div class="wrap header-inner">
+        <div class="logo">
+          <a href={`${h}#inicio`}>
+            <img src="/assets/logoIcaTurismo.png" alt="IcaTurismo" class="logo-img" />
+          </a>
+          <p class="logo-name">IcaTurismo</p>
+        </div>
+
+        <nav class="site-nav" aria-label={t('nav.aria', locale)}>
+          <ul class="nav-links" id="navLinks">
+            <li><a href={`${h}#inicio`}>{t('nav.home', locale)}</a></li>
+            <li><a href={legacy.beaches}>{t('nav.beaches', locale)}</a></li>
+            <li><a href={legacy.dunes}>{t('nav.dunes', locale)}</a></li>
+            <li><a href={legacy.culture}>{t('nav.culture', locale)}</a></li>
+            <li><a href={legacy.contact}>{t('nav.contact', locale)}</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-actions">
+          <button
+            type="button"
+            class="hamburger"
+            id="hamburger"
+            aria-label={t('menu.open', locale)}
+            aria-expanded="false"
+            aria-controls="navLinks"
+          >
+            <span></span><span></span><span></span>
+          </button>
+
+          <div class="nav-user" id="navUser">
+            <div id="guestArea">
+              <button type="button" class="user-btn" id="userBtn" aria-label={t('account.menu', locale)} aria-expanded="false" aria-haspopup="true">
+                <img src="/assets/Person.png" alt="" />
+                <span>{t('account.btn', locale)}</span>
+                <span class="chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="user-dropdown" id="userDropdown">
+                <a href={legacy.login}>{t('account.login', locale)}</a>
+                <a href={legacy.register}>{t('account.register', locale)}</a>
+              </div>
+            </div>
+            <div id="userArea" class="is-hidden" hidden>
+              <button type="button" class="user-btn" id="userProfileBtn" aria-label={t('account.menu', locale)} aria-expanded="false" aria-haspopup="true">
+                <img src="/assets/Person.png" alt="" />
+                <span id="userNameDisplay">{t('account.user', locale)}</span>
+                <span class="chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="user-dropdown" id="userProfileDropdown">
+                <a href={legacy.profile} id="miPerfilLink">{t('account.profile', locale)}</a>
+                <a href="#" id="logoutAction">{t('account.logout', locale)}</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Selector de idioma (nuevo, con tu mismo diseño) -->
+          <LanguageSwitcher locale={locale} currentPath={currentPath} />
+
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label={t('theme.toggle', locale)} aria-pressed="false">
+            <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+
+          <a class="cart-link" href={legacy.cart} aria-label={t('cart.aria', locale)} title={t('cart.title', locale)}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.2 10.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 8H6"></path><circle cx="10" cy="19" r="1.3"></circle><circle cx="18" cy="19" r="1.3"></circle></svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <!-- ========== PIE DE PÁGINA ========== -->
+    <footer>
+      <div class="wrap footer-content">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <a class="footer-logo" href={`${h}#inicio`} aria-label={f.homeAria}>
+              <img src="/assets/logoIcaTurismo.png" alt="" />
+              <span>IcaTurismo</span>
+            </a>
+          </div>
+          <div class="footer-payment-banner">
+            <img src="/assets/FormaPago/FormasDePago.png" alt={f.payAlt} loading="lazy" />
+          </div>
+        </div>
+
+        <div class="footer-main">
+          <div class="footer-column">
+            <h2>{f.explore}</h2>
+            <ul>
+              <li><a href={`${h}#inicio`}>{t('nav.home', locale)}</a></li>
+              <li><a href={`${h}#destinos`}>{f.destinationsLink}</a></li>
+              <li><a href={legacy.contact}>{t('nav.contact', locale)}</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-column">
+            <h2>{f.destinations}</h2>
+            <ul>
+              <li><a href={legacy.beaches}>{t('nav.beaches', locale)}</a></li>
+              <li><a href={legacy.dunes}>{t('nav.dunes', locale)}</a></li>
+              <li><a href={legacy.culture}>{t('nav.culture', locale)}</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-column">
+            <h2>{f.follow}</h2>
+            <ul>
+              <li><a href="https://www.facebook.com/samantha.sp.946?locale=es_LA" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+              <li><a href="https://www.instagram.com/sammn_uu/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+              <li><a href="https://www.youtube.com/@Styx117-S" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-column">
+            <h2>{f.contact}</h2>
+            <address>
+              Calle Los Turistas 123, Ica<br />
+              <a href="tel:+51056123456">(056) 123-456</a><br />
+              <a href="mailto:info@icaturismo.dev">info@icaturismo.dev</a>
+            </address>
+            <a class="footer-back-to-top" href={`${h}#inicio`}>{f.top}</a>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; {year} IcaTurismo · {f.bottom}</p>
+        </div>
+      </div>
+    </footer>
+
+    <button class="chatbot-launcher" type="button" aria-label={t('chat.open', locale)}>
+      <img src="/assets/chatbot.png" alt="" />
+    </button>
+
+    <!-- Tus scripts originales (hamburguesa, dropdown, carrusel, reviews, chatbot) -->
+    <script is:inline src="/js/config.js"></script>
+    <script is:inline src="/js/auth.js"></script>
+    <script is:inline src="/js/reviews.js"></script>
+    <script is:inline src="/js/Script.js"></script>
+    <script is:inline src="/js/chatbot.js"></script>
+  </body>
+</html>

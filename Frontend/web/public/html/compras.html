@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Compra - Tour de Playa</title>
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#0a2c33">
+    <!-- Tema claro/oscuro: se carga primero para evitar parpadeos -->
+    <script src="../js/theme.js"></script>
+    <script src="/js/i18n-dict.js"></script>
+    <script src="/js/i18n.js"></script>
+    <link rel="stylesheet" href="../css/theme.css">
+    <!-- Fuentes: preconnect + <link> (más rápido que @import dentro del CSS) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,500&family=Inter:wght@300;400;500&display=swap">
+    <!-- Estilos de la página principal -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Favicon -->
+    <link rel="icon" href="../assets/UTP.webp" type="image/webp">
+</head>
+<body>
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+<!-- ========== ENCABEZADO / NAV ========== -->
+<header>
+    <div class="wrap header-inner">
+        <!-- Logo -->
+        <div class="logo">
+            <a href="/"><img src="../assets/logoIcaTurismo.png" alt="IcaTurismo" class="logo-img"></a>
+            <p class="logo-name">IcaTurismo</p>
+        </div>
+        <nav class="site-nav" aria-label="Principal">
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="promociones/playas/playas.html">Playas</a></li>
+                <li><a href="promociones/dunas/dunas.html">Dunas</a></li>
+                <li><a href="promociones/cultura/cultura.html">Cultura</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <button type="button" class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="nav-user" id="navUser">
+                <div id="guestArea">
+                    <button type="button" class="user-btn" id="userBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true">
+                        <img src="../assets/Person.png" alt="">
+                        <span>Cuenta</span>
+                        <span class="chevron" aria-hidden="true">▾</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="login.html">Iniciar sesión</a>
+                        <a href="registro.html">Registrarse</a>
+                    </div>
+                </div>
+                <div id="userArea" class="is-hidden" hidden>
+                    <button type="button" class="user-btn" id="userProfileBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true">
+                        <img src="../assets/Person.png" alt="">
+                        <span id="userNameDisplay">Usuario</span>
+                        <span class="chevron" aria-hidden="true">▾</span>
+                    </button>
+                    <div class="user-dropdown" id="userProfileDropdown">
+                        <a href="perfil.html" id="miPerfilLink">Mi Perfil</a>
+                        <a href="#" id="logoutAction">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Cambiar a modo oscuro" aria-pressed="false">
+                <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+        </div>
+    </div>
+</header>
+    <main id="contenido" class="reserva-layout">
+        <section class="formulario-contenedor" aria-labelledby="reserva-titulo">
+        <h1 id="reserva-titulo">Completa tu reserva</h1>
+        <p class="reserva-acceso" id="reserva-acceso" role="status" hidden>
+            Inicia sesión con una cuenta registrada para reservar.
+            <a href="login.html">Iniciar sesión</a> o <a href="registro.html">crear una cuenta</a>.
+        </p>
+        <form id="form-reserva" action="#" method="POST">
+      
+      <div class="grupo-input">
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" name="nombre" required placeholder="Ej. Juan Pérez">
+      </div>
+
+      <div class="grupo-input">
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" name="email" required placeholder="correo@ejemplo.com">
+      </div>
+
+      <div class="grupo-input">
+        <label for="fecha">Fecha del tour</label>
+        <input type="date" id="fecha" name="fecha" required>
+      </div>
+
+      <div class="grupo-input">
+        <label for="promocion">Promoción</label>
+        <select id="promocion" name="promocion" required disabled>
+          <option value="">Cargando promociones...</option>
+        </select>
+      </div>
+
+      <div class="grupo-input">
+        <label for="personas">Número de asistentes</label>
+        <input type="number" id="personas" name="personas" min="1" max="15" required value="1">
+      </div>
+
+      <p class="reserva-total" id="reserva-total" aria-live="polite">Selecciona una promoción para ver el total.</p>
+
+      <div class="grupo-input">
+        <label for="pago">Método de pago</label>
+        <select id="pago" name="pago" required>
+          <option value="" disabled selected>Selecciona una opción</option>
+          <option value="tarjeta">Tarjeta de Crédito / Débito</option>
+          <option value="paypal">PayPal</option>
+          <option value="yape">Yape / Plin</option>
+        </select>
+      </div>
+
+    <button type="submit" class="btn-pagar">Continuar al pago</button>
+      
+    </form>
+        </section>
+        <section class="panel-pago" id="panel-pago" aria-live="polite" aria-label="Método de pago" hidden>
+            <div class="pago-metodo">
+                <p class="pago-etiqueta">Resumen de reserva</p>
+                <h2 id="resumen-promocion"></h2>
+                <p id="resumen-total"></p>
+                <p class="pago-descripcion">El método seleccionado se guardará en la reserva, pero el pago quedará pendiente. Esta página aún no procesa cobros ni solicita datos de tarjeta.</p>
+            </div>
+            <p id="reserva-mensaje" class="reserva-mensaje" role="status" aria-live="polite" hidden></p>
+            <button type="button" class="btn-pagar" id="confirmar-reserva">Confirmar reserva</button>
+            <button type="button" class="btn-volver" id="volver-reserva">Volver a los datos</button>
+        </section>
+    </main>
+<!-- ========== PIE DE PÁGINA ========== -->
+<footer>
+    <div class="wrap footer-content">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <a class="footer-logo" href="#inicio" aria-label="IcaTurismo, volver al inicio">
+                    <img src="../assets/logoIcaTurismo.png" alt="">
+                    <span>IcaTurismo</span>
+                </a>
+            </div>
+            <div class="footer-payment-banner">
+                <img src="../assets/FormaPago/FormasDePago.png" alt="Formas de pago aceptadas: Visa, Mastercard, PayPal, PagoEfectivo, Yape y Plin" loading="lazy">
+            </div>
+        </div>
+
+        <div class="footer-main">
+            <div class="footer-column">
+                <h2>Explora</h2>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#destinos">Nuestros destinos</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h2>Destinos</h2>
+                <ul>
+                    <li><a href="promociones/playas/playas.html">Playas</a></li>
+                    <li><a href="promociones/dunas/dunas.html">Dunas</a></li>
+                    <li><a href="promociones/cultura/cultura.html">Cultura</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h2>Síguenos</h2>
+                <ul>
+                    <li><a href="https://www.facebook.com/samantha.sp.946?locale=es_LA" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+                    <li><a href="https://www.instagram.com/sammn_uu/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                    <li><a href="https://www.youtube.com/@Styx117-S" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h2>Contacto</h2>
+                <address>
+                    Calle Los Turistas 123, Ica<br>
+                    <a href="tel:+51056123456">(056) 123-456</a><br>
+                    <a href="mailto:info@icaturismo.dev">info@icaturismo.dev</a>
+                </address>
+                <a class="footer-back-to-top" href="#inicio">Volver al inicio ↑</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 IcaTurismo · Empresa de turismo con sede en Ica</p>
+        </div>
+    </div>
+</footer>
+<script src="../js/config.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/metodoPago.js"></script>
+<script src="../js/Script.js"></script>
+</body>
+</html>

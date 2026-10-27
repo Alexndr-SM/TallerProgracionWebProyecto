@@ -1,0 +1,88 @@
+---
+// Usa el MISMO diseño del selector que ya tenías en style.css
+// (.language-picker / .language-toggle / .language-options),
+// pero ahora cada bandera es un enlace real a /es/, /en/ o /fr/.
+import { LOCALES, LOCALE_LABELS, LOCALE_FLAGS, switchLocalePath, t, type Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+  currentPath: string;
+}
+const { locale, currentPath } = Astro.props;
+---
+
+<div class="language-picker" data-lang-picker>
+  <button
+    type="button"
+    class="language-toggle"
+    aria-label={t('lang.show', locale)}
+    aria-expanded="false"
+    aria-controls="languageOptions"
+    title={t('lang.title', locale)}
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path>
+    </svg>
+  </button>
+
+  <div class="language-options" id="languageOptions" role="group" aria-label={t('lang.options', locale)}>
+    {
+      LOCALES.map((l) => (
+        <a
+          class="language-option"
+          href={switchLocalePath(currentPath, l)}
+          hreflang={l}
+          lang={l}
+          data-locale={l}
+          aria-label={LOCALE_LABELS[l]}
+          aria-current={l === locale ? 'true' : undefined}
+          title={LOCALE_LABELS[l]}
+        >
+          <img src={LOCALE_FLAGS[l]} alt="" width="24" height="18" />
+        </a>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .language-option {
+    text-decoration: none;
+  }
+  .language-option[aria-current='true'] {
+    border-color: var(--seafoam);
+    background: rgba(159, 211, 200, 0.18);
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var picker = document.querySelector('[data-lang-picker]');
+    if (!picker) return;
+    var toggle = picker.querySelector('.language-toggle');
+
+    function setOpen(open, returnFocus) {
+      picker.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      if (!open && returnFocus) toggle.focus();
+    }
+
+    toggle.addEventListener('click', function () {
+      setOpen(!picker.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!picker.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && picker.classList.contains('open')) setOpen(false, true);
+    });
+
+    // Recordar el idioma elegido (lo usa la redirección de "/")
+    picker.querySelectorAll('[data-locale]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        try { localStorage.setItem('icat_lang', a.getAttribute('data-locale')); } catch (e) {}
+      });
+    });
+  })();
+</script>

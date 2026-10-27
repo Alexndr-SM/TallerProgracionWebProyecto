@@ -1,0 +1,36 @@
+---
+// "/" no tiene contenido: manda a la persona a /es/, /en/ o /fr/
+// según su elección guardada o el idioma de su navegador.
+// Es estático (sin servidor), por eso la redirección se hace en el navegador.
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IcaTurismo</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="https://icaturismo.com/es/" />
+    <noscript><meta http-equiv="refresh" content="0;url=/es/" /></noscript>
+    <script is:inline>
+      (function () {
+        var supported = ['es', 'en', 'fr'];
+        var lang = null;
+        try { lang = localStorage.getItem('icat_lang'); } catch (e) {}
+        if (supported.indexOf(lang) === -1) {
+          var prefs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'es'];
+          lang = 'es';
+          for (var i = 0; i < prefs.length; i++) {
+            var code = String(prefs[i]).slice(0, 2).toLowerCase();
+            if (supported.indexOf(code) !== -1) { lang = code; break; }
+          }
+        }
+        location.replace('/' + lang + '/' + location.hash);
+      })();
+    </script>
+  </head>
+  <body>
+    <p><a href="/es/">Español</a> · <a href="/en/">English</a> · <a href="/fr/">Français</a></p>
+  </body>
+</html>

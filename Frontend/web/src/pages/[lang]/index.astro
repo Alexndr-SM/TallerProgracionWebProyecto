@@ -1,0 +1,284 @@
+---
+// Una sola plantilla genera /es/, /en/ y /fr/ (antes eran 3 archivos casi iguales).
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { LOCALES, homePath, legacy, type Locale } from '../../lib/i18n';
+import { home } from '../../lib/home';
+
+export function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const locale = Astro.params.lang as Locale;
+const c = home[locale];
+const currentPath = homePath(locale);
+
+// Imágenes y enlaces (no se traducen)
+const slideImgs = [
+  'https://www.ytuqueplanes.com/imagenes/fotos/regiones/RC-BANNER-INT-Ica.webp',
+  'https://www.paracasexplorer.com/wp-content/uploads/2019/04/4-2.jpg',
+  'https://www.peru.travel/Contenido/Destino/Imagen/es/5/1.2/Principal/oasis-huacachina-ica-peru-desktop.jpg',
+  'https://upload.wikimedia.org/wikipedia/commons/6/65/Santuario_de_Luren%2C_2019.jpg?utm_source=es.wikipedia.org&utm_campaign=index&utm_content=original',
+];
+const serviceIcons = ['🛏️', '🚌', '🍽️', '🧭'];
+const benefitIcons = ['🏖️', '⛰️', '🏺', '🌵'];
+const cards = [
+  { id: 'playas', href: legacy.beaches, badgeClass: 'badge', img: slideImgs[0] },
+  { id: 'dunas', href: legacy.dunes, badgeClass: 'badge badge--teal', img: slideImgs[1] },
+  {
+    id: 'cultura',
+    href: legacy.culture,
+    badgeClass: 'badge badge--ink',
+    img: 'https://blogs.ucontinental.edu.pe/wp-content/uploads/2021/11/ica-ocho-curiosidades-de-esta-region-que-quiza-no-conocias-universidad-continental-3.jpg',
+  },
+];
+const team = [
+  'Gutierres Sotelo Diego',
+  'Sotelo Marcos Alexander',
+  'Sarmiento Palomino Samantha',
+  'Peña Torres Mariana',
+  'Santillan Solis Jordan',
+  'Taxis Unzueta Abraham',
+];
+const videoSrc =
+  'https://www.youtube-nocookie.com/embed/IjnYfpsW2e4?autoplay=1&mute=1&loop=1&playlist=IjnYfpsW2e4&controls=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1';
+const mapSrc =
+  'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7740.288109378249!2d-75.7357121!3d-14.0686695!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9110e3db5c16ca7d%3A0x14a969e069453071!2sUniversidad%20Tecnol%C3%B3gica%20Del%20Per%C3%BA!5e0!3m2!1ses-419!2spe!4v1790225641935!5m2!1ses-419!2spe';
+---
+
+<BaseLayout title={c.metaTitle} description={c.metaDescription} locale={locale} currentPath={currentPath}>
+  <h1 class="sr-only">{c.h1}</h1>
+
+  <!-- ========== CARRUSEL ========== -->
+  <section class="carrusel" id="inicio" aria-roledescription="carrusel" aria-label={c.carouselLabel}>
+    <div class="carrusel-contenedor">
+      <div class="carrusel-slides" id="carruselSlides" aria-live="off">
+        {
+          c.slides.map((s, i) => (
+            <div
+              class={i === 0 ? 'slide active' : 'slide'}
+              role="group"
+              aria-roledescription="slide"
+              aria-label={c.slideLabel(i + 1, c.slides.length)}
+            >
+              <img
+                src={slideImgs[i]}
+                alt={s.alt}
+                loading={i === 0 ? undefined : 'lazy'}
+                decoding={i === 0 ? undefined : 'async'}
+              />
+              <div class="slide-texto">
+                <span class="kicker">{c.kicker}</span>
+                <h2>{s.h2}</h2>
+                <p>{s.p}</p>
+                <a href="#destinos" class="btn-hero">
+                  {c.explore}
+                  <span class="sr-only">{s.sr}</span>
+                </a>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <button type="button" class="carrusel-btn prev" id="prevBtn" aria-label={c.prev}><span aria-hidden="true">&#10094;</span></button>
+      <button type="button" class="carrusel-btn next" id="nextBtn" aria-label={c.next}><span aria-hidden="true">&#10095;</span></button>
+      <button type="button" class="carrusel-pausa" id="pausaBtn" aria-label={c.pause} aria-pressed="false"><span aria-hidden="true">❚❚</span></button>
+
+      <div class="carrusel-indicadores" id="indicadores"></div>
+    </div>
+  </section>
+
+  <!-- ========== SERVICIOS ========== -->
+  <section class="services-section" aria-labelledby="services-title">
+    <div class="wrap">
+      <h2 class="section-title scroll-reveal" id="services-title">{c.services.title}</h2>
+      <div class="section-underline scroll-reveal"></div>
+      <div class="services-grid">
+        {
+          c.services.items.map((s, i) => (
+            <article class="service-card scroll-reveal">
+              <div class="service-icon" aria-hidden="true">{serviceIcons[i]}</div>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SOBRE NOSOTROS ========== -->
+  <section class="about-section" aria-labelledby="about-title">
+    <div class="wrap about-content">
+      <div class="about-copy scroll-reveal" data-reveal="left">
+        <span class="about-kicker">{c.about.kicker}</span>
+        <h2 id="about-title">{c.about.title}</h2>
+        <div class="about-underline"></div>
+        <p>{c.about.p1}</p>
+        <p>{c.about.p2}</p>
+      </div>
+      <div class="about-image scroll-reveal" data-reveal="right" role="group" aria-label={c.about.teamAria}>
+        <input class="about-image-toggle" type="checkbox" id="about-team-toggle" aria-label={c.about.toggleAria} />
+        <label class="about-image-inner" for="about-team-toggle">
+          <div class="about-image-front">
+            <img
+              src="https://eepsicologia.com/wp-content/uploads/diferencia-entre-grupo-y-equipo.jpg"
+              alt={c.about.teamAlt}
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="about-image-hint" aria-hidden="true">{c.about.hint}</span>
+          </div>
+          <div class="about-image-back">
+            <h3>{c.about.teamTitle}</h3>
+            <ul>{team.map((n) => <li>{n}</li>)}</ul>
+          </div>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== BENEFICIOS ========== -->
+  <section class="beneficios">
+    <div class="wrap">
+      <h2 class="section-title scroll-reveal">{c.benefits.title}</h2>
+      <div class="section-underline scroll-reveal"></div>
+      <div class="beneficios-grid">
+        {
+          c.benefits.items.map((b, i) => (
+            <div class="beneficio scroll-reveal">
+              <div class="icono-circulo">{benefitIcons[i]}</div>
+              <h3>{b.title}</h3>
+              <p>{b.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== HERO CTA ========== -->
+  <section class="hero">
+    <div class="wrap hero-content scroll-reveal">
+      <h2>{c.cta.title}</h2>
+      <p>{c.cta.text}</p>
+      <a href="#destinos" class="btn-hero">{c.explore}</a>
+    </div>
+  </section>
+
+  <!-- ========== DESTINOS ========== -->
+  <section class="destinos" id="destinos">
+    <div class="wrap">
+      <h2 class="section-title scroll-reveal">{c.destinations.title}</h2>
+      <div class="section-underline scroll-reveal"></div>
+      <div class="grid-destinos">
+        {
+          c.destinations.cards.map((card, i) => (
+            <a class="card scroll-reveal" id={cards[i].id} href={cards[i].href} aria-label={card.aria}>
+              <div class="card-media">
+                <span class={cards[i].badgeClass}>{card.badge}</span>
+                <img loading="lazy" decoding="async" src={cards[i].img} alt={card.title} />
+              </div>
+              <div class="card-body">
+                <h3>{card.title}</h3>
+                <p>{card.text}</p>
+                <div class="card-content">
+                  <h4>{card.h4a}</h4>
+                  <ul>{card.list.map((x) => <li>{x}</li>)}</ul>
+                  <h4>{card.h4b}</h4>
+                  <ol>{card.recs.map((x) => <li>{x}</li>)}</ol>
+                  <h4>{card.h4c}</h4>
+                  <table class="tabla-simple">
+                    <thead>
+                      <tr><th>{card.head[0]}</th><th>{card.head[1]}</th></tr>
+                    </thead>
+                    <tbody>
+                      {card.rows.map((r) => <tr><td>{r[0]}</td><td>{r[1]}</td></tr>)}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== VIDEO Y MAPA ========== -->
+  <section class="media-section" id="ubicacion">
+    <div class="wrap">
+      <h2 class="section-title scroll-reveal">{c.media.title}</h2>
+      <div class="section-underline scroll-reveal"></div>
+      <div class="media-grid">
+        <div class="media-video scroll-reveal" data-reveal="left">
+          <div class="video-frame">
+            <iframe
+              src={videoSrc}
+              title={c.media.videoTitle}
+              allow="autoplay; encrypted-media; picture-in-picture"
+              allowfullscreen
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
+        </div>
+        <div class="media-map scroll-reveal" data-reveal="right">
+          <div class="map-frame">
+            <iframe
+              src={mapSrc}
+              title={c.media.mapTitle}
+              allowfullscreen
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== OPINIONES ========== -->
+  <section class="reviews-section" id="opiniones">
+    <div class="wrap">
+      <h2 class="section-title scroll-reveal">{c.reviews.title}</h2>
+      <div class="section-underline scroll-reveal"></div>
+      <p class="reviews-note scroll-reveal" data-comments-status role="status">{c.reviews.loading}</p>
+      <div class="reviews-list" data-reviews-limit="6" aria-live="polite"></div>
+      <div class="reviews-actions scroll-reveal">
+        <a class="btn-hero" href={legacy.comments}>{c.reviews.all}</a>
+      </div>
+
+      <div class="review-form-card scroll-reveal">
+        <h3>{c.reviews.formTitle}</h3>
+        <p>{c.reviews.formText}</p>
+        <form class="review-form" id="reviewForm">
+          <div class="review-form-fields">
+            <label for="review-content">
+              {c.reviews.label}
+              <textarea id="review-content" name="contenido" rows="4" maxlength="1000" required placeholder={c.reviews.placeholder}></textarea>
+            </label>
+            <div class="review-rating">
+              <span>{c.reviews.rating}</span>
+              <div class="review-rating-stars" role="radiogroup" aria-label={c.reviews.rating}>
+                {
+                  [5, 4, 3, 2, 1].map((n) => (
+                    <>
+                      <input type="radio" id={`rating-${n}`} name="calificacion" value={String(n)} required={n === 5} />
+                      <label for={`rating-${n}`} aria-label={c.reviews.star(n)}>★</label>
+                    </>
+                  ))
+                }
+              </div>
+            </div>
+            <div class="review-form-actions">
+              <input class="review-photo-input" id="review-photo" name="fotoPerfil" type="file" accept="image/jpeg,image/png,image/webp" />
+              <label class="review-photo-button" for="review-photo">{c.reviews.photo}</label>
+              <button type="submit" class="review-submit">{c.reviews.submit}</button>
+            </div>
+            <div class="review-photo-preview" id="review-photo-preview" hidden></div>
+            <p class="review-status" data-review-status role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
