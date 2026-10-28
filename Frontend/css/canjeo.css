@@ -36,6 +36,7 @@
 .redemption-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .9rem 1rem; border: 1px solid rgb(29 76 68 / 13%); border-radius: 10px; background: rgb(255 255 255 / 75%); font: .82rem/1.5 Inter, sans-serif; }
 .redemption-row span { color: #71817e; }
 .redemption-row code { color: #1e5c4d; font-weight: 650; }
+.redemption-row__date { color: #71817e; font-size: .75rem; }
 .redemptions-empty { color: #71817e; font: .85rem/1.5 Inter, sans-serif; }
 [data-theme="light"] .rewards-login,
 [data-theme="light"] .reward-card,
@@ -45,12 +46,13 @@
 [data-theme="light"] .reward-card h3 { color: #17343a; }
 [data-theme="light"] .rewards-login p,
 [data-theme="light"] .reward-card p,
-[data-theme="light"] .redemption-row span { color: #516c6d; }
+[data-theme="light"] .redemption-row span,
+[data-theme="light"] .redemption-row__date { color: #516c6d; }
 [data-theme="light"] .rewards-section-heading > p,
 [data-theme="light"] .redemptions-empty { color: #d3e0da; }
 [data-theme="dark"] .rewards-page { color: #edf4ee; }
 [data-theme="dark"] .rewards-login, [data-theme="dark"] .reward-card, [data-theme="dark"] .redemption-row { border-color: rgb(188 223 207 / 16%); background: #1b2b29; }
-[data-theme="dark"] .rewards-section-heading > p, [data-theme="dark"] .reward-card p, [data-theme="dark"] .redemption-row span, [data-theme="dark"] .redemptions-empty { color: #a4b8af; }
+[data-theme="dark"] .rewards-section-heading > p, [data-theme="dark"] .reward-card p, [data-theme="dark"] .redemption-row span, [data-theme="dark"] .redemption-row__date, [data-theme="dark"] .redemptions-empty { color: #a4b8af; }
 [data-theme="dark"] .reward-card h3, [data-theme="dark"] .rewards-login h3 { color: #edf4ee; }
 [data-theme="dark"] .rewards-balance strong, [data-theme="dark"] .reward-card__cost { color: #c4e5ac; }
 @media (max-width: 800px) { .rewards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

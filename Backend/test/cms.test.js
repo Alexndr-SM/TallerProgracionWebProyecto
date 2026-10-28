@@ -172,7 +172,19 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
     assert.equal(productRedemption.status, 201);
     assert.equal(productRedemption.data.puntos, 100);
     assert.match(productRedemption.data.canje.codigo, /^ICA-[A-F0-9]{12}$/);
-    assert.equal((await request('/api/canjeos', 'GET', undefined, 2)).data.recompensas.some((item) => item.id === product.data.recompensa.id), false);
+    const savedProductRedemption = await db.query(
+      'SELECT codigo, recompensa_nombre, puntos FROM canjes WHERE usuario_id = $1 AND codigo = $2',
+      [2, productRedemption.data.canje.codigo]
+    );
+    assert.deepEqual(savedProductRedemption.rows[0], {
+      codigo: productRedemption.data.canje.codigo,
+      recompensa_nombre: 'Producto de prueba',
+      puntos: 100,
+    });
+    const catalogAfterProductRedemption = await request('/api/canjeos', 'GET', undefined, 2);
+    assert.equal(catalogAfterProductRedemption.data.recompensas.some((item) => item.id === product.data.recompensa.id), false);
+    assert.equal(catalogAfterProductRedemption.data.canjes.length, 2);
+    assert.equal(catalogAfterProductRedemption.data.canjes[0].codigo, productRedemption.data.canje.codigo);
     const expensive = await request('/api/admin/recompensas', 'POST', {
       nombre: 'Beneficio costoso', tipo: 'producto', puntos: 250,
     }, 1);

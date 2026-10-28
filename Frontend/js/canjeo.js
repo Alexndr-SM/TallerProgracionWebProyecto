@@ -5,6 +5,7 @@
   const login = document.getElementById('rewardsLogin');
   const grid = document.getElementById('rewardsGrid');
   const redemptions = document.getElementById('redemptionsList');
+  let redemptionItems = [];
   const labels = { producto: 'Producto', promocion: 'Promoción', descuento: 'Descuento' };
   const icons = { producto: '🎁', promocion: '✦', descuento: '%' };
   const number = (value) => Number(value).toLocaleString('es-PE');
@@ -84,6 +85,7 @@
   }
 
   function renderRedemptions(items) {
+    redemptionItems = items;
     if (!items.length) {
       const empty = document.createElement('p');
       empty.className = 'redemptions-empty';
@@ -99,6 +101,16 @@
       const code = document.createElement('code');
       code.textContent = item.codigo;
       row.append(detail, code);
+      if (item.created_at) {
+        const createdAt = new Date(item.created_at);
+        if (!Number.isNaN(createdAt.getTime())) {
+          const date = document.createElement('time');
+          date.className = 'redemption-row__date';
+          date.dateTime = createdAt.toISOString();
+          date.textContent = createdAt.toLocaleString('es-PE', { dateStyle: 'medium', timeStyle: 'short' });
+          row.append(date);
+        }
+      }
       return row;
     }));
   }
@@ -129,6 +141,7 @@
     try {
       const result = await request(`/api/canjeos/${reward.id}/canjear`, { method: 'POST' });
       const successMessage = `¡Canje realizado! Guarda tu código ${result.canje.codigo}.`;
+      renderRedemptions([result.canje, ...redemptionItems.filter((item) => item.codigo !== result.canje.codigo)].slice(0, 20));
       showNotice(successMessage);
       try {
         await loadCatalog();
