@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </button>
       <div class="user-dropdown" id="userProfileDropdown">
         <a href="${accountUrl('perfil.html')}" id="miPerfilLink">Mi Perfil</a>
+        <a href="${accountUrl('canjeo.html')}">Canjear puntos</a>
         <a href="#" id="logoutAction">Cerrar sesión</a>
       </div>`;
 

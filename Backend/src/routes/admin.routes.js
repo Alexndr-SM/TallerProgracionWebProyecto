@@ -3,6 +3,7 @@ const controller = require('../controllers/adminController');
 const cmsPromotions = require('../controllers/promotionController');
 const { getMedia } = require('../controllers/mediaController');
 const { getAnalytics } = require('../controllers/analyticsController');
+const rewards = require('../controllers/rewardController');
 const { requireAuth, requireRole } = require('../middleware/auth.middleware');
 
 const router = express.Router();
@@ -23,5 +24,8 @@ router.get('/promociones', requireRole('admin', 'editor'), cmsPromotions.listAdm
 router.get('/medios', requireRole('admin', 'editor'), getMedia);
 router.post('/promociones', requireRole('admin', 'editor'), controller.createPromotion);
 router.patch('/promociones/:id', requireRole('admin', 'editor'), controller.updatePromotion);
+router.get('/recompensas', requireRole('admin'), rewards.listAdminRewards);
+router.post('/recompensas', requireRole('admin'), rewards.createReward);
+router.patch('/recompensas/:id', requireRole('admin'), rewards.updateReward);
 
 module.exports = router;
