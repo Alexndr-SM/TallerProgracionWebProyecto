@@ -44,6 +44,14 @@ Las páginas brutas de Cloudinary se mantienen hasta 30 segundos en una caché a
 
 Referencias de implementación: [paginación de Admin API](https://cloudinary.com/documentation/admin_api#get_resources) y [optimización de imágenes](https://cloudinary.com/documentation/image_optimization).
 
+## Canje de puntos
+
+En **Administración → Catálogo de canje**, el administrador puede publicar productos, promociones y descuentos, indicar su costo en puntos y, opcionalmente, limitar sus unidades disponibles. Al elegir una imagen del dispositivo, se sube a Cloudinary y queda seleccionada para el beneficio. El catálogo incluye de inicio un sombrero ICATURISMO y una sombrilla. Los beneficios pueden desactivarse sin eliminar el historial de canjes.
+
+Los clientes con sesión activa encuentran **Canjear puntos** en el menú de cuenta y pueden consultar su saldo, canjear beneficios disponibles y recuperar el código de cada canje. El servidor valida el saldo y el stock dentro de una transacción, descuenta los puntos e incorpora el movimiento al historial de fidelización.
+
+La función agrega las migraciones `005_recompensas.sql` y `006_productos_canje.sql` al inicio de la API, que crean el catálogo y registran el sombrero y la sombrilla iniciales. Las rutas protegidas son `GET /api/canjeos`, `POST /api/canjeos/:id/canjear` y `GET|POST|PATCH /api/admin/recompensas`. La administración está reservada a `admin`; cada canje requiere una cuenta de cliente activa.
+
 ## Fondos, paleta y carruseles
 
 En **Destinos → Editar** y **Promociones → Editar** aparece **Imagen de fondo de la página (opcional)**. Se puede subir con Cloudinary, previsualizarla, cambiarla, quitarla o pegar una URL HTTPS. Es independiente de la portada, la imagen principal y la galería. Una promoción sin fondo propio hereda el del destino; si tampoco existe, se utiliza su imagen principal. Un destino sin fondo propio utiliza su portada.

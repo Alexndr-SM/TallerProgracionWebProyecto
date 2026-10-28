@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </button>
       <div class="user-dropdown" id="userProfileDropdown">
         <a href="${accountUrl('perfil.html')}" id="miPerfilLink">Mi Perfil</a>
+        <a href="${accountUrl('canjeo.html')}" id="canjeoLink">Canjear puntos</a>
         <a href="#" id="logoutAction">Cerrar sesión</a>
       </div>`;
 
@@ -215,6 +216,63 @@ document.addEventListener('DOMContentLoaded', () => {
   const userArea = document.getElementById('userArea');
   const userNameDisplay = document.getElementById('userNameDisplay');
   const logoutAction = document.getElementById('logoutAction');
+  const scriptEl = document.querySelector('script[src*="Script.js"]');
+  const pointsUrl = scriptEl ? new URL('../html/canjeo.html', scriptEl.src).href : 'html/canjeo.html';
+  const pointsBalance = document.querySelector('.rewards-balance');
+  const pointsElement = pointsBalance?.querySelector('#rewardsPoints');
+
+  function updatePointsPosition() {
+    if (!pointsBalance) return;
+    pointsBalance.classList.toggle('is-floating', window.scrollY > 0);
+  }
+
+  if (pointsBalance) {
+    pointsBalance.href = pointsUrl;
+    pointsBalance.hidden = true;
+    window.addEventListener('scroll', updatePointsPosition, { passive: true });
+    window.addEventListener('resize', updatePointsPosition);
+    updatePointsPosition();
+  }
+
+  async function refreshPointsBalance(points) {
+    if (!pointsBalance || !pointsElement) return;
+    if (!window.Auth?.isLoggedIn()) {
+      pointsBalance.hidden = true;
+      return;
+    }
+    pointsBalance.hidden = false;
+    if (Number.isFinite(Number(points))) {
+      const formattedPoints = Number(points).toLocaleString('es-PE');
+      pointsElement.textContent = formattedPoints;
+      pointsBalance.setAttribute('aria-label', `Saldo disponible: ${formattedPoints} puntos. Abrir catálogo de canjes.`);
+      pointsBalance.removeAttribute('title');
+      return;
+    }
+    try {
+      const response = await fetch(`${(window.API_URL || '').replace(/\/$/, '')}/api/perfil/puntos`, {
+        headers: { Authorization: `Bearer ${Auth.getToken()}` },
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.ok) throw new Error(result.message || 'No se pudo consultar el saldo.');
+      const formattedPoints = Number(result.puntos_actuales).toLocaleString('es-PE');
+      pointsElement.textContent = formattedPoints;
+      pointsBalance.setAttribute('aria-label', `Saldo disponible: ${formattedPoints} puntos. Abrir catálogo de canjes.`);
+      pointsBalance.removeAttribute('title');
+    } catch (error) {
+      pointsElement.textContent = '—';
+      pointsBalance.title = `Saldo no disponible: ${error.message}`;
+    }
+  }
+
+  if (pointsBalance) {
+    document.addEventListener('icat:points-updated', (event) => refreshPointsBalance(event.detail?.points));
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) refreshPointsBalance();
+    });
+    window.setInterval(() => {
+      if (!document.hidden) refreshPointsBalance();
+    }, 60000);
+  }
 
   function aplicarSesionUI() {
     const logged = !!(window.Auth && Auth.isLoggedIn());
@@ -242,6 +300,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Asegurar que el enlace a "Mi Perfil" esté presente arriba de "Cerrar sesión"
       const profileDropdown = document.getElementById('userProfileDropdown');
+      if (profileDropdown && !document.getElementById('canjeoLink')) {
+        const rewardsLink = document.createElement('a');
+        rewardsLink.id = 'canjeoLink';
+        rewardsLink.href = pointsUrl;
+        rewardsLink.textContent = 'Canjear puntos';
+        if (logoutAction && logoutAction.parentNode === profileDropdown) {
+          profileDropdown.insertBefore(rewardsLink, logoutAction);
+        } else {
+          profileDropdown.append(rewardsLink);
+        }
+      }
       if (profileDropdown && Auth.isStaff() && !document.getElementById('editorPanelLink')) {
         const scriptEl = document.querySelector('script[src*="Script.js"]');
         if (scriptEl) {
@@ -279,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ejecutar al cargar la página
   aplicarSesionUI();
+  if (pointsBalance) refreshPointsBalance();
 
   // Evento para cerrar sesión desde el nuevo menú
   if (logoutAction) {

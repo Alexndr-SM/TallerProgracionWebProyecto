@@ -19,6 +19,7 @@ const reservationRoutes = require('./routes/reservation.routes');
 const adminRoutes = require('./routes/admin.routes');
 const promotionRoutes = require('./routes/promotion.routes');
 const perfilRoutes = require('./routes/perfil.routes');
+const rewardRoutes = require('./routes/reward.routes');
 const destinationRoutes = require('./routes/destination.routes');
 const uploadRoutes = require('./routes/upload.routes');
 const { migrate } = require('./database/migrate');
@@ -64,6 +65,7 @@ app.use('/api/destinos', destinationRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/perfil', perfilRoutes);
+app.use('/api/canjeos', rewardRoutes);
 app.use('/api/equipo', require('./routes/team.routes'));
 
 // Crear tabla usuarios al arrancar (si no existe)

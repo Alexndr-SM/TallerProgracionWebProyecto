@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#123b38">
+  <title>Canjea tus puntos · IcaTurismo</title>
+  <script src="../js/theme.js"></script>
+  <link rel="stylesheet" href="../css/page-loader.css">
+  <script src="../js/page-loader.js"></script>
+  <link rel="icon" href="../assets/logoIcaTurismo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="../css/cms-public.css">
+  <link rel="stylesheet" href="../css/canjeo.css">
+</head>
+<body class="cms-page">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <div data-cms-header></div>
+  <main id="contenido" class="rewards-page">
+    <section class="rewards-hero">
+      <span class="rewards-eyebrow">ICA CLUB · BENEFICIOS PARA TI</span>
+      <h1>Tu próximo recuerdo<br>se canjea con puntos.</h1>
+      <p>Usa tus puntos acumulados para disfrutar promociones, productos y descuentos especiales.</p>
+      <a class="rewards-balance" href="canjeo.html" aria-live="polite" aria-label="Saldo disponible: cargando puntos" hidden>
+        <strong id="rewardsPoints">—</strong>
+        <span>pts</span>
+      </a>
+    </section>
+    <section class="rewards-content" aria-labelledby="rewardsTitle">
+      <div class="rewards-section-heading">
+        <div><span class="rewards-eyebrow">ELIGE TU BENEFICIO</span><h2 id="rewardsTitle">Catálogo de canje</h2></div>
+        <p>Los puntos se descuentan de tu saldo al confirmar el canje.</p>
+      </div>
+      <div id="rewardsNotice" class="rewards-notice" role="status" aria-live="polite"></div>
+      <div id="rewardsLogin" class="rewards-login" hidden>
+        <h3>Inicia sesión para ver tus puntos</h3>
+        <p>El catálogo y tu saldo están disponibles para clientes con una cuenta activa.</p>
+        <a class="rewards-button" href="login.html">Iniciar sesión</a>
+      </div>
+      <div id="rewardsGrid" class="rewards-grid" aria-live="polite"></div>
+    </section>
+    <section class="redemptions-content" aria-labelledby="redemptionsTitle">
+      <div class="rewards-section-heading"><div><span class="rewards-eyebrow">TUS CANJES</span><h2 id="redemptionsTitle">Beneficios obtenidos</h2></div></div>
+      <div id="redemptionsList" class="redemptions-list"></div>
+    </section>
+  </main>
+  <div data-cms-footer></div>
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/cms-public.js"></script>
+  <script src="../js/Script.js"></script>
+  <script src="../js/canjeo.js"></script>
+</body>
+</html>
