@@ -1,0 +1,631 @@
+// IcaTurismo — diccionario es → [en, fr]. Generado; para agregar textos, añade una línea.
+window.ICAT_DICT = {"Panel de administración · IcaTurismo":["Admin panel · IcaTurismo","Panneau d'administration · IcaTurismo"],"Iniciando panel administrativo...":["Starting admin panel...","Démarrage du panneau d'administration..."],"Reintentar conexión":["Retry connection","Réessayer la connexion"],"Comentarios · IcaTurismo":["Comments · IcaTurismo","Commentaires · IcaTurismo"],"Saltar al contenido":["Skip to content","Aller au contenu"],"Inicio":["Home","Accueil"],"Playas":["Beaches","Plages"],"Dunas":["Dunes","Dunes"],"Cultura":["Culture","Culture"],"Contacto":["Contact","Contact"],"Cuenta":["Account","Compte"],"Iniciar sesión":["Log in","Connexion"],"Registrarse":["Sign up","S'inscrire"],"Usuario":["User","Utilisateur"],"Mi Perfil":["My profile","Mon profil"],"Cerrar sesión":["Log out","Déconnexion"],"Todos los comentarios":["All comments","Tous les commentaires"],"Cargando comentarios...":["Loading comments...","Chargement des commentaires..."],"Deja tu comentario":["Leave your comment","Laissez votre commentaire"],"Comparte tu experiencia. Para publicar, debes iniciar sesión; la foto de perfil es opcional.":["Share your experience. To post you must log in; a profile photo is optional.","Partagez votre expérience. Pour publier, vous devez vous connecter ; la photo de profil est facultative."],"Tu comentario":["Your comment","Votre commentaire"],"Tu calificación":["Your rating","Votre note"],"Agregar foto de perfil (opcional)":["Add profile photo (optional)","Ajouter une photo de profil (facultatif)"],"Publicar comentario":["Post comment","Publier le commentaire"],"Volver a la página principal":["Back to the home page","Retour à la page d'accueil"],"Explora":["Explore","Explorer"],"Nuestros destinos":["Our destinations","Nos destinations"],"Destinos":["Destinations","Destinations"],"Síguenos":["Follow us","Suivez-nous"],"Calle Los Turistas 123, Ica":["Calle Los Turistas 123, Ica","Calle Los Turistas 123, Ica"],"Volver arriba ↑":["Back to top ↑","Retour en haut ↑"],"© 2026 IcaTurismo · Empresa de turismo con sede en Ica":["© 2026 IcaTurismo · Tourism company based in Ica","© 2026 IcaTurismo · Entreprise de tourisme basée à Ica"],"IcaTurismo, ir al inicio":["IcaTurismo, go to home","IcaTurismo, aller à l'accueil"],"Principal":["Main","Principal"],"Abrir menú":["Open menu","Ouvrir le menu"],"Menú de usuario":["User menu","Menu utilisateur"],"Cambiar a modo oscuro":["Switch to dark mode","Passer en mode sombre"],"Ir al carrito de compras":["Go to shopping cart","Aller au panier"],"Carrito de compras":["Shopping cart","Panier"],"Cuéntanos cómo fue tu experiencia":["Tell us about your experience","Racontez-nous votre expérience"],"5 estrellas":["5 stars","5 étoiles"],"4 estrellas":["4 stars","4 étoiles"],"3 estrellas":["3 stars","3 étoiles"],"2 estrellas":["2 stars","2 étoiles"],"1 estrella":["1 star","1 étoile"],"IcaTurismo, volver al inicio":["IcaTurismo, back to home","IcaTurismo, retour à l'accueil"],"Formas de pago aceptadas: Visa, Mastercard, PayPal, PagoEfectivo, Yape y Plin":["Accepted payment methods: Visa, Mastercard, PayPal, PagoEfectivo, Yape and Plin","Moyens de paiement acceptés : Visa, Mastercard, PayPal, PagoEfectivo, Yape et Plin"],"Formulario de Compra - Tour de Playa":["Booking form - Beach tour","Formulaire de réservation - Excursion à la plage"],"Completa tu reserva":["Complete your booking","Finalisez votre réservation"],"Inicia sesión con una cuenta registrada para reservar.":["Log in with a registered account to book.","Connectez-vous avec un compte enregistré pour réserver."],"crear una cuenta":["create an account","créer un compte"],"Nombre completo":["Full name","Nom complet"],"Correo electrónico":["Email","E-mail"],"Fecha del tour":["Tour date","Date de l'excursion"],"Promoción":["Promotion","Promotion"],"Cargando promociones...":["Loading promotions...","Chargement des promotions..."],"Número de asistentes":["Number of attendees","Nombre de participants"],"Selecciona una promoción para ver el total.":["Select a promotion to see the total.","Sélectionnez une promotion pour voir le total."],"Método de pago":["Payment method","Moyen de paiement"],"Selecciona una opción":["Select an option","Sélectionnez une option"],"Tarjeta de Crédito / Débito":["Credit / Debit card","Carte de crédit / débit"],"Yape / Plin":["Yape / Plin","Yape / Plin"],"Continuar al pago":["Continue to payment","Continuer vers le paiement"],"Resumen de reserva":["Booking summary","Récapitulatif de la réservation"],"El método seleccionado se guardará en la reserva, pero el pago quedará pendiente. Esta página aún no procesa cobros ni solicita datos de tarjeta.":["The selected method will be saved in the booking, but payment will remain pending. This page does not process charges or ask for card details yet.","Le moyen choisi sera enregistré dans la réservation, mais le paiement restera en attente. Cette page ne traite pas encore les paiements et ne demande pas de données de carte."],"Confirmar reserva":["Confirm booking","Confirmer la réservation"],"Volver a los datos":["Back to details","Retour aux informations"],"Volver al inicio ↑":["Back to top ↑","Retour en haut ↑"],"Ej. Juan Pérez":["E.g. John Smith","Ex. Jean Dupont"],"correo@ejemplo.com":["email@example.com","courriel@exemple.com"],"Contacto · IcaTurismo":["Contact · IcaTurismo","Contact · IcaTurismo"],"¿Tienes alguna pregunta?":["Have a question?","Une question ?"],"Estamos aquí para ayudarte a planificar tu próxima experiencia en Ica. Escríbenos y te responderemos pronto.":["We are here to help you plan your next experience in Ica. Write to us and we will reply soon.","Nous sommes là pour vous aider à planifier votre prochaine expérience à Ica. Écrivez-nous et nous vous répondrons bientôt."],"Nombre *":["First name *","Prénom *"],"Apellido *":["Last name *","Nom *"],"Correo electrónico *":["Email *","E-mail *"],"Mensaje *":["Message *","Message *"],"Enviar mensaje":["Send message","Envoyer le message"],"Información de contacto":["Contact information","Informations de contact"],"Dirección":["Address","Adresse"],"Teléfono":["Phone","Téléphone"],"Síguenos en nuestras redes sociales":["Follow us on our social networks","Suivez-nous sur nos réseaux sociaux"],"Chatea con nosotros":["Chat with us","Discutez avec nous"],"¿Prefieres escribirnos por WhatsApp? Estamos listos para ayudarte.":["Prefer to write to us on WhatsApp? We are ready to help.","Vous préférez nous écrire sur WhatsApp ? Nous sommes prêts à vous aider."],"Iniciar chat en WhatsApp":["Start WhatsApp chat","Démarrer le chat WhatsApp"],"Encuéntranos en Ica":["Find us in Ica","Retrouvez-nous à Ica"],"Costa y paisaje de Ica":["Coast and landscape of Ica","Côte et paysage d'Ica"],"Síguenos en Facebook":["Follow us on Facebook","Suivez-nous sur Facebook"],"Síguenos en Instagram":["Follow us on Instagram","Suivez-nous sur Instagram"],"Síguenos en YouTube":["Follow us on YouTube","Suivez-nous sur YouTube"],"Mapa de Ica":["Map of Ica","Carte d'Ica"],"Abrir el chat de IcaTurismo":["Open the IcaTurismo chat","Ouvrir le chat IcaTurismo"],"Iniciar sesión · IcaTurismo":["Log in · IcaTurismo","Connexion · IcaTurismo"],"Promoción de destinos":["Destinations promotion","Promotion des destinations"],"Bienvenido de nuevo":["Welcome back","Bon retour"],"Inicia sesión para continuar explorando Ica":["Log in to keep exploring Ica","Connectez-vous pour continuer à explorer Ica"],"Contraseña":["Password","Mot de passe"],"Recordarme":["Remember me","Se souvenir de moi"],"¿Olvidaste tu contraseña?":["Forgot your password?","Mot de passe oublié ?"],"o continúa con":["or continue with","ou continuer avec"],"¿No tienes cuenta?":["Don't have an account?","Pas encore de compte ?"],"Regístrate aquí":["Sign up here","Inscrivez-vous ici"],"← Volver al inicio":["← Back to home","← Retour à l'accueil"],"Modo oscuro":["Dark mode","Mode sombre"],"tu@email.com":["you@email.com","vous@email.com"],"Mostrar contraseña":["Show password","Afficher le mot de passe"],"Mi Perfil — IcaTurismo":["My profile — IcaTurismo","Mon profil — IcaTurismo"],"Descubre Ica":["Discover Ica","Découvrir Ica"],"Servicios":["Services","Services"],"Nosotros":["About us","À propos"],"Cargando…":["Loading…","Chargement…"],"DNI:":["ID:","Pièce d'identité :"],"Teléfono:":["Phone:","Téléphone :"],"Miembro desde":["Member since","Membre depuis"],"Último acceso":["Last access","Dernière connexion"],"Puntos acumulados":["Accumulated points","Points cumulés"],"Equivale a S/ 0 en descuentos":["Equals S/ 0 in discounts","Équivaut à S/ 0 de réduction"],"Mis Reservas":["My bookings","Mes réservations"],"Historial de Puntos":["Points history","Historique des points"],"Editar Perfil":["Edit profile","Modifier le profil"],"+ Nueva reserva":["+ New booking","+ Nouvelle réservation"],"Todas":["All","Toutes"],"Pendientes":["Pending","En attente"],"Confirmadas":["Confirmed","Confirmées"],"Canceladas":["Cancelled","Annulées"],"Cargando reservas…":["Loading bookings…","Chargement des réservations…"],"Saldo actual:":["Current balance:","Solde actuel :"],"0 pts":["0 pts","0 pts"],"¿Cómo funcionan los puntos?":["How do points work?","Comment fonctionnent les points ?"],"🌟 Ganas":["🌟 You earn","🌟 Vous gagnez"],"1 punto por cada S/ 10":["1 point for every S/ 10","1 point pour chaque tranche de S/ 10"],"gastados en reservas.":["spent on bookings.","dépensée en réservations."],"❌ Si cancelas una reserva, los puntos ganados por esa reserva se revierten.":["❌ If you cancel a booking, the points earned for it are reversed.","❌ Si vous annulez une réservation, les points gagnés pour celle-ci sont annulés."],"🎁 Los puntos se pueden canjear por descuentos en futuras reservas.":["🎁 Points can be redeemed for discounts on future bookings.","🎁 Les points peuvent être échangés contre des réductions sur vos prochaines réservations."],"📋 El historial muestra los últimos 100 movimientos.":["📋 The history shows the last 100 movements.","📋 L'historique affiche les 100 derniers mouvements."],"Cargando historial…":["Loading history…","Chargement de l'historique…"],"Información Personal":["Personal information","Informations personnelles"],"Actualiza tus datos de contacto y documentación para tus reservas.":["Update your contact and ID details for your bookings.","Mettez à jour vos coordonnées et votre pièce d'identité pour vos réservations."],"Nombre completo *":["Full name *","Nom complet *"],"El correo electrónico está vinculado a tu cuenta y no se puede modificar.":["Your email is linked to your account and cannot be changed.","Votre e-mail est lié à votre compte et ne peut pas être modifié."],"Número de teléfono":["Phone number","Numéro de téléphone"],"DNI / Documento de identidad":["ID / identity document","Pièce d'identité"],"Guardar información":["Save information","Enregistrer les informations"],"Seguridad y Contraseña":["Security and password","Sécurité et mot de passe"],"Para proteger tu cuenta, utiliza una contraseña segura de al menos 8 caracteres.":["To protect your account, use a strong password of at least 8 characters.","Pour protéger votre compte, utilisez un mot de passe robuste d'au moins 8 caractères."],"Contraseña actual *":["Current password *","Mot de passe actuel *"],"Nueva contraseña *":["New password *","Nouveau mot de passe *"],"Confirmar nueva contraseña *":["Confirm new password *","Confirmer le nouveau mot de passe *"],"Actualizar contraseña":["Update password","Mettre à jour le mot de passe"],"Verificando sesión…":["Checking session…","Vérification de la session…"],"Cancelar":["Cancel","Annuler"],"Confirmar":["Confirm","Confirmer"],"BOLETA DE VENTA":["SALES RECEIPT","REÇU DE VENTE"],"ELECTRÓNICA":["ELECTRONIC","ÉLECTRONIQUE"],"CLIENTE:":["CUSTOMER:","CLIENT :"],"Cliente":["Customer","Client"],"FECHA EMISIÓN:":["ISSUE DATE:","DATE D'ÉMISSION :"],"21 de octubre de 2026":["October 21, 2026","21 octobre 2026"],"FECHA DEL TOUR:":["TOUR DATE:","DATE DE L'EXCURSION :"],"CANT.":["QTY.","QTÉ"],"DESCRIPCIÓN":["DESCRIPTION","DESCRIPTION"],"P. UNIT":["UNIT PRICE","PRIX UNIT."],"TOTAL":["TOTAL","TOTAL"],"1 persona(s)":["1 person(s)","1 personne(s)"],"Tour":["Tour","Excursion"],"OP. GRAVADA:":["TAXABLE AMT.:","BASE IMPOSABLE :"],"TOTAL:":["TOTAL:","TOTAL :"],"📄 Descargar PDF":["📄 Download PDF","📄 Télécharger le PDF"],"Cerrar":["Close","Fermer"],"Navegación principal":["Main navigation","Navigation principale"],"Cambiar tema":["Change theme","Changer de thème"],"Foto de perfil":["Profile photo","Photo de profil"],"Mis puntos de fidelización":["My loyalty points","Mes points de fidélité"],"Secciones del perfil":["Profile sections","Sections du profil"],"Filtrar reservas":["Filter bookings","Filtrer les réservations"],"Tu nombre completo":["Your full name","Votre nom complet"],"El correo no se puede modificar":["Email cannot be changed","L'e-mail ne peut pas être modifié"],"Ej. 987654321":["E.g. 987654321","Ex. 987654321"],"Ej. 72345678":["E.g. 72345678","Ex. 72345678"],"Tu contraseña actual":["Your current password","Votre mot de passe actuel"],"Mínimo 8 caracteres":["Minimum 8 characters","Minimum 8 caractères"],"Repite la nueva contraseña":["Repeat the new password","Répétez le nouveau mot de passe"],"Formas de pago aceptadas":["Accepted payment methods","Moyens de paiement acceptés"],"Promociones culturales · IcaTurismo":["Cultural promotions · IcaTurismo","Promotions culturelles · IcaTurismo"],"Tradición, patrimonio y sabores de Ica":["Tradition, heritage and flavors of Ica","Tradition, patrimoine et saveurs d'Ica"],"Experiencias culturales en Ica":["Cultural experiences in Ica","Expériences culturelles à Ica"],"Conoce la historia de las antiguas culturas de la región, visita espacios patrimoniales y descubre la tradición vitivinícola de Ica.":["Learn about the history of the region's ancient cultures, visit heritage sites and discover Ica's winemaking tradition.","Découvrez l'histoire des anciennes cultures de la région, visitez des sites patrimoniaux et explorez la tradition viticole d'Ica."],"Tradición local":["Local tradition","Tradition locale"],"Medio día · Valle de Ica":["Half day · Ica Valley","Demi-journée · Vallée d'Ica"],"Ruta de bodegas y pisco":["Winery and pisco route","Route des caves et du pisco"],"Conoce el proceso de elaboración del pisco y los vinos locales en una visita guiada.":["Learn how pisco and local wines are made on a guided visit.","Découvrez comment sont élaborés le pisco et les vins locaux lors d'une visite guidée."],"Visita a bodega turística":["Visit to a tourist winery","Visite d'une cave touristique"],"Explicación del proceso":["Explanation of the process","Explication du processus"],"Degustación para adultos":["Tasting for adults","Dégustation pour adultes"],"Desde":["From","À partir de"],"por persona*":["per person*","par personne*"],"Ver experiencia →":["See experience →","Voir l'expérience →"],"Historia":["History","Histoire"],"2 a 3 horas · Ciudad de Ica":["2 to 3 hours · Ica city","2 à 3 heures · Ville d'Ica"],"Museos y culturas ancestrales":["Museums and ancestral cultures","Musées et cultures ancestrales"],"Acércate a la historia regional mediante piezas, relatos y patrimonio arqueológico.":["Get closer to regional history through artifacts, stories and archaeological heritage.","Rapprochez-vous de l'histoire régionale grâce aux pièces, aux récits et au patrimoine archéologique."],"Visita a museo local":["Visit to a local museum","Visite d'un musée local"],"Recorrido interpretativo":["Interpretive tour","Visite d'interprétation"],"Orientación de guía":["Guide orientation","Orientation du guide"],"Patrimonio":["Heritage","Patrimoine"],"Día completo · Nazca":["Full day · Nazca","Journée complète · Nazca"],"Nazca y su legado milenario":["Nazca and its ancient legacy","Nazca et son legs millénaire"],"Explora la historia de Nazca y conoce opciones para apreciar sus geoglifos desde miradores autorizados.":["Explore the history of Nazca and learn about options to appreciate its geoglyphs from authorized viewpoints.","Explorez l'histoire de Nazca et découvrez comment apprécier ses géoglyphes depuis des belvédères autorisés."],"Orientación turística":["Tourist orientation","Orientation touristique"],"Visita a espacios culturales":["Visit to cultural sites","Visite de sites culturels"],"Tiempo para conocer Nazca":["Time to get to know Nazca","Temps pour découvrir Nazca"],"*Precios referenciales por persona. Entradas, traslados, degustaciones y actividades pueden variar; confirma lo incluido antes de reservar.":["*Reference prices per person. Tickets, transfers, tastings and activities may vary; confirm what is included before booking.","*Prix indicatifs par personne. Les entrées, transferts, dégustations et activités peuvent varier ; confirmez ce qui est inclus avant de réserver."],"Recorrido por bodegas vitivinícolas de Ica":["Tour of wineries in Ica","Visite des caves viticoles d'Ica"],"Colección arqueológica del museo de Ica":["Archaeological collection of the Ica museum","Collection archéologique du musée d'Ica"],"Recorrido arqueológico en Nazca":["Archaeological tour in Nazca","Visite archéologique à Nazca"],"Ruta de bodegas y pisco · IcaTurismo":["Winery and pisco route · IcaTurismo","Route des caves et du pisco · IcaTurismo"],"← Volver a experiencias culturales":["← Back to cultural experiences","← Retour aux expériences culturelles"],"Tradición local · Valle de Ica":["Local tradition · Ica Valley","Tradition locale · Vallée d'Ica"],"Conoce la tradición vitivinícola de Ica, recorre una bodega turística y aprende sobre las etapas de elaboración del pisco y los vinos de la región.":["Discover Ica's winemaking tradition, tour a tourist winery and learn about the stages of making pisco and the region's wines.","Découvrez la tradition viticole d'Ica, visitez une cave touristique et apprenez les étapes d'élaboration du pisco et des vins de la région."],"⏱ Medio día":["⏱ Half day","⏱ Demi-journée"],"📍 Valle de Ica":["📍 Ica Valley","📍 Vallée d'Ica"],"🍇 Visita guiada":["🍇 Guided visit","🍇 Visite guidée"],"Incluye":["Includes","Inclus"],"Visita a bodega participante":["Visit to a participating winery","Visite d'une cave participante"],"Explicación general del proceso de elaboración":["General explanation of the production process","Explication générale du processus d'élaboration"],"Degustación para mayores de edad, según condiciones del local":["Tasting for adults, according to the venue's conditions","Dégustation pour les personnes majeures, selon les conditions du lieu"],"Orientación para conocer la historia vitivinícola local":["Guidance to learn about the local winemaking history","Orientation pour découvrir l'histoire viticole locale"],"Solicitar reserva":["Request booking","Demander une réservation"],"Desde S/ 95 por persona*. Traslado y degustación dependen del paquete confirmado.":["From S/ 95 per person*. Transfer and tasting depend on the confirmed package.","À partir de S/ 95 par personne*. Le transfert et la dégustation dépendent du forfait confirmé."],"Descubre una de las tradiciones más conocidas del valle de Ica.":["Discover one of the best-known traditions of the Ica valley.","Découvrez l'une des traditions les plus connues de la vallée d'Ica."],"Tradición vitivinícola":["Winemaking tradition","Tradition viticole"],"¿Qué conocerás?":["What will you discover?","Que découvrirez-vous ?"],"Recorrido por las instalaciones y explicación del cultivo local.":["Tour of the facilities and explanation of local cultivation.","Visite des installations et explication de la culture locale."],"Introducción a la elaboración de pisco y vino.":["Introduction to making pisco and wine.","Introduction à l'élaboration du pisco et du vin."],"Degustación opcional para adultos, cuando esté incluida y disponible.":["Optional tasting for adults, when included and available.","Dégustation facultative pour adultes, lorsqu'elle est incluse et disponible."],"La venta y degustación de bebidas alcohólicas está limitada a personas mayores de edad. Confirma transporte, duración y servicios antes de reservar.":["The sale and tasting of alcoholic drinks is limited to adults. Confirm transport, duration and services before booking.","La vente et la dégustation de boissons alcoolisées sont réservées aux personnes majeures. Confirmez le transport, la durée et les services avant de réserver."],"Precio referencial":["Reference price","Prix indicatif"],"por persona":["per person","par personne"],"Consulta disponibilidad y condiciones de la bodega.":["Check availability and the winery's conditions.","Renseignez-vous sur la disponibilité et les conditions de la cave."],"Continuar a reserva":["Continue to booking","Continuer vers la réservation"],"IcaTurismo, inicio":["IcaTurismo, home","IcaTurismo, accueil"],"Ir al carrito":["Go to cart","Aller au panier"],"Recorrido por una bodega vitivinícola de Ica":["Tour of a winery in Ica","Visite d'une cave viticole à Ica"],"Tienda de una bodega en Ica":["Winery shop in Ica","Boutique d'une cave à Ica"],"Espacio turístico de la ruta vitivinícola":["Tourist area of the winery route","Espace touristique de la route viticole"],"Visita guiada a una bodega":["Guided visit to a winery","Visite guidée d'une cave"],"Formas de pago":["Payment methods","Moyens de paiement"],"Nazca y su legado milenario · IcaTurismo":["Nazca and its ancient legacy · IcaTurismo","Nazca et son legs millénaire · IcaTurismo"],"Patrimonio mundial · Nazca":["World heritage · Nazca","Patrimoine mondial · Nazca"],"Descubre la cultura Nazca y la historia de sus geoglifos con una visita interpretativa a espacios culturales y puntos de observación autorizados.":["Discover Nazca culture and the history of its geoglyphs with an interpretive visit to cultural sites and authorized viewpoints.","Découvrez la culture Nazca et l'histoire de ses géoglyphes lors d'une visite d'interprétation de sites culturels et de belvédères autorisés."],"⏱ Día completo":["⏱ Full day","⏱ Journée complète"],"📍 Nazca, Ica":["📍 Nazca, Ica","📍 Nazca, Ica"],"🗿 Patrimonio":["🗿 Heritage","🗿 Patrimoine"],"Orientación para organizar la visita en Nazca":["Guidance to organize your visit in Nazca","Orientation pour organiser votre visite à Nazca"],"Recorrido por espacios culturales participantes":["Tour of participating cultural sites","Visite de sites culturels participants"],"Información sobre las culturas y geoglifos de la zona":["Information about the cultures and geoglyphs of the area","Informations sur les cultures et les géoglyphes de la région"],"Recomendación de miradores autorizados, según itinerario":["Recommendation of authorized viewpoints, according to itinerary","Recommandation de belvédères autorisés, selon l'itinéraire"],"Desde S/ 150 por persona*. Sobrevuelo, entradas y traslados pueden tener costo adicional.":["From S/ 150 per person*. Flyovers, tickets and transfers may have an extra cost.","À partir de S/ 150 par personne*. Les survols, entrées et transferts peuvent entraîner un coût supplémentaire."],"Las líneas y geoglifos forman parte del patrimonio cultural de Nazca.":["The lines and geoglyphs are part of Nazca's cultural heritage.","Les lignes et géoglyphes font partie du patrimoine culturel de Nazca."],"Nazca y su legado":["Nazca and its legacy","Nazca et son héritage"],"Explora con respeto":["Explore with respect","Explorez avec respect"],"Coordina el transporte y los horarios de visita a Nazca.":["Arrange transport and visiting hours for Nazca.","Organisez le transport et les horaires de visite pour Nazca."],"Conoce el contexto de la cultura Nazca en espacios culturales.":["Learn about the context of Nazca culture at cultural sites.","Découvrez le contexte de la culture Nazca dans des sites culturels."],"Observa geoglifos únicamente desde zonas permitidas y miradores autorizados.":["Observe geoglyphs only from permitted areas and authorized viewpoints.","Observez les géoglyphes uniquement depuis les zones autorisées et les belvédères agréés."],"Los sobrevuelos son una actividad opcional, no incluida en este precio referencial, y están sujetos a disponibilidad, clima y regulación aeronáutica.":["Flyovers are an optional activity, not included in this reference price, and are subject to availability, weather and aviation regulations.","Les survols sont une activité facultative, non incluse dans ce prix indicatif, et dépendent de la disponibilité, de la météo et de la réglementation aéronautique."],"Confirma qué traslados, entradas y actividades incluye la propuesta.":["Confirm which transfers, tickets and activities the proposal includes.","Confirmez les transferts, entrées et activités compris dans la proposition."],"Sitio arqueológico Los Paredones de Nazca":["Los Paredones de Nazca archaeological site","Site archéologique de Los Paredones de Nazca"],"Paisaje y patrimonio arqueológico de Nazca":["Landscape and archaeological heritage of Nazca","Paysage et patrimoine archéologique de Nazca"],"Museos y culturas ancestrales · IcaTurismo":["Museums and ancestral cultures · IcaTurismo","Musées et cultures ancestrales · IcaTurismo"],"Historia · Ciudad de Ica":["History · Ica city","Histoire · Ville d'Ica"],"Acércate al pasado de la región a través de colecciones arqueológicas y relatos sobre las culturas que habitaron los valles del sur peruano.":["Get closer to the region's past through archaeological collections and stories about the cultures that lived in the valleys of southern Peru.","Rapprochez-vous du passé de la région grâce à des collections archéologiques et à des récits sur les cultures qui ont habité les vallées du sud du Pérou."],"⏱ 2 a 3 horas":["⏱ 2 to 3 hours","⏱ 2 à 3 heures"],"📍 Ciudad de Ica":["📍 Ica city","📍 Ville d'Ica"],"🏺 Patrimonio":["🏺 Heritage","🏺 Patrimoine"],"Orientación para visitar un museo local":["Guidance for visiting a local museum","Orientation pour visiter un musée local"],"Recorrido por salas y exposiciones abiertas al público":["Tour of rooms and exhibitions open to the public","Visite des salles et expositions ouvertes au public"],"Contexto sobre culturas y patrimonio regional":["Context on regional cultures and heritage","Contexte sur les cultures et le patrimoine régionaux"],"Tiempo para recorrer las colecciones a tu ritmo":["Time to explore the collections at your own pace","Du temps pour parcourir les collections à votre rythme"],"Desde S/ 60 por persona*. Entradas y guía especializada se confirman según disponibilidad.":["From S/ 60 per person*. Tickets and specialized guide are confirmed according to availability.","À partir de S/ 60 par personne*. Les entrées et le guide spécialisé sont confirmés selon la disponibilité."],"Conoce el patrimonio y las culturas ancestrales de la región.":["Learn about the heritage and ancestral cultures of the region.","Découvrez le patrimoine et les cultures ancestrales de la région."],"Historia y patrimonio":["History and heritage","Histoire et patrimoine"],"Una visita para aprender":["A visit to learn","Une visite pour apprendre"],"Revisa horarios y disponibilidad del museo seleccionado.":["Check the opening hours and availability of the selected museum.","Vérifiez les horaires et la disponibilité du musée choisi."],"Recorre las exposiciones respetando las indicaciones de conservación.":["Explore the exhibitions following the conservation guidelines.","Parcourez les expositions en respectant les consignes de conservation."],"Conoce historias y objetos que ayudan a comprender el pasado regional.":["Discover stories and objects that help you understand the region's past.","Découvrez des histoires et des objets qui aident à comprendre le passé de la région."],"Los horarios, salas abiertas, guías y tarifas de ingreso dependen de cada institución y pueden cambiar.":["Opening hours, open rooms, guides and entrance fees depend on each institution and may change.","Les horaires, salles ouvertes, guides et tarifs d'entrée dépendent de chaque institution et peuvent changer."],"Confirma entradas, horario y guía antes de tu visita.":["Confirm tickets, hours and guide before your visit.","Confirmez les entrées, les horaires et le guide avant votre visite."],"Piezas arqueológicas expuestas en un museo de Ica":["Archaeological pieces displayed in a museum in Ica","Pièces archéologiques exposées dans un musée d'Ica"],"Colección de museo regional":["Regional museum collection","Collection d'un musée régional"],"Exhibición de objetos arqueológicos en museo":["Display of archaeological objects in a museum","Exposition d'objets archéologiques dans un musée"],"Piezas y exposición cultural":["Pieces and cultural exhibition","Pièces et exposition culturelle"],"Promociones de dunas · IcaTurismo":["Dune promotions · IcaTurismo","Promotions dunes · IcaTurismo"],"Desierto, adrenalina y atardeceres":["Desert, adrenaline and sunsets","Désert, adrénaline et couchers de soleil"],"Promociones de dunas en Ica":["Dune promotions in Ica","Promotions dunes à Ica"],"Vive la aventura del desierto de Huacachina con recorridos en buggy, sandboard y paisajes que se disfrutan mejor al atardecer.":["Live the Huacachina desert adventure with buggy rides, sandboarding and landscapes best enjoyed at sunset.","Vivez l'aventure du désert de Huacachina avec des balades en buggy, du sandboard et des paysages qui se savourent au coucher du soleil."],"Aventura":["Adventure","Aventure"],"2 horas · Huacachina":["2 hours · Huacachina","2 heures · Huacachina"],"Buggy y sandboard":["Buggy and sandboarding","Buggy et sandboard"],"Recorre las dunas en buggy y prueba el sandboard con guía y equipo básico.":["Ride through the dunes by buggy and try sandboarding with a guide and basic equipment.","Parcourez les dunes en buggy et essayez le sandboard avec un guide et un équipement de base."],"Paseo en buggy":["Buggy ride","Balade en buggy"],"Paradas para sandboard":["Sandboarding stops","Arrêts pour le sandboard"],"Guía e indicaciones de seguridad":["Guide and safety instructions","Guide et consignes de sécurité"],"Atardecer":["Sunset","Coucher de soleil"],"1 hora y media · Huacachina":["1.5 hours · Huacachina","1 h 30 · Huacachina"],"Atardecer en las dunas":["Sunset in the dunes","Coucher de soleil dans les dunes"],"Disfruta una ruta panorámica por el desierto y contempla la puesta de sol sobre el oasis.":["Enjoy a scenic route through the desert and watch the sun set over the oasis.","Profitez d'un parcours panoramique dans le désert et admirez le soleil se coucher sur l'oasis."],"Ruta en buggy":["Buggy route","Parcours en buggy"],"Paradas fotográficas":["Photo stops","Arrêts photo"],"Tiempo para ver el atardecer":["Time to watch the sunset","Temps pour admirer le coucher de soleil"],"Combo aventura":["Adventure combo","Combo aventure"],"3 horas · Huacachina":["3 hours · Huacachina","3 heures · Huacachina"],"Desierto extremo":["Extreme desert","Désert extrême"],"Combina un recorrido de mayor duración con varias paradas para deslizarte por la arena.":["Combine a longer tour with several stops to slide down the sand.","Combinez un parcours plus long avec plusieurs arrêts pour glisser sur le sable."],"Recorrido extendido en buggy":["Extended buggy tour","Parcours étendu en buggy"],"Sandboard en varias dunas":["Sandboarding on several dunes","Sandboard sur plusieurs dunes"],"Acompañamiento de guía":["Guide accompaniment","Accompagnement d'un guide"],"*Precios referenciales por persona. Confirma disponibilidad, duración, equipo incluido y condiciones con el operador antes de reservar.":["*Reference prices per person. Confirm availability, duration, included equipment and conditions with the operator before booking.","*Prix indicatifs par personne. Confirmez la disponibilité, la durée, l'équipement inclus et les conditions auprès de l'opérateur avant de réserver."],"Aventura en buggy por las dunas de Ica":["Buggy adventure through the dunes of Ica","Aventure en buggy dans les dunes d'Ica"],"Paseo de aventura al atardecer en las dunas":["Sunset adventure ride in the dunes","Balade d'aventure au coucher du soleil dans les dunes"],"Sandboard y aventura en el desierto de Ica":["Sandboarding and adventure in the Ica desert","Sandboard et aventure dans le désert d'Ica"],"Atardecer en las dunas · IcaTurismo":["Sunset in the dunes · IcaTurismo","Coucher de soleil dans les dunes · IcaTurismo"],"← Volver a promociones de dunas":["← Back to dune promotions","← Retour aux promotions dunes"],"Atardecer · Huacachina":["Sunset · Huacachina","Coucher de soleil · Huacachina"],"Recorre el desierto al final del día y disfruta la luz del atardecer desde un punto panorámico de las dunas.":["Cross the desert at the end of the day and enjoy the sunset light from a scenic spot in the dunes.","Parcourez le désert en fin de journée et profitez de la lumière du couchant depuis un point panoramique des dunes."],"⏱ Aproximadamente 1.5 horas":["⏱ About 1.5 hours","⏱ Environ 1 h 30"],"📍 Huacachina, Ica":["📍 Huacachina, Ica","📍 Huacachina, Ica"],"📸 Paradas panorámicas":["📸 Scenic stops","📸 Arrêts panoramiques"],"Paseo guiado en buggy":["Guided buggy ride","Balade guidée en buggy"],"Paradas para fotografías":["Stops for photos","Arrêts pour les photos"],"Tiempo para contemplar la puesta de sol, según horario":["Time to watch the sunset, depending on the schedule","Temps pour admirer le coucher de soleil, selon l'horaire"],"Instrucciones de seguridad al inicio":["Safety instructions at the start","Consignes de sécurité au départ"],"Desde S/ 75 por persona*. Horarios y disponibilidad varían según temporada.":["From S/ 75 per person*. Schedules and availability vary by season.","À partir de S/ 75 par personne*. Les horaires et la disponibilité varient selon la saison."],"El atardecer transforma los colores del desierto de Ica.":["The sunset transforms the colors of the Ica desert.","Le coucher de soleil transforme les couleurs du désert d'Ica."],"Vistas del desierto":["Desert views","Vues du désert"],"Plan para la tarde":["Plan for the afternoon","Programme de l'après-midi"],"Encuentro en Huacachina y coordinación con el guía.":["Meeting in Huacachina and coordination with the guide.","Rendez-vous à Huacachina et coordination avec le guide."],"Recorrido en buggy por rutas permitidas del desierto.":["Buggy ride along permitted desert routes.","Balade en buggy sur les itinéraires autorisés du désert."],"Parada panorámica para disfrutar el atardecer y tomar fotos.":["Scenic stop to enjoy the sunset and take photos.","Arrêt panoramique pour profiter du coucher de soleil et prendre des photos."],"Regreso al punto de partida antes de anochecer.":["Return to the starting point before nightfall.","Retour au point de départ avant la tombée de la nuit."],"La puesta de sol y las paradas dependen del clima y las indicaciones del operador.":["The sunset and stops depend on the weather and the operator's instructions.","Le coucher de soleil et les arrêts dépendent de la météo et des consignes de l'opérateur."],"Consulta hora exacta de salida, disponibilidad y duración.":["Check the exact departure time, availability and duration.","Vérifiez l'heure exacte de départ, la disponibilité et la durée."],"Paseo en buggy por las dunas de Huacachina":["Buggy ride through the dunes of Huacachina","Balade en buggy dans les dunes de Huacachina"],"Buggy en las dunas":["Buggy in the dunes","Buggy dans les dunes"],"Ruta por el desierto":["Desert route","Parcours dans le désert"],"Oasis rodeado de dunas":["Oasis surrounded by dunes","Oasis entourée de dunes"],"Desierto extremo · IcaTurismo":["Extreme desert · IcaTurismo","Désert extrême · IcaTurismo"],"Combo aventura · Huacachina":["Adventure combo · Huacachina","Combo aventure · Huacachina"],"Dedica más tiempo a explorar las dunas y disfruta varias paradas para practicar sandboard en diferentes pendientes.":["Spend more time exploring the dunes and enjoy several stops to practice sandboarding on different slopes.","Consacrez plus de temps à explorer les dunes et profitez de plusieurs arrêts pour pratiquer le sandboard sur différentes pentes."],"⏱ Aproximadamente 3 horas":["⏱ About 3 hours","⏱ Environ 3 heures"],"🏂 Sandboard":["🏂 Sandboarding","🏂 Sandboard"],"Varias paradas en dunas seleccionadas":["Several stops on selected dunes","Plusieurs arrêts sur des dunes sélectionnées"],"Tabla de sandboard, de acuerdo con el operador":["Sandboard, according to the operator","Planche de sandboard, selon l'opérateur"],"Desde S/ 130 por persona*. Precio, tiempo y equipo deben confirmarse con el operador.":["From S/ 130 per person*. Price, time and equipment must be confirmed with the operator.","À partir de S/ 130 par personne*. Le prix, la durée et l'équipement doivent être confirmés auprès de l'opérateur."],"Una experiencia de aventura entre las dunas del desierto.":["An adventure experience among the desert dunes.","Une expérience d'aventure au cœur des dunes du désert."],"Vive las dunas":["Experience the dunes","Vivez les dunes"],"Itinerario de aventura":["Adventure itinerary","Itinéraire d'aventure"],"Registro y charla de seguridad en Huacachina.":["Check-in and safety briefing in Huacachina.","Accueil et briefing de sécurité à Huacachina."],"Recorrido más extenso por rutas autorizadas entre las dunas.":["Longer tour along authorized routes among the dunes.","Parcours plus long sur des itinéraires autorisés entre les dunes."],"Paradas para deslizarse en sandboard con ayuda del guía.":["Stops to slide down by sandboard with the guide's help.","Arrêts pour glisser en sandboard avec l'aide du guide."],"Retorno al oasis y cierre de la actividad.":["Return to the oasis and end of the activity.","Retour à l'oasis et fin de l'activité."],"La experiencia se adapta a las condiciones del desierto y puede cambiar por motivos de seguridad o clima.":["The experience adapts to desert conditions and may change for safety or weather reasons.","L'expérience s'adapte aux conditions du désert et peut changer pour des raisons de sécurité ou de météo."],"Confirma requisitos, equipo, horarios y disponibilidad antes de reservar.":["Confirm requirements, equipment, schedules and availability before booking.","Confirmez les conditions, l'équipement, les horaires et la disponibilité avant de réserver."],"Actividad de sandboard en el desierto de Ica":["Sandboarding activity in the Ica desert","Activité de sandboard dans le désert d'Ica"],"Dunas para practicar sandboard":["Dunes for sandboarding","Dunes pour le sandboard"],"Oasis de Huacachina junto al desierto":["Huacachina oasis next to the desert","Oasis de Huacachina au bord du désert"],"Recorrido turístico en las dunas":["Tourist tour in the dunes","Parcours touristique dans les dunes"],"Buggy y sandboard · IcaTurismo":["Buggy and sandboarding · IcaTurismo","Buggy et sandboard · IcaTurismo"],"Aventura · Huacachina":["Adventure · Huacachina","Aventure · Huacachina"],"Adéntrate en las dunas de Huacachina con un recorrido en buggy y descubre la emoción del sandboard en las paradas indicadas por el guía.":["Venture into the Huacachina dunes on a buggy tour and discover the thrill of sandboarding at the stops chosen by the guide.","Aventurez-vous dans les dunes de Huacachina lors d'une balade en buggy et découvrez le frisson du sandboard aux arrêts indiqués par le guide."],"⏱ Aproximadamente 2 horas":["⏱ About 2 hours","⏱ Environ 2 heures"],"👥 Actividad guiada":["👥 Guided activity","👥 Activité guidée"],"Recorrido turístico en buggy":["Buggy tour","Balade touristique en buggy"],"Paradas para practicar sandboard":["Stops to practice sandboarding","Arrêts pour pratiquer le sandboard"],"Tabla básica para deslizarse, según operador":["Basic sandboard, according to the operator","Planche de base pour glisser, selon l'opérateur"],"Desde S/ 90 por persona*. Duración, equipo y salidas deben confirmarse con el operador.":["From S/ 90 per person*. Duration, equipment and departures must be confirmed with the operator.","À partir de S/ 90 par personne*. La durée, l'équipement et les départs doivent être confirmés auprès de l'opérateur."],"Explora las dunas en un recorrido guiado desde Huacachina.":["Explore the dunes on a guided tour from Huacachina.","Explorez les dunes lors d'une excursion guidée au départ de Huacachina."],"Desierto y aventura":["Desert and adventure","Désert et aventure"],"Recorrido sugerido":["Suggested route","Parcours suggéré"],"Encuentro en Huacachina y charla breve de seguridad.":["Meeting in Huacachina and short safety briefing.","Rendez-vous à Huacachina et bref briefing de sécurité."],"Salida en buggy por las dunas con paradas panorámicas.":["Buggy departure through the dunes with scenic stops.","Départ en buggy à travers les dunes avec des arrêts panoramiques."],"Práctica de sandboard en zonas definidas por el guía.":["Sandboarding practice in areas set by the guide.","Pratique du sandboard dans les zones définies par le guide."],"Retorno al punto de partida.":["Return to the starting point.","Retour au point de départ."],"La actividad depende de las condiciones del clima y de las reglas de seguridad del operador. Informa sobre restricciones de edad o salud antes de reservar.":["The activity depends on weather conditions and the operator's safety rules. Report any age or health restrictions before booking.","L'activité dépend des conditions météo et des règles de sécurité de l'opérateur. Signalez toute restriction d'âge ou de santé avant de réserver."],"Confirma horarios, disponibilidad y qué equipo está incluido.":["Confirm schedules, availability and what equipment is included.","Confirmez les horaires, la disponibilité et l'équipement inclus."],"Buggy recorriendo las dunas de Ica":["Buggy driving through the dunes of Ica","Buggy traversant les dunes d'Ica"],"Dunas recorridas en buggy":["Dunes crossed by buggy","Dunes parcourues en buggy"],"Actividad de aventura en Huacachina":["Adventure activity in Huacachina","Activité d'aventure à Huacachina"],"Paisaje desértico de Ica":["Desert landscape of Ica","Paysage désertique d'Ica"],"Promociones de playa · IcaTurismo":["Beach promotions · IcaTurismo","Promotions plages · IcaTurismo"],"Mar, naturaleza y aventura":["Sea, nature and adventure","Mer, nature et aventure"],"Promociones de playas en Ica":["Beach promotions in Ica","Promotions plages à Ica"],"Descubre la costa de Paracas con propuestas para disfrutar el mar, sus paisajes y la vida silvestre. Elige una experiencia para conocer todos sus detalles.":["Discover the Paracas coast with options to enjoy the sea, its landscapes and wildlife. Choose an experience to see all the details.","Découvrez la côte de Paracas avec des propositions pour profiter de la mer, de ses paysages et de sa faune. Choisissez une expérience pour en connaître tous les détails."],"Mar y fauna":["Sea and wildlife","Mer et faune"],"Medio día · Paracas":["Half day · Paracas","Demi-journée · Paracas"],"Islas Ballestas y costa de Paracas":["Ballestas Islands and Paracas coast","Îles Ballestas et côte de Paracas"],"Navega por la reserva y observa formaciones marinas y fauna desde una embarcación turística.":["Sail through the reserve and see marine formations and wildlife from a tourist boat.","Naviguez dans la réserve et observez les formations marines et la faune depuis un bateau touristique."],"Paseo en bote":["Boat ride","Balade en bateau"],"Guía durante el recorrido":["Guide during the tour","Guide pendant la visite"],"Chaleco salvavidas":["Life jacket","Gilet de sauvetage"],"Ver promoción":["See promotion","Voir la promotion"],"Paisajes únicos":["Unique landscapes","Paysages uniques"],"Día completo · Reserva de Paracas":["Full day · Paracas Reserve","Journée complète · Réserve de Paracas"],"Ruta de la Reserva y Playa Roja":["Reserve route and Red Beach","Route de la Réserve et Playa Roja"],"Recorre miradores costeros y conoce Playa Roja, reconocida por el contraste de sus colores.":["Visit coastal viewpoints and see Red Beach, known for its contrasting colors.","Visitez des belvédères côtiers et découvrez la Playa Roja, réputée pour le contraste de ses couleurs."],"Traslado turístico compartido":["Shared tourist transfer","Transfert touristique partagé"],"Paradas en miradores":["Stops at viewpoints","Arrêts aux belvédères"],"Sol y descanso":["Sun and relaxation","Soleil et détente"],"Día completo · Paracas":["Full day · Paracas","Journée complète · Paracas"],"Playa La Mina y Lagunillas":["La Mina Beach and Lagunillas","Plage La Mina et Lagunillas"],"Disfruta una jornada junto al mar con tiempo para relajarte y apreciar la costa de Paracas.":["Enjoy a day by the sea with time to relax and appreciate the Paracas coast.","Profitez d'une journée au bord de la mer avec du temps pour vous détendre et apprécier la côte de Paracas."],"Traslado ida y vuelta":["Round-trip transfer","Transfert aller-retour"],"Tiempo libre en la playa":["Free time on the beach","Temps libre à la plage"],"Orientación para visitantes":["Visitor guidance","Orientation pour les visiteurs"],"*Precios referenciales por persona. Disponibilidad, horarios, entradas y condiciones deben confirmarse antes de reservar.":["*Reference prices per person. Availability, schedules, tickets and conditions must be confirmed before booking.","*Prix indicatifs par personne. La disponibilité, les horaires, les entrées et les conditions doivent être confirmés avant de réserver."],"Excursión en embarcación por la costa de Paracas":["Boat excursion along the Paracas coast","Excursion en bateau le long de la côte de Paracas"],"Playa Roja en la Reserva Nacional de Paracas":["Red Beach in the Paracas National Reserve","Playa Roja dans la Réserve nationale de Paracas"],"Oleaje y costa del litoral de Ica":["Waves and shoreline of the Ica coast","Vagues et littoral de la côte d'Ica"],"Islas Ballestas y costa de Paracas · IcaTurismo":["Ballestas Islands and Paracas coast · IcaTurismo","Îles Ballestas et côte de Paracas · IcaTurismo"],"← Volver a promociones de playas":["← Back to beach promotions","← Retour aux promotions plages"],"Mar y fauna · Paracas":["Sea and wildlife · Paracas","Mer et faune · Paracas"],"Una salida en embarcación para descubrir el paisaje marino de Paracas y observar, desde el agua, la fauna que habita en la zona.":["A boat trip to discover the marine landscape of Paracas and see, from the water, the wildlife that lives in the area.","Une sortie en bateau pour découvrir le paysage marin de Paracas et observer, depuis l'eau, la faune qui vit dans la région."],"♧ Paseo en bote":["♧ Boat ride","♧ Balade en bateau"],"📍 Paracas, Ica":["📍 Paracas, Ica","📍 Paracas, Ica"],"La experiencia incluye":["The experience includes","L'expérience comprend"],"Paseo turístico en embarcación":["Tourist boat ride","Balade touristique en bateau"],"Chaleco salvavidas durante la navegación":["Life jacket during the trip","Gilet de sauvetage pendant la navigation"],"Orientación de guía sobre el recorrido":["Guide orientation about the route","Orientation du guide sur le parcours"],"Paradas para apreciar el paisaje costero, según condiciones del mar":["Stops to appreciate the coastal scenery, depending on sea conditions","Arrêts pour apprécier le paysage côtier, selon l'état de la mer"],"Solicitar una reserva":["Request a booking","Demander une réservation"],"Desde S/ 85 por persona · Precio referencial sujeto a disponibilidad y confirmación.":["From S/ 85 per person · Reference price subject to availability and confirmation.","À partir de S/ 85 par personne · Prix indicatif sous réserve de disponibilité et de confirmation."],"La navegación permite conocer la costa de Paracas desde el mar.":["Sailing lets you see the Paracas coast from the sea.","La navigation permet de découvrir la côte de Paracas depuis la mer."],"Postales de la costa":["Coastal postcards","Cartes postales de la côte"],"¿Cómo será el recorrido?":["What will the tour be like?","Comment se déroulera la visite ?"],"Encuentro en Paracas.":["Meeting in Paracas.","Rendez-vous à Paracas."],"Presentación del grupo y revisión de indicaciones de seguridad.":["Group introduction and review of safety instructions.","Présentation du groupe et rappel des consignes de sécurité."],"Salida al mar.":["Departure to sea.","Départ en mer."],"Navegación por la costa y observación panorámica de formaciones e islotes.":["Sailing along the coast and panoramic viewing of formations and islets.","Navigation le long de la côte et observation panoramique des formations et îlots."],"Regreso al muelle.":["Return to the pier.","Retour au quai."],"Finalización del paseo y tiempo libre para continuar explorando Paracas.":["End of the tour and free time to keep exploring Paracas.","Fin de la balade et temps libre pour continuer à explorer Paracas."],"El itinerario puede ajustarse por clima, oleaje o disposiciones de las autoridades de la reserva.":["The itinerary may be adjusted due to weather, waves or instructions from the reserve authorities.","L'itinéraire peut être ajusté en raison de la météo, de la houle ou des directives des autorités de la réserve."],"Consulta disponibilidad, horario y condiciones antes de confirmar tu reserva.":["Check availability, schedule and conditions before confirming your booking.","Vérifiez la disponibilité, l'horaire et les conditions avant de confirmer votre réservation."],"Promociones de playas":["Beach promotions","Promotions plages"],"Embarcación turística en la costa de Paracas":["Tourist boat on the Paracas coast","Bateau touristique sur la côte de Paracas"],"Vista de la costa de Paracas desde el mar":["View of the Paracas coast from the sea","Vue de la côte de Paracas depuis la mer"],"Paisaje de Playa Roja en Paracas":["Red Beach landscape in Paracas","Paysage de la Playa Roja à Paracas"],"Oleaje en la costa del Pacífico":["Waves on the Pacific coast","Vagues sur la côte du Pacifique"],"Playa La Mina y Lagunillas · IcaTurismo":["La Mina Beach and Lagunillas · IcaTurismo","Plage La Mina et Lagunillas · IcaTurismo"],"Sol y descanso · Paracas":["Sun and relaxation · Paracas","Soleil et détente · Paracas"],"Una escapada para disfrutar el litoral de Paracas a tu ritmo, contemplar el paisaje y pasar el día junto al mar.":["A getaway to enjoy the Paracas shoreline at your own pace, take in the scenery and spend the day by the sea.","Une escapade pour profiter du littoral de Paracas à votre rythme, contempler le paysage et passer la journée au bord de la mer."],"🏖 Tiempo libre":["🏖 Free time","🏖 Temps libre"],"Traslado turístico compartido ida y vuelta desde el punto acordado":["Shared round-trip tourist transfer from the agreed point","Transfert touristique partagé aller-retour depuis le point convenu"],"Orientación para ubicar accesos y servicios de la zona":["Guidance to find access points and services in the area","Orientation pour repérer les accès et les services de la zone"],"Tiempo libre para disfrutar la playa y el paisaje":["Free time to enjoy the beach and the scenery","Temps libre pour profiter de la plage et du paysage"],"Recomendaciones de seguridad y cuidado del entorno":["Safety recommendations and care for the environment","Recommandations de sécurité et de respect de l'environnement"],"Desde S/ 95 por persona · Precio referencial sujeto a disponibilidad y confirmación.":["From S/ 95 per person · Reference price subject to availability and confirmation.","À partir de S/ 95 par personne · Prix indicatif sous réserve de disponibilité et de confirmation."],"Disfruta una jornada de mar y descanso en la costa de Paracas.":["Enjoy a day of sea and relaxation on the Paracas coast.","Profitez d'une journée de mer et de détente sur la côte de Paracas."],"Rincones para disfrutar junto al mar":["Corners to enjoy by the sea","Recoins à savourer au bord de la mer"],"Plan para el día":["Plan for the day","Programme de la journée"],"Salida desde Paracas.":["Departure from Paracas.","Départ de Paracas."],"Traslado hacia el sector de playas seleccionado.":["Transfer to the selected beach area.","Transfert vers la zone de plage choisie."],"Tiempo en la costa.":["Time on the coast.","Temps sur la côte."],"Disfruta la playa, toma fotografías y conoce los alrededores respetando las indicaciones del lugar.":["Enjoy the beach, take photos and explore the surroundings following the site's instructions.","Profitez de la plage, prenez des photos et découvrez les environs en suivant les consignes du lieu."],"Regreso.":["Return.","Retour."],"Reencuentro en el punto acordado para retornar a Paracas.":["Meet again at the agreed point to return to Paracas.","Retrouvailles au point convenu pour retourner à Paracas."],"El acceso a playas puede variar según temporada, clima y disposiciones de las autoridades. Alimentos, bebidas y entradas no especificados se consideran por cuenta del visitante.":["Beach access may vary depending on the season, weather and authority regulations. Food, drinks and tickets not specified are the visitor's responsibility.","L'accès aux plages peut varier selon la saison, la météo et les dispositions des autorités. Les repas, boissons et entrées non précisés sont à la charge du visiteur."],"Consulta disponibilidad, punto de salida y condiciones antes de confirmar.":["Check availability, departure point and conditions before confirming.","Vérifiez la disponibilité, le point de départ et les conditions avant de confirmer."],"Olas y costa de playa en un día soleado":["Waves and shore on a sunny day","Vagues et rivage par une journée ensoleillée"],"Olas en una playa soleada":["Waves on a sunny beach","Vagues sur une plage ensoleillée"],"Embarcación recorriendo la costa de Ica":["Boat sailing along the Ica coast","Bateau longeant la côte d'Ica"],"Paisaje costero de la Reserva de Paracas":["Coastal landscape of the Paracas Reserve","Paysage côtier de la Réserve de Paracas"],"Reserva de Paracas y Playa Roja · IcaTurismo":["Paracas Reserve and Red Beach · IcaTurismo","Réserve de Paracas et Playa Roja · IcaTurismo"],"Paisajes únicos · Reserva de Paracas":["Unique landscapes · Paracas Reserve","Paysages uniques · Réserve de Paracas"],"Explora los paisajes desérticos y costeros de la Reserva Nacional de Paracas, con paradas en miradores y una visita a la emblemática Playa Roja.":["Explore the desert and coastal landscapes of the Paracas National Reserve, with stops at viewpoints and a visit to the iconic Red Beach.","Explorez les paysages désertiques et côtiers de la Réserve nationale de Paracas, avec des arrêts aux belvédères et une visite de l'emblématique Playa Roja."],"🚐 Ruta terrestre":["🚐 Land route","🚐 Parcours terrestre"],"Traslado turístico compartido desde el punto de encuentro":["Shared tourist transfer from the meeting point","Transfert touristique partagé depuis le point de rendez-vous"],"Acompañamiento de guía durante la ruta":["Guide accompaniment along the route","Accompagnement d'un guide pendant le parcours"],"Paradas panorámicas según las condiciones de visita":["Scenic stops depending on visiting conditions","Arrêts panoramiques selon les conditions de visite"],"Tiempo para tomar fotografías y conocer el paisaje":["Time to take photos and see the landscape","Temps pour prendre des photos et découvrir le paysage"],"Desde S/ 120 por persona · Precio referencial sujeto a disponibilidad y confirmación.":["From S/ 120 per person · Reference price subject to availability and confirmation.","À partir de S/ 120 par personne · Prix indicatif sous réserve de disponibilité et de confirmation."],"Playa Roja forma parte de los paisajes costeros de la Reserva de Paracas.":["Red Beach is part of the coastal landscapes of the Paracas Reserve.","La Playa Roja fait partie des paysages côtiers de la Réserve de Paracas."],"Paisajes de la Reserva de Paracas":["Landscapes of the Paracas Reserve","Paysages de la Réserve de Paracas"],"Itinerario sugerido":["Suggested itinerary","Itinéraire suggéré"],"Encuentro y salida.":["Meeting and departure.","Rendez-vous et départ."],"Reunión con el grupo para iniciar el recorrido terrestre.":["Meet with the group to start the land tour.","Rencontre avec le groupe pour commencer le parcours terrestre."],"Miradores de la reserva.":["Reserve viewpoints.","Belvédères de la réserve."],"Paradas para contemplar los acantilados y el litoral.":["Stops to take in the cliffs and the shoreline.","Arrêts pour contempler les falaises et le littoral."],"Playa Roja.":["Red Beach.","Playa Roja."],"Visita panorámica y tiempo para fotografías desde las zonas permitidas.":["Panoramic visit and time for photos from permitted areas.","Visite panoramique et temps pour les photos depuis les zones autorisées."],"Retorno a Paracas.":["Return to Paracas.","Retour à Paracas."],"Fin de la experiencia en el punto de salida.":["End of the experience at the departure point.","Fin de l'expérience au point de départ."],"El acceso y recorrido están sujetos a las normas de la reserva y a las condiciones del clima. El ingreso a áreas protegidas puede tener un costo no incluido.":["Access and route are subject to reserve rules and weather conditions. Entry to protected areas may have a cost that is not included.","L'accès et le parcours sont soumis aux règles de la réserve et aux conditions météo. L'entrée dans les zones protégées peut avoir un coût non inclus."],"Consulta disponibilidad, horario, entradas y condiciones antes de confirmar.":["Check availability, schedule, tickets and conditions before confirming.","Vérifiez la disponibilité, l'horaire, les entrées et les conditions avant de confirmer."],"Vista de Playa Roja en la Reserva Nacional de Paracas":["View of Red Beach in the Paracas National Reserve","Vue de la Playa Roja dans la Réserve nationale de Paracas"],"Playa Roja en la costa de Paracas":["Red Beach on the Paracas coast","Playa Roja sur la côte de Paracas"],"Recorrido turístico en la costa de Ica":["Tourist tour on the Ica coast","Parcours touristique sur la côte d'Ica"],"Olas del litoral del Pacífico":["Waves on the Pacific shoreline","Vagues sur le littoral du Pacifique"],"Registrarse · IcaTurismo":["Sign up · IcaTurismo","Inscription · IcaTurismo"],"Crea tu cuenta":["Create your account","Créez votre compte"],"Regístrate y descubre los mejores destinos de Ica":["Sign up and discover the best destinations in Ica","Inscrivez-vous et découvrez les meilleures destinations d'Ica"],"Confirmar contraseña":["Confirm password","Confirmer le mot de passe"],"Acepto los términos y condiciones":["I accept the terms and conditions","J'accepte les conditions générales"],"Crear cuenta":["Create account","Créer un compte"],"o regístrate con":["or sign up with","ou s'inscrire avec"],"¿Ya tienes cuenta?":["Already have an account?","Vous avez déjà un compte ?"],"Inicia sesión":["Log in","Connectez-vous"],"Tu nombre":["Your name","Votre nom"],"Repite tu contraseña":["Repeat your password","Répétez votre mot de passe"],"Mi cuenta":["My account","Mon compte"],"Cambiar a modo claro":["Switch to light mode","Passer en mode clair"],"Modo claro":["Light mode","Mode clair"],"Mostrar idiomas":["Show languages","Afficher les langues"],"Idiomas":["Languages","Langues"],"Opciones de idioma":["Language options","Options de langue"],"Cerrar menú":["Close menu","Fermer le menu"],"Pausar carrusel":["Pause carousel","Mettre le carrousel en pause"],"Reanudar carrusel":["Resume carousel","Reprendre le carrousel"],"No se pudo conectar con el servidor. Revisa que la API esté en marcha y la URL en config.js":["Could not connect to the server. Check that the API is running and the URL in config.js is correct.","Impossible de se connecter au serveur. Vérifiez que l'API est démarrée et que l'URL dans config.js est correcte."],"No se pudo iniciar sesión":["Could not log in","Impossible de se connecter"],"No se pudo registrar":["Could not sign up","Impossible de s'inscrire"],"Error al iniciar sesión":["Login error","Erreur de connexion"],"Las contraseñas no coinciden":["The passwords do not match","Les mots de passe ne correspondent pas"],"Creando cuenta...":["Creating account...","Création du compte..."],"Error al registrarse":["Sign-up error","Erreur lors de l'inscription"],"Selecciona una promoción":["Select a promotion","Sélectionnez une promotion"],"No hay promociones disponibles":["No promotions available","Aucune promotion disponible"],"No se pudieron cargar las promociones":["Could not load the promotions","Impossible de charger les promotions"],"No se pudieron cargar las promociones.":["Could not load the promotions.","Impossible de charger les promotions."],"No se configuró la dirección de la API.":["The API address is not configured.","L'adresse de l'API n'est pas configurée."],"Selecciona una promoción disponible.":["Select an available promotion.","Sélectionnez une promotion disponible."],"Registrando reserva...":["Registering booking...","Enregistrement de la réservation..."],"No se pudo registrar la reserva.":["Could not register the booking.","Impossible d'enregistrer la réservation."],"No se pudo conectar con el servidor.":["Could not connect to the server.","Impossible de se connecter au serveur."],"Cargando promociones disponibles...":["Loading available promotions...","Chargement des promotions disponibles..."],"Experiencia turística · Ica":["Tourist experience · Ica","Expérience touristique · Ica"],"Descubre esta experiencia turística en Ica.":["Discover this tourist experience in Ica.","Découvrez cette expérience touristique à Ica."],"Reservar →":["Book →","Réserver →"],"Precios por persona. El pago se procesa fuera de este sitio y se registra como pendiente hasta su verificación.":["Prices per person. Payment is processed outside this site and is recorded as pending until it is verified.","Prix par personne. Le paiement est traité en dehors de ce site et reste en attente jusqu'à sa vérification."],"Por el momento no hay promociones disponibles en esta categoría.":["There are currently no promotions available in this category.","Aucune promotion n'est disponible pour le moment dans cette catégorie."],"Para publicar,":["To post,","Pour publier,"],"inicia sesión":["log in","connectez-vous"],"No se pudieron cargar los comentarios.":["Could not load the comments.","Impossible de charger les commentaires."],"Experiencias compartidas por nuestros visitantes.":["Experiences shared by our visitors.","Expériences partagées par nos visiteurs."],"Aún no hay comentarios. ¡Sé la primera persona en compartir su experiencia!":["There are no comments yet. Be the first to share your experience!","Il n'y a pas encore de commentaires. Soyez le premier à partager votre expérience !"],"Vista previa de la foto de perfil":["Profile photo preview","Aperçu de la photo de profil"],"La foto debe estar en formato JPG, PNG o WebP.":["The photo must be in JPG, PNG or WebP format.","La photo doit être au format JPG, PNG ou WebP."],"La foto no puede superar los 5 MB.":["The photo cannot exceed 5 MB.","La photo ne peut pas dépasser 5 Mo."],"No se pudo publicar el comentario.":["Could not post the comment.","Impossible de publier le commentaire."],"Publicando...":["Posting...","Publication..."],"Pendiente":["Pending","En attente"],"Confirmada":["Confirmed","Confirmée"],"Cancelada":["Cancelled","Annulée"],"Pago pendiente":["Payment pending","Paiement en attente"],"Pagado":["Paid","Payé"],"Reembolsado":["Refunded","Remboursé"],"Tarjeta":["Card","Carte"],"Paypal":["PayPal","PayPal"],"Yape":["Yape","Yape"],"Plin":["Plin","Plin"],"Explorar promociones":["Explore promotions","Explorer les promotions"],"No tienes reservas en esta categoría.":["You have no bookings in this category.","Vous n'avez aucune réservation dans cette catégorie."],"Asistentes":["Attendees","Participants"],"Precio unitario":["Unit price","Prix unitaire"],"Total":["Total","Total"],"Reservado el":["Booked on","Réservé le"],"✕ Cancelar reserva":["✕ Cancel booking","✕ Annuler la réservation"],"💳 Confirmar pago":["💳 Confirm payment","💳 Confirmer le paiement"],"↩ Reembolso (90%)":["↩ Refund (90%)","↩ Remboursement (90 %)"],"📄 GENERAR BOLETA":["📄 GENERATE RECEIPT","📄 GÉNÉRER LE REÇU"],"Cancelar reserva":["Cancel booking","Annuler la réservation"],"Confirmar Cancelación":["Confirm cancellation","Confirmer l'annulation"],"Confirmar pago de reserva":["Confirm booking payment","Confirmer le paiement de la réservation"],"Confirmar Pago":["Confirm payment","Confirmer le paiement"],"¡Pago confirmado exitosamente!":["Payment confirmed successfully!","Paiement confirmé avec succès !"],"Aviso de Confirmación de Reembolso":["Refund confirmation notice","Avis de confirmation de remboursement"],"Confirmar Reembolso":["Confirm refund","Confirmer le remboursement"],"Reembolso procesado correctamente.":["Refund processed successfully.","Remboursement traité avec succès."],"Sin registrar":["Not registered","Non renseigné"],"Primera sesión":["First session","Première session"],"Aún no tienes movimientos de puntos. ¡Realiza tu primera reserva para empezar a acumular!":["You don't have any point movements yet. Make your first booking to start earning!","Vous n'avez pas encore de mouvements de points. Faites votre première réservation pour commencer à en accumuler !"],"Por favor, ingresa un nombre válido (mínimo 2 caracteres).":["Please enter a valid name (minimum 2 characters).","Veuillez saisir un nom valide (2 caractères minimum)."],"Datos actualizados con éxito.":["Details updated successfully.","Informations mises à jour avec succès."],"No se pudieron actualizar los datos.":["Could not update the details.","Impossible de mettre à jour les informations."],"Todos los campos de contraseña son requeridos.":["All password fields are required.","Tous les champs de mot de passe sont obligatoires."],"La nueva contraseña debe tener al menos 8 caracteres.":["The new password must be at least 8 characters long.","Le nouveau mot de passe doit contenir au moins 8 caractères."],"La nueva contraseña y su confirmación no coinciden.":["The new password and its confirmation do not match.","Le nouveau mot de passe et sa confirmation ne correspondent pas."],"La nueva contraseña debe ser diferente a la actual.":["The new password must be different from the current one.","Le nouveau mot de passe doit être différent de l'actuel."],"¡Contraseña actualizada con éxito!":["Password updated successfully!","Mot de passe mis à jour avec succès !"],"No se pudo actualizar la contraseña.":["Could not update the password.","Impossible de mettre à jour le mot de passe."],"No se encontró el contenido de la boleta.":["The receipt content was not found.","Le contenu du reçu est introuvable."],"No se cargó la librería para generar el PDF.":["The PDF library did not load.","La bibliothèque de génération de PDF n'a pas été chargée."],"Generando PDF...":["Generating PDF...","Génération du PDF..."],"No se pudo generar el PDF. Revisa la consola con F12.":["Could not generate the PDF. Check the console with F12.","Impossible de générer le PDF. Consultez la console avec F12."],"No se pudo cargar el perfil. Intenta recargar la página.":["Could not load the profile. Try reloading the page.","Impossible de charger le profil. Essayez de recharger la page."],"Comentario publicado correctamente.":["Comment posted successfully.","Commentaire publié avec succès."],"Correo o contraseña incorrectos.":["Incorrect email or password.","E-mail ou mot de passe incorrect."],"Cuenta creada correctamente.":["Account created successfully.","Compte créé avec succès."],"Inicio de sesión correcto.":["Logged in successfully.","Connexion réussie."],"Email y contraseña son obligatorios.":["Email and password are required.","L'e-mail et le mot de passe sont obligatoires."],"Faltan nombre, email o contraseña.":["Name, email or password is missing.","Le nom, l'e-mail ou le mot de passe est manquant."],"Ese correo ya está registrado.":["That email is already registered.","Cet e-mail est déjà enregistré."],"Error en el servidor.":["Server error.","Erreur du serveur."],"La contraseña debe tener al menos 8 caracteres.":["The password must be at least 8 characters long.","Le mot de passe doit contenir au moins 8 caractères."],"La contraseña actual es incorrecta.":["The current password is incorrect.","Le mot de passe actuel est incorrect."],"La nueva contraseña no puede ser idéntica a la actual.":["The new password cannot be the same as the current one.","Le nouveau mot de passe ne peut pas être identique à l'actuel."],"El comentario debe tener entre 1 y 1000 caracteres.":["The comment must be between 1 and 1000 characters.","Le commentaire doit contenir entre 1 et 1000 caractères."],"Selecciona una calificación entre 1 y 5 estrellas.":["Select a rating between 1 and 5 stars.","Sélectionnez une note entre 1 et 5 étoiles."],"El nombre debe tener entre 2 y 120 caracteres.":["The name must be between 2 and 120 characters.","Le nom doit contenir entre 2 et 120 caractères."],"El teléfono debe tener entre 6 y 20 caracteres.":["The phone number must be between 6 and 20 characters.","Le numéro de téléphone doit contenir entre 6 et 20 caractères."],"El DNI o documento debe tener entre 6 y 20 caracteres.":["The ID number must be between 6 and 20 characters.","Le numéro de pièce d'identité doit contenir entre 6 et 20 caractères."],"Perfil actualizado correctamente.":["Profile updated successfully.","Profil mis à jour avec succès."],"No se pudo actualizar el perfil.":["Could not update the profile.","Impossible de mettre à jour le profil."],"No se pudo cargar el perfil.":["Could not load the profile.","Impossible de charger le profil."],"No se pudo cargar el historial de puntos.":["Could not load the points history.","Impossible de charger l'historique des points."],"No se pudieron cargar las reservas.":["Could not load the bookings.","Impossible de charger les réservations."],"Reserva cancelada correctamente.":["Booking cancelled successfully.","Réservation annulée avec succès."],"La reserva ya está cancelada.":["The booking is already cancelled.","La réservation est déjà annulée."],"Esta reserva no se puede cancelar en su estado actual.":["This booking cannot be cancelled in its current state.","Cette réservation ne peut pas être annulée dans son état actuel."],"No se pudo cancelar la reserva.":["Could not cancel the booking.","Impossible d'annuler la réservation."],"No se encontró la reserva.":["Booking not found.","Réservation introuvable."],"Reserva no encontrada.":["Booking not found.","Réservation introuvable."],"ID de reserva no válido.":["Invalid booking ID.","Identifiant de réservation invalide."],"El identificador de reserva no es válido.":["The booking identifier is not valid.","L'identifiant de réservation n'est pas valide."],"Esta reserva ya tiene el pago confirmado.":["This booking already has confirmed payment.","Le paiement de cette réservation est déjà confirmé."],"Esta reserva ya tiene el pago confirmado. Utiliza la opción de Reembolso.":["This booking already has confirmed payment. Use the Refund option.","Le paiement de cette réservation est déjà confirmé. Utilisez l'option de remboursement."],"Esta reserva ya tiene un reembolso aplicado.":["This booking already has a refund applied.","Un remboursement a déjà été appliqué à cette réservation."],"No se puede confirmar el pago de una reserva cancelada.":["Payment cannot be confirmed for a cancelled booking.","Le paiement d'une réservation annulée ne peut pas être confirmé."],"No se pudo confirmar el pago de la reserva.":["Could not confirm the booking payment.","Impossible de confirmer le paiement de la réservation."],"Solo se puede solicitar reembolso de reservas con pago confirmado.":["Refunds can only be requested for bookings with confirmed payment.","Un remboursement ne peut être demandé que pour les réservations dont le paiement est confirmé."],"No se pudo procesar el reembolso.":["Could not process the refund.","Impossible de traiter le remboursement."],"Revisa la promoción, los asistentes y el método de pago.":["Check the promotion, the attendees and the payment method.","Vérifiez la promotion, les participants et le moyen de paiement."],"Selecciona un método de pago válido.":["Select a valid payment method.","Sélectionnez un moyen de paiement valide."],"Selecciona una fecha válida a partir de hoy.":["Select a valid date from today onwards.","Sélectionnez une date valide à partir d'aujourd'hui."],"El número de asistentes debe estar entre 1 y 15.":["The number of attendees must be between 1 and 15.","Le nombre de participants doit être compris entre 1 et 15."],"La promoción ya no está disponible.":["The promotion is no longer available.","La promotion n'est plus disponible."],"La promoción ya no está disponible. Actualiza la página y selecciona otra.":["The promotion is no longer available. Refresh the page and select another one.","La promotion n'est plus disponible. Actualisez la page et sélectionnez-en une autre."],"No se pudo registrar la reserva presencial.":["Could not register the in-person booking.","Impossible d'enregistrer la réservation sur place."],"No autorizado. Inicia sesión.":["Unauthorized. Please log in.","Non autorisé. Veuillez vous connecter."],"Sesión inválida o expirada.":["Invalid or expired session.","Session invalide ou expirée."],"La cuenta está inactiva. Contacta con un administrador.":["The account is inactive. Contact an administrator.","Le compte est inactif. Contactez un administrateur."],"La cuenta está inactiva o ya no existe.":["The account is inactive or no longer exists.","Le compte est inactif ou n'existe plus."],"La cuenta ya no está registrada. Inicia sesión nuevamente.":["The account is no longer registered. Please log in again.","Le compte n'est plus enregistré. Veuillez vous reconnecter."],"Usuario no encontrado.":["User not found.","Utilisateur introuvable."],"No se pudo validar la sesión.":["Could not validate the session.","Impossible de valider la session."]};
+window.ICAT_PATTERNS = [["^Ir a la diapositiva (\\d+) de (\\d+)$","Go to slide $1 of $2","Aller à la diapositive $1 sur $2"],["^(\\d+) de 5 estrellas$","$1 out of 5 stars","$1 étoiles sur 5"],["^Foto de perfil de (.+)$","Profile photo of $1","Photo de profil de $1"],["^1 persona$","1 person","1 personne"],["^(\\d+) personas$","$1 people","$1 personnes"],["^(\\d+) persona\\(s\\)$","$1 person(s)","$1 personne(s)"],["^(.+) por persona · Total: (.+)$","$1 per person · Total: $2","$1 par personne · Total : $2"],["^Desde (S/ [\\d.,]+) por persona$","From $1 per person","À partir de $1 par personne"],["^(.+) por persona$","$1 per person","$1 par personne"],["^Total de la reserva: (.+)$","Booking total: $1","Total de la réservation : $1"],["^Resumen de reserva: (.+)$","Booking summary: $1","Récapitulatif de la réservation : $1"],["^Reserva #(\\d+) registrada por (.+)\\. Estado del pago: pendiente\\.$","Booking #$1 registered for $2. Payment status: pending.","Réservation n°$1 enregistrée pour $2. Statut du paiement : en attente."],["^Equivale a S/ ([\\d.,]+) en descuentos$","Equals S/ $1 in discounts","Équivaut à S/ $1 de réduction"],["^Reserva cancelada\\. Se revirtieron (\\d+) puntos\\. Puntos actuales: (\\d+)$","Booking cancelled. $1 points were reversed. Current points: $2","Réservation annulée. $1 points ont été annulés. Points actuels : $2"],["^Reserva cancelada\\. Puntos actuales: (\\d+)$","Booking cancelled. Current points: $1","Réservation annulée. Points actuels : $1"],["^Cancelación de reserva: (.+)$","Booking cancellation: $1","Annulation de réservation : $1"],["^Reembolso \\(90%\\) de reserva: (.+)$","Refund (90%) of booking: $1","Remboursement (90 %) de la réservation : $1"],["^Reserva: (.+)$","Booking: $1","Réservation : $1"],["^¿Seguro que deseas cancelar tu reserva de \"(.+)\"\\?\\n\\nLos puntos ganados por esta reserva serán revertidos\\. Esta acción no se puede deshacer\\.$","Are you sure you want to cancel your booking for \"$1\"?\n\nThe points earned for this booking will be reversed. This action cannot be undone.","Voulez-vous vraiment annuler votre réservation pour « $1 » ?\n\nLes points gagnés pour cette réservation seront annulés. Cette action est irréversible."],["^¿Deseas confirmar el pago de tu reserva para \"(.+)\"\\?\\n\\nMonto total a confirmar: (.+)\\nMétodo de pago seleccionado: (.+)\\n\\nAl confirmar, la reserva cambiará a estado \"Confirmada\" y el pago figurará como \"Pagado\"\\.$","Do you want to confirm payment for your booking for \"$1\"?\n\nTotal amount to confirm: $2\nSelected payment method: $3\n\nOnce confirmed, the booking will change to \"Confirmed\" and the payment will show as \"Paid\".","Voulez-vous confirmer le paiement de votre réservation pour « $1 » ?\n\nMontant total à confirmer : $2\nMoyen de paiement choisi : $3\n\nUne fois confirmée, la réservation passera à l'état « Confirmée » et le paiement apparaîtra comme « Payé »."],["^Estás solicitando el reembolso de tu reserva para \"(.+)\"\\. Por favor, revisa las condiciones antes de continuar:\\n\\nDevolución del 90%: (.+) serán devueltos a tu medio de pago\\.\\nRetención del 10%: (.+) por gastos operativos y penalidad de anulación\\.\\nAjuste de puntos: Se descontará el 90% de los puntos obtenidos \\(-(\\d+) pts\\)\\.\\nEstado final: La reserva quedará cancelada\\.\\n\\n¿Estás seguro de que deseas confirmar el reembolso\\?$","You are requesting a refund for your booking for \"$1\". Please review the conditions before continuing:\n\n90% refund: $2 will be returned to your payment method.\n10% retention: $3 for operating costs and cancellation penalty.\nPoints adjustment: 90% of the points earned will be deducted (-$4 pts).\nFinal status: The booking will be cancelled.\n\nAre you sure you want to confirm the refund?","Vous demandez le remboursement de votre réservation pour « $1 ». Veuillez vérifier les conditions avant de continuer :\n\nRemboursement de 90 % : $2 seront restitués sur votre moyen de paiement.\nRetenue de 10 % : $3 pour frais de gestion et pénalité d'annulation.\nAjustement des points : 90 % des points obtenus seront déduits (-$4 pts).\nÉtat final : la réservation sera annulée.\n\nVoulez-vous vraiment confirmer le remboursement ?"],["^Error (\\d+)$","Error $1","Erreur $1"]];
+
+// Home translations shared with web/src/lib/home.ts.
+Object.assign(window.ICAT_DICT, {
+  "15": [
+    "15",
+    "15"
+  ],
+  "25": [
+    "25",
+    "25"
+  ],
+  "70": [
+    "70",
+    "70"
+  ],
+  "80": [
+    "80",
+    "80"
+  ],
+  "90": [
+    "90",
+    "90"
+  ],
+  "150": [
+    "150",
+    "150"
+  ],
+  "Descubre Ica": [
+    "Discover Ica",
+    "Découvrez Ica"
+  ],
+  "IcaTurismo · Destinos de Ica": [
+    "IcaTurismo · Destinations in Ica",
+    "IcaTurismo · Destinations à Ica"
+  ],
+  "Promociones de playas, dunas y cultura en Ica. Reserva tu aventura.": [
+    "Beach, dune and culture deals in Ica, Peru. Book your adventure.",
+    "Promotions plages, dunes et culture à Ica, au Pérou. Réservez votre aventure."
+  ],
+  "IcaTurismo: destinos turísticos de Ica, Perú": [
+    "IcaTurismo: tourist destinations in Ica, Peru",
+    "IcaTurismo : destinations touristiques à Ica, Pérou"
+  ],
+  "Ica · Perú": [
+    "Ica · Peru",
+    "Ica · Pérou"
+  ],
+  "Destinos destacados de Ica": [
+    "Featured destinations in Ica",
+    "Destinations à la une à Ica"
+  ],
+  "Diapositiva anterior": [
+    "Previous slide",
+    "Diapositive précédente"
+  ],
+  "Diapositiva siguiente": [
+    "Next slide",
+    "Diapositive suivante"
+  ],
+  "Playas de ensueño": [
+    "Dream beaches",
+    "Plages de rêve"
+  ],
+  "Paracas, Islas Ballestas y más.": [
+    "Paracas, Ballestas Islands and more.",
+    "Paracas, îles Ballestas et bien plus."
+  ],
+  "sobre playas de ensueño": [
+    "about dream beaches",
+    "sur les plages de rêve"
+  ],
+  "Playas de Ica": [
+    "Beaches of Ica",
+    "Plages d'Ica"
+  ],
+  "Dunas y aventura": [
+    "Dunes and adventure",
+    "Dunes et aventure"
+  ],
+  "Buggy, sandboard y atardeceres en Huacachina.": [
+    "Buggy, sandboarding and sunsets in Huacachina.",
+    "Buggy, sandboard et couchers de soleil à Huacachina."
+  ],
+  "sobre dunas y aventura": [
+    "about dunes and adventure",
+    "sur les dunes et l’aventure"
+  ],
+  "Aventura en las dunas de Ica": [
+    "Adventure in the dunes of Ica",
+    "Aventure dans les dunes d'Ica"
+  ],
+  "Cultura e historia": [
+    "Culture and history",
+    "Culture et histoire"
+  ],
+  "Líneas de Nazca, bodegas y museos.": [
+    "Nazca Lines, wineries and museums.",
+    "Lignes de Nazca, caves et musées."
+  ],
+  "sobre cultura e historia": [
+    "about culture and history",
+    "sur la culture et l’histoire"
+  ],
+  "Cultura de Ica": [
+    "Culture of Ica",
+    "Culture d'Ica"
+  ],
+  "Un destino lleno de vida y tradición.": [
+    "A destination full of life and tradition.",
+    "Une destination pleine de vie et de traditions."
+  ],
+  "sobre descubre Ica": [
+    "about discovering Ica",
+    "pour découvrir Ica"
+  ],
+  "Ica en general": [
+    "Ica overview",
+    "Ica en général"
+  ],
+  "Explora más": [
+    "Explore more",
+    "Explorer"
+  ],
+  "Nuestros servicios": [
+    "Our services",
+    "Nos services"
+  ],
+  "Alojamiento": [
+    "Accommodation",
+    "Hébergement"
+  ],
+  "Encuentra opciones cómodas para descansar y disfrutar cada día de tu visita a Ica.": [
+    "Find comfortable places to rest and enjoy every day of your visit to Ica.",
+    "Trouvez des options confortables pour vous reposer et profiter de chaque jour de votre séjour à Ica."
+  ],
+  "Transporte": [
+    "Transport",
+    "Transport"
+  ],
+  "Muévete con facilidad entre los principales destinos y atractivos de la región.": [
+    "Get around easily between the main destinations and attractions of the region.",
+    "Déplacez-vous facilement entre les principales destinations et attractions de la région."
+  ],
+  "Alimentación": [
+    "Food",
+    "Restauration"
+  ],
+  "Descubre sabores locales y disfruta de alternativas para acompañar tu recorrido.": [
+    "Discover local flavors and enjoy options to accompany your trip.",
+    "Découvrez les saveurs locales et profitez de bonnes adresses pour accompagner votre parcours."
+  ],
+  "Actividades": [
+    "Activities",
+    "Activités"
+  ],
+  "Vive experiencias culturales y aventuras para conocer Ica desde nuevas perspectivas.": [
+    "Enjoy cultural experiences and adventures to see Ica from new perspectives.",
+    "Vivez des expériences culturelles et des aventures pour découvrir Ica sous un autre angle."
+  ],
+  "Conoce Ica con nosotros": [
+    "Discover Ica with us",
+    "Découvrez Ica avec nous"
+  ],
+  "Sobre nosotros": [
+    "About us",
+    "À propos de nous"
+  ],
+  "IcaTurismo nace del deseo de compartir la riqueza de nuestra región y acercar a cada viajero a sus paisajes, cultura y tradiciones. Queremos ayudarte a descubrir cada rincón de Ica y hacer de tu visita una experiencia especial.": [
+    "IcaTurismo was born from the wish to share the richness of our region and bring every traveler closer to its landscapes, culture and traditions. We want to help you discover every corner of Ica and make your visit a special experience.",
+    "IcaTurismo est né du désir de partager la richesse de notre région et de rapprocher chaque voyageur de ses paysages, de sa culture et de ses traditions. Nous voulons vous aider à découvrir chaque recoin d'Ica et faire de votre visite une expérience spéciale."
+  ],
+  "Te acompañamos a explorar el destino con información útil, propuestas para todos los gustos y el cariño de quienes disfrutan mostrar lo mejor de Ica.": [
+    "We go with you as you explore the destination, with useful information, proposals for every taste and the care of people who love showing the best of Ica.",
+    "Nous vous accompagnons dans l'exploration de la destination avec des informations utiles, des propositions pour tous les goûts et la passion de ceux qui aiment montrer le meilleur d'Ica."
+  ],
+  "Integrantes del equipo IcaTurismo": [
+    "IcaTurismo team members",
+    "Membres de l'équipe IcaTurismo"
+  ],
+  "Voltear para mostrar u ocultar los integrantes del equipo": [
+    "Flip to show or hide the team members",
+    "Retourner pour afficher ou masquer les membres de l'équipe"
+  ],
+  "Equipo de IcaTurismo": [
+    "IcaTurismo team",
+    "Équipe d'IcaTurismo"
+  ],
+  "Conoce al equipo": [
+    "Meet the team",
+    "Rencontrez l'équipe"
+  ],
+  "Integrantes del equipo": [
+    "Team members",
+    "Membres de l'équipe"
+  ],
+  "¿Por qué elegir Ica?": [
+    "Why choose Ica?",
+    "Pourquoi choisir Ica ?"
+  ],
+  "Playas únicas": [
+    "Unique beaches",
+    "Plages uniques"
+  ],
+  "Litoral desértico y reservas naturales como Paracas.": [
+    "Desert coastline and nature reserves such as Paracas.",
+    "Littoral désertique et réserves naturelles comme Paracas."
+  ],
+  "Paisajes de altura": [
+    "High-altitude landscapes",
+    "Paysages en altitude"
+  ],
+  "Rutas de trekking entre dunas, valles y cañones.": [
+    "Trekking routes among dunes, valleys and canyons.",
+    "Itinéraires de randonnée entre dunes, vallées et canyons."
+  ],
+  "Historia viva": [
+    "Living history",
+    "Histoire vivante"
+  ],
+  "Líneas de Nazca, museos y bodegas centenarias.": [
+    "Nazca Lines, museums and centuries-old wineries.",
+    "Lignes de Nazca, musées et caves centenaires."
+  ],
+  "Aventura real": [
+    "Real adventure",
+    "Vraie aventure"
+  ],
+  "Sandboard, kitesurf y experiencias en el desierto.": [
+    "Sandboarding, kitesurfing and desert experiences.",
+    "Sandboard, kitesurf et expériences dans le désert."
+  ],
+  "Descubre los tesoros de Ica": [
+    "Discover the treasures of Ica",
+    "Découvrez les trésors d'Ica"
+  ],
+  "Playas doradas, dunas emocionantes y cultura milenaria te esperan.": [
+    "Golden beaches, thrilling dunes and ancient culture await you.",
+    "Plages dorées, dunes palpitantes et culture millénaire vous attendent."
+  ],
+  "Nuestros Destinos": [
+    "Our Destinations",
+    "Nos Destinations"
+  ],
+  "Ir a Playas de Ica": [
+    "Go to Beaches of Ica",
+    "Aller aux Plages d'Ica"
+  ],
+  "Disfruta del mar y el desierto en Paracas, Islas Ballestas y más.": [
+    "Enjoy the sea and the desert in Paracas, the Ballestas Islands and more.",
+    "Profitez de la mer et du désert à Paracas, aux îles Ballestas et ailleurs."
+  ],
+  "Paseos en bote": [
+    "Boat tours",
+    "Balades en bateau"
+  ],
+  "Avistamiento de aves": [
+    "Bird watching",
+    "Observation d'oiseaux"
+  ],
+  "Kitesurf": [
+    "Kitesurfing",
+    "Kitesurf"
+  ],
+  "Recomendaciones": [
+    "Recommendations",
+    "Recommandations"
+  ],
+  "Visitar en verano": [
+    "Visit in summer",
+    "Visiter en été"
+  ],
+  "Usar bloqueador": [
+    "Wear sunscreen",
+    "Utiliser de la crème solaire"
+  ],
+  "Precios referenciales": [
+    "Reference prices",
+    "Prix indicatifs"
+  ],
+  "Actividad": [
+    "Activity",
+    "Activité"
+  ],
+  "Precio (S/.)": [
+    "Price (S/.)",
+    "Prix (S/.)"
+  ],
+  "Paseo a Ballestas": [
+    "Ballestas tour",
+    "Excursion aux Ballestas"
+  ],
+  "Kitesurf (1h)": [
+    "Kitesurfing (1h)",
+    "Kitesurf (1 h)"
+  ],
+  "Ir a las Dunas de Ica": [
+    "Go to the Dunes of Ica",
+    "Aller aux Dunes d'Ica"
+  ],
+  "Recorre el desierto de Huacachina en buggy y prueba el sandboard.": [
+    "Ride through the Huacachina desert by buggy and try sandboarding.",
+    "Parcourez le désert de Huacachina en buggy et essayez le sandboard."
+  ],
+  "Experiencias": [
+    "Experiences",
+    "Expériences"
+  ],
+  "Sandboard": [
+    "Sandboarding",
+    "Sandboard"
+  ],
+  "Atardecer en el desierto": [
+    "Sunset in the desert",
+    "Coucher de soleil dans le désert"
+  ],
+  "Usar bloqueador solar": [
+    "Wear sunscreen",
+    "Utiliser de la crème solaire"
+  ],
+  "Llevar agua y ropa cómoda": [
+    "Bring water and comfortable clothes",
+    "Emporter de l'eau et des vêtements confortables"
+  ],
+  "Desde (S/.)": [
+    "From (S/.)",
+    "À partir de (S/.)"
+  ],
+  "Atardecer en buggy": [
+    "Sunset buggy ride",
+    "Buggy au coucher du soleil"
+  ],
+  "Ir a Cultura de Ica": [
+    "Go to Culture of Ica",
+    "Aller à la Culture d'Ica"
+  ],
+  "Museos, líneas de Nazca, bodegas y tradiciones vivas.": [
+    "Museums, Nazca Lines, wineries and living traditions.",
+    "Musées, lignes de Nazca, caves et traditions vivantes."
+  ],
+  "Lugares": [
+    "Places",
+    "Lieux"
+  ],
+  "Museo de Paracas": [
+    "Paracas Museum",
+    "Musée de Paracas"
+  ],
+  "Líneas de Nazca": [
+    "Nazca Lines",
+    "Lignes de Nazca"
+  ],
+  "Bodega Tacama": [
+    "Tacama Winery",
+    "Cave Tacama"
+  ],
+  "Visita guiada": [
+    "Guided visit",
+    "Visite guidée"
+  ],
+  "Degustación de vinos": [
+    "Wine tasting",
+    "Dégustation de vins"
+  ],
+  "Entradas": [
+    "Tickets",
+    "Entrées"
+  ],
+  "Sitio": [
+    "Site",
+    "Site"
+  ],
+  "Entrada (S/.)": [
+    "Ticket (S/.)",
+    "Entrée (S/.)"
+  ],
+  "Museo Paracas": [
+    "Paracas Museum",
+    "Musée de Paracas"
+  ],
+  "Vive Ica y ubícanos": [
+    "Experience Ica and find us",
+    "Vivez Ica et retrouvez-nous"
+  ],
+  "Video de Ica": [
+    "Video of Ica",
+    "Vidéo d'Ica"
+  ],
+  "Opiniones de nuestros visitantes": [
+    "What our visitors say",
+    "Avis de nos visiteurs"
+  ],
+  "Ver todos los comentarios": [
+    "See all comments",
+    "Voir tous les commentaires"
+  ],
+  "Empresa de turismo con sede en Ica": [
+    "Tourism company based in Ica",
+    "Entreprise de tourisme basée à Ica"
+  ]
+});
+
+// Contact page copy, including individual text nodes around inline elements.
+Object.assign(window.ICAT_DICT, {
+  "Conversemos · IcaTurismo": [
+    "Let's talk · IcaTurismo",
+    "Parlons ensemble · IcaTurismo"
+  ],
+  "Conversemos sobre tu próximo viaje a Ica. Consulta destinos, promociones y reservas con el equipo de IcaTurismo.": [
+    "Talk to us about your next trip to Ica. Ask the IcaTurismo team about destinations, offers and bookings.",
+    "Parlons de votre prochain voyage à Ica. Renseignez-vous sur les destinations, les offres et les réservations auprès de notre équipe."
+  ],
+  "Conversemos · Ica, Perú": [
+    "Let's talk · Ica, Peru",
+    "Parlons ensemble · Ica, Pérou"
+  ],
+  "Tu próximo viaje": [
+    "Your next trip",
+    "Votre prochain voyage"
+  ],
+  "empieza con un": [
+    "starts with a",
+    "commence par un"
+  ],
+  "hola.": [
+    "hello.",
+    "bonjour."
+  ],
+  "Una pregunta, una idea o un destino por descubrir. Estamos aquí para ayudarte a darle forma a tu experiencia.": [
+    "A question, an idea or a destination to discover. We are here to help you shape your experience.",
+    "Une question, une idée ou une destination à découvrir. Nous sommes là pour vous aider à créer votre expérience."
+  ],
+  "Cuéntanos tu plan": [
+    "Tell us your plans",
+    "Parlez-nous de votre projet"
+  ],
+  "Hablemos de tu viaje": [
+    "Let's talk about your trip",
+    "Parlons de votre voyage"
+  ],
+  "Mar y paisaje de la costa de Ica": [
+    "Sea and coastal scenery in Ica",
+    "La mer et les paysages côtiers d’Ica"
+  ],
+  "Ica se vive mejor cuando la compartes.": [
+    "Ica is even better when shared.",
+    "Ica se vit encore mieux à plusieurs."
+  ],
+  "Mar, dunas y nuevas historias.": [
+    "Sea, dunes and new stories.",
+    "La mer, les dunes et de nouvelles histoires."
+  ],
+  "Tu próxima experiencia te espera": [
+    "Your next experience awaits",
+    "Votre prochaine expérience vous attend"
+  ],
+  "Sigamos conectados": [
+    "Let's stay connected",
+    "Restons en contact"
+  ],
+  "Un poco de Ica, cada día.": [
+    "A little of Ica, every day.",
+    "Un peu d’Ica, chaque jour."
+  ],
+  "Inspírate, descubre y escríbenos por tu red favorita.": [
+    "Get inspired, explore and contact us on your favorite social network.",
+    "Inspirez-vous, découvrez et écrivez-nous sur votre réseau préféré."
+  ],
+  "Cada viaje empieza a tu manera": [
+    "Every trip starts your way",
+    "Chaque voyage commence à votre façon"
+  ],
+  "Cuéntanos tu plan.": [
+    "Tell us your plans.",
+    "Parlez-nous de votre projet."
+  ],
+  "Déjanos los detalles y prepara tu consulta para nuestro equipo.": [
+    "Share the details and prepare your inquiry for our team.",
+    "Donnez-nous les détails et préparez votre demande pour notre équipe."
+  ],
+  "Nombre": [
+    "First name",
+    "Prénom"
+  ],
+  "Apellido": [
+    "Last name",
+    "Nom"
+  ],
+  "Obligatorio": [
+    "Required",
+    "Obligatoire"
+  ],
+  "Tu nombre": [
+    "Your first name",
+    "Votre prénom"
+  ],
+  "Tu apellido": [
+    "Your last name",
+    "Votre nom"
+  ],
+  "Correo electrónico": [
+    "Email address",
+    "Adresse e-mail"
+  ],
+  "tu@correo.com": [
+    "you@example.com",
+    "vous@exemple.com"
+  ],
+  "¿Qué te gustaría vivir?": [
+    "What would you like to experience?",
+    "Que souhaitez-vous vivre ?"
+  ],
+  "Destino, fecha aproximada, cuántas personas viajan… Cuéntanos lo que tienes en mente.": [
+    "Destination, approximate date, number of travelers… Tell us what you have in mind.",
+    "Destination, date approximative, nombre de voyageurs… Parlez-nous de vos envies."
+  ],
+  "Preparar correo": [
+    "Prepare email",
+    "Préparer l’e-mail"
+  ],
+  "Copiar mensaje": [
+    "Copy message",
+    "Copier le message"
+  ],
+  "Abriremos tu aplicación de correo con la consulta preparada. El envío se confirma allí. También puedes escribirnos por": [
+    "We will open your email app with your inquiry ready. Confirm sending there. You can also contact us on",
+    "Nous ouvrirons votre messagerie avec votre demande préparée. Confirmez l’envoi dans celle-ci. Vous pouvez aussi nous écrire sur"
+  ],
+  "Mensaje preparado para copiar": [
+    "Message ready to copy",
+    "Message prêt à copier"
+  ],
+  "Elige cómo encontrarnos": [
+    "Choose how to reach us",
+    "Choisissez comment nous contacter"
+  ],
+  "Siempre hay una forma de conectar.": [
+    "There is always a way to connect.",
+    "Il y a toujours un moyen de se retrouver."
+  ],
+  "Visítanos": [
+    "Visit us",
+    "Venez nous voir"
+  ],
+  "Ver ubicación": [
+    "View location",
+    "Voir l’emplacement"
+  ],
+  "Conversemos": [
+    "Let's talk",
+    "Parlons ensemble"
+  ],
+  "Consulta antes de tu visita.": [
+    "Contact us before your visit.",
+    "Contactez-nous avant votre visite."
+  ],
+  "Escríbenos": [
+    "Write to us",
+    "Écrivez-nous"
+  ],
+  "Tu próxima historia puede empezar aquí.": [
+    "Your next story could start here.",
+    "Votre prochaine histoire peut commencer ici."
+  ],
+  "Nos vemos en Ica": [
+    "See you in Ica",
+    "Rendez-vous à Ica"
+  ],
+  "Más cerca de tu": [
+    "Closer to your",
+    "Plus près de votre"
+  ],
+  "próxima aventura.": [
+    "next adventure.",
+    "prochaine aventure."
+  ],
+  "Explora la ubicación en el mapa y consulta con el equipo antes de organizar tu visita.": [
+    "Explore the location on the map and contact the team before planning your visit.",
+    "Explorez l’emplacement sur la carte et contactez notre équipe avant de planifier votre visite."
+  ],
+  "Abrir mapa de Ica": [
+    "Open map of Ica",
+    "Ouvrir la carte d’Ica"
+  ],
+  "Mapa de Ica": [
+    "Map of Ica",
+    "Carte d’Ica"
+  ],
+  "Tu consulta está preparada. Confirma el envío en tu aplicación de correo. Si no se abre, utiliza Copiar mensaje.": [
+    "Your inquiry is ready. Confirm sending in your email app. If it does not open, use Copy message.",
+    "Votre demande est prête. Confirmez l’envoi dans votre messagerie. Si elle ne s’ouvre pas, utilisez Copier le message."
+  ],
+  "Mensaje copiado. Pégalo en tu correo o en WhatsApp para enviarlo.": [
+    "Message copied. Paste it into your email or WhatsApp to send it.",
+    "Message copié. Collez-le dans votre messagerie ou dans WhatsApp pour l’envoyer."
+  ],
+  "Seleccionamos el mensaje para que puedas copiarlo manualmente.": [
+    "We selected the message so you can copy it manually.",
+    "Nous avons sélectionné le message pour que vous puissiez le copier manuellement."
+  ],
+  "Consulta de viaje · IcaTurismo": [
+    "Travel inquiry · IcaTurismo",
+    "Demande de voyage · IcaTurismo"
+  ],
+  "Hola, IcaTurismo:": [
+    "Hello, IcaTurismo:",
+    "Bonjour, IcaTurismo :"
+  ],
+  "Correo:": [
+    "Email:",
+    "E-mail :"
+  ],
+  "IcaTurismo en Facebook (abre otra pestaña)": [
+    "IcaTurismo on Facebook (opens a new tab)",
+    "IcaTurismo sur Facebook (ouvre un nouvel onglet)"
+  ],
+  "IcaTurismo en Instagram (abre otra pestaña)": [
+    "IcaTurismo on Instagram (opens a new tab)",
+    "IcaTurismo sur Instagram (ouvre un nouvel onglet)"
+  ],
+  "IcaTurismo en YouTube (abre otra pestaña)": [
+    "IcaTurismo on YouTube (opens a new tab)",
+    "IcaTurismo sur YouTube (ouvre un nouvel onglet)"
+  ],
+  "IcaTurismo en WhatsApp (abre otra pestaña)": [
+    "IcaTurismo on WhatsApp (opens a new tab)",
+    "IcaTurismo sur WhatsApp (ouvre un nouvel onglet)"
+  ]
+});

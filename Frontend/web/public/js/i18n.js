@@ -4,7 +4,7 @@
 // (html/*.html) y los mensajes que generan los scripts (Script.js,
 // reviews.js, perfil.js, auth.js, alert(), etc.).
 //
-//  - Idioma: prefijo de la URL (/en/) > localStorage 'icat_lang' > navegador.
+//  - Idioma: elección explícita en la URL o guardada; español por defecto.
 //  - Diccionario: js/i18n-dict.js  (clave = texto original en español).
 //  - Si el idioma es español no hace nada.
 //  - Para agregar un texto nuevo: añade su línea en i18n-dict.js
@@ -14,7 +14,7 @@
   'use strict';
 
   var SUPPORTED = ['es', 'en', 'fr'];
-  var STORAGE_KEY = 'icat_lang';
+  var STORAGE_KEY = 'icat_lang_manual';
   var DATE_LOCALES = { en: 'en-US', fr: 'fr-FR' };
 
   function readStored() {
@@ -23,22 +23,11 @@
   function writeStored(lang) {
     try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
   }
-  function fromBrowser() {
-    var prefs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'es'];
-    for (var i = 0; i < prefs.length; i++) {
-      var code = String(prefs[i]).slice(0, 2).toLowerCase();
-      if (SUPPORTED.indexOf(code) !== -1) return code;
-    }
-    return 'es';
-  }
-
   var m = location.pathname.match(/^\/(es|en|fr)(\/|$)/);
-  var lang = (m && m[1]) || null;
-  if (!lang) {
-    var s = readStored();
-    lang = SUPPORTED.indexOf(s) !== -1 ? s : fromBrowser();
-  }
-  writeStored(lang);
+  var selected = new URLSearchParams(location.search).get('lang');
+  var stored = readStored();
+  var lang = (m && m[1]) || (SUPPORTED.indexOf(selected) !== -1 ? selected :
+    (SUPPORTED.indexOf(stored) !== -1 ? stored : 'es'));
   document.documentElement.lang = lang;
 
   var dict = window.ICAT_DICT || {};
@@ -75,7 +64,9 @@
     if (/^\/(es|en|fr)(\/|$)/.test(location.pathname)) {
       location.href = '/' + code + '/' + location.hash;
     } else {
-      location.reload();
+      var target = new URL(location.href);
+      target.searchParams.set('lang', code);
+      location.href = target.href;
     }
   }
 

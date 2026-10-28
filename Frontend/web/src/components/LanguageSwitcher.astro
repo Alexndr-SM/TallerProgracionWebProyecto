@@ -81,7 +81,7 @@ const { locale, currentPath } = Astro.props;
     // Recordar el idioma elegido (lo usa la redirección de "/")
     picker.querySelectorAll('[data-locale]').forEach(function (a) {
       a.addEventListener('click', function () {
-        try { localStorage.setItem('icat_lang', a.getAttribute('data-locale')); } catch (e) {}
+        try { localStorage.setItem('icat_lang_manual', a.getAttribute('data-locale')); } catch (e) {}
       });
     });
   })();

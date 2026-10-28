@@ -3,6 +3,11 @@
 // Interacciones de la página principal (index.html)
 // =========================================================
 
+// Guardar la ruta mientras este script se está ejecutando.
+const icatScriptUrl = document.currentScript?.src ||
+  Array.from(document.scripts).find(script => /(?:^|\/)js\/Script\.js(?:[?#]|$)/.test(script.getAttribute('src') || ''))?.src ||
+  new URL('js/Script.js', document.baseURI).href;
+
 // Espera a que el HTML esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
   const defaultAvatarUrl = 'https://res.cloudinary.com/plhejhea/image/upload/v1792620223/Person.svg';
@@ -10,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let navUser = document.getElementById('navUser');
 
   if (headerActions && !navUser) {
-    const scriptUrl = document.querySelector('script[src$="/js/Script.js"]')?.src;
+    const scriptUrl = icatScriptUrl;
     if (!scriptUrl) throw new Error('No se pudo determinar la ruta del menú de cuenta.');
 
     const accountUrl = (file) => new URL(`../html/${file}`, scriptUrl).href;
@@ -50,20 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const languageAnchor = navUser || headerActions?.querySelector('.theme-toggle');
 
-  if (headerActions && languageAnchor) {
+  if (headerActions && languageAnchor && !headerActions.querySelector('.language-picker')) {
+    const scriptUrl = icatScriptUrl;
     const languages = [
-      {
-        label: 'English (United States)',
-        flag: 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg?utm_source=es.wikipedia.org&utm_campaign=index&utm_content=original'
-      },
-      {
-        label: 'Español (Perú)',
-        flag: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Flag_of_Peru_%281884%E2%80%931950%29.svg/960px-Flag_of_Peru_%281884%E2%80%931950%29.svg.png?utm_source=es.wikipedia.org&utm_campaign=index&utm_content=thumbnail'
-      },
-      {
-        label: 'Français (France)',
-        flag: 'https://www.divinachartermenorca.com/static/img/flags/flag_fr.png?r=455ec45755e6a5c39749b27e97794789872cad68'
-      }
+      { code: 'en', label: 'English (United States)', flag: '/assets/flags/en.svg' },
+      { code: 'es', label: 'Español (Perú)', flag: '/assets/flags/es.svg' },
+      { code: 'fr', label: 'Français (France)', flag: '/assets/flags/fr.svg' }
     ];
     const languagePicker = document.createElement('div');
     languagePicker.className = 'language-picker';
@@ -83,20 +80,27 @@ document.addEventListener('DOMContentLoaded', () => {
     languageOptions.setAttribute('role', 'group');
     languageOptions.setAttribute('aria-label', 'Opciones de idioma');
 
-    languages.forEach(({ label, flag }) => {
+    languages.forEach(({ code, label, flag }) => {
       const option = document.createElement('button');
       option.type = 'button';
       option.className = 'language-option';
       option.setAttribute('aria-label', label);
       option.title = label;
+      option.lang = code;
+      option.setAttribute('translate', 'no');
+      option.dataset.locale = code;
 
       const image = document.createElement('img');
-      image.src = flag;
+      image.src = new URL('../' + flag.replace(/^\//, ''), scriptUrl).href;
       image.alt = '';
       image.loading = 'lazy';
 
       option.appendChild(image);
-      option.addEventListener('click', () => closeLanguageOptions());
+      if (window.ICAT_I18N && window.ICAT_I18N.lang === code) option.setAttribute('aria-current', 'true');
+      option.addEventListener('click', () => {
+        closeLanguageOptions();
+        if (window.ICAT_I18N) window.ICAT_I18N.setLang(code);
+      });
       languageOptions.appendChild(option);
     });
 
