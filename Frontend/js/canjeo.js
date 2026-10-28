@@ -1,6 +1,7 @@
 (function () {
   'use strict';
   const pointsElement = document.getElementById('rewardsPoints');
+  const balance = pointsElement.closest('.rewards-balance');
   const notice = document.getElementById('rewardsNotice');
   const login = document.getElementById('rewardsLogin');
   const grid = document.getElementById('rewardsGrid');
@@ -122,6 +123,9 @@
     ]);
     if (accountResult.status === 'fulfilled') {
       pointsElement.textContent = number(accountResult.value.puntos_actuales);
+      document.dispatchEvent(new CustomEvent('icat:points-updated', {
+        detail: { points: accountResult.value.puntos_actuales },
+      }));
     }
     if (catalogResult.status === 'rejected') throw catalogResult.reason;
     const catalog = catalogResult.value;
@@ -161,6 +165,7 @@
   }
 
   if (!Auth.isLoggedIn()) {
+    balance.hidden = true;
     login.hidden = false;
     grid.hidden = true;
     redemptions.hidden = true;

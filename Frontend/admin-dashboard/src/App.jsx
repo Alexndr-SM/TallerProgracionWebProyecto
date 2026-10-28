@@ -14,12 +14,14 @@ import {
   Menu,
   Package,
   Plus,
+  Pencil,
   RefreshCw,
   Search,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
   Users,
+  Trash2,
   X,
 } from 'lucide-react'
 import './App.css'
@@ -202,8 +204,9 @@ function PointsPage({ customers }) {
   </>
 }
 
-function RewardsPage({ rewards, onCreate, onToggle, onUpload, loading }) {
+function RewardsPage({ rewards, onCreate, onUpdate, onDelete, onToggle, onUpload, loading }) {
   const [form, setForm] = useState({ nombre: '', descripcion: '', tipo: 'producto', puntos: '', stock: '', imagen_url: '' })
+  const [editingReward, setEditingReward] = useState(null)
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
@@ -212,17 +215,47 @@ function RewardsPage({ rewards, onCreate, onToggle, onUpload, loading }) {
     event.preventDefault()
     setSaving(true)
     setError('')
-    const saved = await onCreate({
+    const data = {
       ...form,
       puntos: Number(form.puntos),
       stock: form.stock === '' ? null : Number(form.stock),
-    })
+    }
+    const saved = editingReward
+      ? await onUpdate(editingReward.id, { ...data, activo: editingReward.activo })
+      : await onCreate(data)
     if (saved) {
       setForm({ nombre: '', descripcion: '', tipo: 'producto', puntos: '', stock: '', imagen_url: '' })
+      setEditingReward(null)
       setError('')
       document.getElementById('reward-create-dialog')?.close()
     }
     setSaving(false)
+  }
+
+  function openCreate() {
+    setEditingReward(null)
+    setForm({ nombre: '', descripcion: '', tipo: 'producto', puntos: '', stock: '', imagen_url: '' })
+    setError('')
+    document.getElementById('reward-create-dialog')?.showModal()
+  }
+
+  function openEdit(reward) {
+    setEditingReward(reward)
+    setForm({
+      nombre: reward.nombre,
+      descripcion: reward.descripcion || '',
+      tipo: reward.tipo,
+      puntos: String(reward.puntos),
+      stock: reward.stock === null ? '' : String(reward.stock),
+      imagen_url: reward.imagen_url || '',
+    })
+    setError('')
+    document.getElementById('reward-create-dialog')?.showModal()
+  }
+
+  async function removeReward(reward) {
+    if (!window.confirm(`¿Eliminar «${reward.nombre}» del catálogo? Los canjes ya efectuados conservarán sus datos históricos.`)) return
+    await onDelete(reward)
   }
 
   async function selectImage(event) {
@@ -246,11 +279,11 @@ function RewardsPage({ rewards, onCreate, onToggle, onUpload, loading }) {
   }
 
   return <>
-    <SectionHeading eyebrow="Fidelización" title="Catálogo de canje" description="Crea productos, promociones y descuentos para que tus clientes los canjeen con sus puntos." action={<button className="button button--primary" type="button" onClick={() => { setError(''); setForm({ nombre: '', descripcion: '', tipo: 'producto', puntos: '', stock: '', imagen_url: '' }); document.getElementById('reward-create-dialog')?.showModal() }}><Plus size={16} /> Agregar beneficio</button>} />
+    <SectionHeading eyebrow="Fidelización" title="Catálogo de canje" description="Crea, actualiza y elimina productos, promociones y descuentos para tus clientes." action={<button className="button button--primary" type="button" onClick={openCreate}><Plus size={16} /> Agregar beneficio</button>} />
     <dialog id="reward-create-dialog" className="modal reward-create-dialog" onClose={() => setError('')}>
       <form className="reward-admin-form" onSubmit={submit}>
-        <div className="modal-heading"><div><span className="eyebrow">Catálogo de canje</span><h2>Agregar un beneficio</h2></div><button className="icon-button" type="button" aria-label="Cerrar" onClick={() => document.getElementById('reward-create-dialog')?.close()}><X size={18} /></button></div>
-        <p className="modal-description">El beneficio se publicará en la página de canje cuando lo guardes.</p>
+        <div className="modal-heading"><div><span className="eyebrow">Catálogo de canje</span><h2>{editingReward ? 'Editar beneficio' : 'Agregar un beneficio'}</h2></div><button className="icon-button" type="button" aria-label="Cerrar" onClick={() => document.getElementById('reward-create-dialog')?.close()}><X size={18} /></button></div>
+        <p className="modal-description">{editingReward ? 'Los cambios se aplicarán al beneficio en el catálogo.' : 'El beneficio se publicará en la página de canje cuando lo guardes.'}</p>
         <label className="field-label">Nombre del beneficio<input required maxLength="180" value={form.nombre} onChange={(event) => setForm({ ...form, nombre: event.target.value })} placeholder="Ej. Botella reutilizable IcaTurismo" /></label>
         <label className="field-label">Tipo<select value={form.tipo} onChange={(event) => setForm({ ...form, tipo: event.target.value })}><option value="producto">Producto</option><option value="promocion">Promoción</option><option value="descuento">Descuento</option></select></label>
         <label className="field-label">Costo en puntos<input required type="number" min="1" max="10000000" step="1" value={form.puntos} onChange={(event) => setForm({ ...form, puntos: event.target.value })} /></label>
@@ -258,13 +291,13 @@ function RewardsPage({ rewards, onCreate, onToggle, onUpload, loading }) {
         <label className="field-label reward-admin-description">Descripción<textarea maxLength="1000" rows="3" value={form.descripcion} onChange={(event) => setForm({ ...form, descripcion: event.target.value })} placeholder="Describe qué incluye este beneficio." /></label>
         <div className="field-label reward-admin-description"><span>Imagen del beneficio</span><label className="reward-image-picker"><ImagePlus size={17} />{uploading ? 'Subiendo a Cloudinary…' : form.imagen_url ? 'Cambiar imagen' : 'Elegir imagen del dispositivo'}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={selectImage} disabled={uploading || saving} /></label><small>JPEG, PNG o WebP · máximo 5 MB. Se guarda automáticamente en Cloudinary.</small>{form.imagen_url && <img className="reward-image-preview" src={form.imagen_url} alt="Vista previa del beneficio" />}</div>
         {error && <p className="form-error reward-admin-description" role="alert">{error}</p>}
-        <div className="modal-actions reward-admin-description"><button className="button button--quiet" type="button" disabled={saving || uploading} onClick={() => document.getElementById('reward-create-dialog')?.close()}>Cancelar</button><button className="button button--primary" type="submit" disabled={saving || uploading}><Plus size={16} />{saving ? 'Guardando…' : 'Guardar beneficio'}</button></div>
+        <div className="modal-actions reward-admin-description"><button className="button button--quiet" type="button" disabled={saving || uploading} onClick={() => document.getElementById('reward-create-dialog')?.close()}>Cancelar</button><button className="button button--primary" type="submit" disabled={saving || uploading}>{editingReward ? <Check size={16} /> : <Plus size={16} />}{saving ? 'Guardando…' : editingReward ? 'Actualizar beneficio' : 'Guardar beneficio'}</button></div>
       </form>
     </dialog>
     <section className="panel table-panel reward-admin-list">
       <div className="table-toolbar"><div><h2>Beneficios del catálogo</h2><span>{rewards.length} registrados</span></div></div>
-      <div className="table-scroll"><table><thead><tr><th>Beneficio</th><th>Tipo</th><th>Costo</th><th>Stock</th><th>Estado</th><th>Acción</th></tr></thead><tbody>
-        {rewards.map((reward) => <tr key={reward.id}><td><div className="table-person"><div><strong>{reward.nombre}</strong><small>{reward.descripcion || 'Sin descripción'}</small></div></div></td><td>{({ producto: 'Producto', promocion: 'Promoción', descuento: 'Descuento' })[reward.tipo]}</td><td className="table-strong">{Number(reward.puntos).toLocaleString('es-PE')} pts</td><td>{reward.stock === null ? 'Ilimitado' : reward.stock}</td><td><span className={`status status--${reward.activo ? 'activo' : 'inactivo'}`}>{reward.activo ? 'Activo' : 'Inactivo'}</span></td><td><button className="button button--quiet" type="button" onClick={() => onToggle(reward)}>{reward.activo ? 'Desactivar' : 'Activar'}</button></td></tr>)}
+      <div className="table-scroll"><table><thead><tr><th>Beneficio</th><th>Tipo</th><th>Costo</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+        {rewards.map((reward) => <tr key={reward.id}><td><div className="table-person"><div><strong>{reward.nombre}</strong><small>{reward.descripcion || 'Sin descripción'}</small></div></div></td><td>{({ producto: 'Producto', promocion: 'Promoción', descuento: 'Descuento' })[reward.tipo]}</td><td className="table-strong">{Number(reward.puntos).toLocaleString('es-PE')} pts</td><td>{reward.stock === null ? 'Ilimitado' : reward.stock}</td><td><span className={`status status--${reward.activo ? 'activo' : 'inactivo'}`}>{reward.activo ? 'Activo' : 'Inactivo'}</span></td><td><div className="table-filters"><button className="button button--quiet" type="button" onClick={() => openEdit(reward)} aria-label={`Editar ${reward.nombre}`}><Pencil size={14} /> Editar</button><button className="button button--quiet" type="button" onClick={() => onToggle(reward)}>{reward.activo ? 'Desactivar' : 'Activar'}</button><button className="button button--quiet" type="button" onClick={() => removeReward(reward)} aria-label={`Eliminar ${reward.nombre}`}><Trash2 size={14} /> Eliminar</button></div></td></tr>)}
       </tbody></table>{!loading && rewards.length === 0 && <p className="empty-state">Todavía no hay beneficios. Agrega el primero desde el formulario.</p>}</div>
     </section>
   </>
@@ -325,7 +358,7 @@ export default function App({ user }) {
   const visibleNav = navGroups.map((group) => ({ ...group, items: group.items.filter((item) => {
     if (['destinos', 'productos', 'medios'].includes(item.id)) return canManageCatalog
     if (item.id === 'equipo') return isAdmin
-    if (item.id === 'recompensas') return isAdmin
+    if (item.id === 'recompensas') return canManageCatalog
     return !isEditor
   }) })).filter((group) => group.items.length)
   const currentNav = navGroups.flatMap((group) => group.items).find((item) => item.id === activePage)
@@ -355,7 +388,7 @@ export default function App({ user }) {
         { name: 'Clientes', request: () => loadAdminResource('/clientes', { signal: controller.signal }), apply: (result) => setCustomers(result.customers || []) },
       ] : []),
       ...(isAdmin ? [{ name: 'Equipo', request: () => loadAdminResource('/empleados', { signal: controller.signal }), apply: (result) => setEmployees(result.employees || []) }] : []),
-      ...(isAdmin ? [{ name: 'Beneficios', request: () => loadAdminResource('/recompensas', { signal: controller.signal }), apply: (result) => setRewards(result.recompensas || []) }] : []),
+      ...(canManageCatalog ? [{ name: 'Beneficios', request: () => loadAdminResource('/recompensas', { signal: controller.signal }), apply: (result) => setRewards(result.recompensas || []) }] : []),
       ...(canManageCatalog ? [
         { name: 'Promociones', request: () => loadAdminResource('/promociones', { signal: controller.signal }), apply: (result) => setProducts((result.promotions || []).map((product) => ({ id: product.id, name: product.nombre, description: product.descripcion, category: product.categoria, price: Number(product.precio), active: product.activo }))) },
         { name: 'Destinos', request: () => cmsRequest('/destinos', { signal: controller.signal }), apply: (result) => setDestinations(result.destinos || []) },
@@ -416,6 +449,28 @@ export default function App({ user }) {
     }
   }, [])
 
+  const updateReward = useCallback(async (id, data) => {
+    try {
+      const result = await updateAdminResource(`/recompensas/${id}`, data)
+      setRewards((current) => current.map((item) => item.id === id ? result.recompensa : item))
+      setNotice('Beneficio actualizado.')
+      return true
+    } catch (error) {
+      setNotice(error.message)
+      return false
+    }
+  }, [])
+
+  const deleteReward = useCallback(async (reward) => {
+    try {
+      await updateAdminResource(`/recompensas/${reward.id}`, {}, 'DELETE')
+      setRewards((current) => current.filter((item) => item.id !== reward.id))
+      setNotice('Beneficio eliminado del catálogo. El historial de canjes se conserva.')
+    } catch (error) {
+      setNotice(error.message)
+    }
+  }, [])
+
   const uploadRewardImage = useCallback(async (file) => {
     const formData = new FormData()
     formData.append('imagenes', file)
@@ -437,14 +492,14 @@ export default function App({ user }) {
   const pageContent = useMemo(() => {
     const changePage = navigate
     if (activePage === 'medios' && canManageCatalog) return <MediaLibrary />
-    if (activePage === 'recompensas' && isAdmin) return <RewardsPage rewards={rewards} onCreate={createReward} onToggle={toggleReward} onUpload={uploadRewardImage} loading={dashboardLoading} />
+    if (activePage === 'recompensas' && canManageCatalog) return <RewardsPage rewards={rewards} onCreate={createReward} onUpdate={updateReward} onDelete={deleteReward} onToggle={toggleReward} onUpload={uploadRewardImage} loading={dashboardLoading} />
     if (['destinos', 'productos'].includes(activePage) && canManageCatalog) return <CmsPanel key={`${activePage}-${navigationVersion}`} initialQuery={navigationTarget.query || ''} initialDestination={navigationTarget.destino_id || ''} kind={activePage === 'destinos' ? 'destinos' : 'promociones'} onCatalogChange={(rows) => setProducts(rows.map((record) => ({ id: record.id, name: record.nombre, description: record.descripcion, category: record.categoria, price: Number(record.precio), active: record.activo })))} />
     if (activePage === 'pedidos') return <OrdersPage key={`orders-${navigationVersion}`} reservations={reservations} initialTarget={navigationTarget} onRefresh={refresh} onClear={() => navigate('pedidos')} />
     if (activePage === 'clientes') return <CustomersPage key={`customers-${navigationVersion}`} initialQuery={navigationTarget.query || ''} customers={customers} onNavigate={changePage} onStatusChange={changeCustomerStatus} onPointsChange={changeCustomerPoints} canManage={isAdmin} loading={dashboardLoading} />
     if (activePage === 'equipo') return <EmployeesPage employees={employees} onAdd={() => setEmployeeModal(true)} onUpdate={changeEmployee} currentUserId={user?.id} loading={dashboardLoading} />
     if (activePage === 'puntos') return <PointsPage customers={customers} />
     return <AdminDashboard user={user} products={products} onNavigate={changePage} period={period} setPeriod={setPeriod} summary={summary} reservations={reservations} loading={dashboardLoading} error={dashboardError} refreshVersion={refreshVersion} onRefresh={refresh} />
-  }, [activePage, canManageCatalog, createReward, customers, dashboardError, dashboardLoading, employees, isAdmin, period, products, rewards, reservations, summary, toggleReward, uploadRewardImage, user, navigationTarget, navigationVersion, navigate, refresh, refreshVersion])
+  }, [activePage, canManageCatalog, createReward, customers, dashboardError, dashboardLoading, deleteReward, employees, isAdmin, period, products, rewards, reservations, summary, toggleReward, updateReward, uploadRewardImage, user, navigationTarget, navigationVersion, navigate, refresh, refreshVersion])
 
   async function saveEmployee(data) {
     try {

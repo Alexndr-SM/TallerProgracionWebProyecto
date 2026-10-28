@@ -4,8 +4,11 @@
 .rewards-eyebrow { color: #bcdfcf; font: 600 .72rem/1.4 Inter, sans-serif; letter-spacing: .16em; }
 .rewards-hero h1 { position: relative; z-index: 1; margin: 1.2rem 0 .8rem; font: 500 clamp(2.7rem, 6vw, 5rem)/.98 'Cormorant Garamond', serif; }
 .rewards-hero > p { max-width: 470px; margin: 0; color: rgb(255 255 255 / 82%); font: 400 .96rem/1.7 Inter, sans-serif; }
-.rewards-balance { position: relative; z-index: 1; display: inline-flex; align-items: baseline; gap: .55rem; margin-top: 2rem; padding: .85rem 1.15rem; border: 1px solid rgb(255 255 255 / 28%); border-radius: 12px; background: rgb(255 255 255 / 10%); backdrop-filter: blur(8px); font: 500 .85rem Inter, sans-serif; }
-.rewards-balance strong { color: #d3efb6; font-size: 1.6rem; }
+.rewards-hero .rewards-balance { position: relative; top: auto; left: auto; right: auto; bottom: auto; z-index: 1; margin-top: 2rem; }
+.rewards-hero .rewards-balance.is-floating { position: fixed; top: auto; right: auto; bottom: max(1rem, env(safe-area-inset-bottom)); left: max(1rem, env(safe-area-inset-left)); z-index: 210; margin: 0; }
+.rewards-balance[hidden] { display: none; }
+.rewards-balance strong { color: #d3efb6; font-size: 1.15rem; }
+.rewards-balance:hover { color: #fff; text-decoration: none; }
 .rewards-content, .redemptions-content { width: min(1120px, calc(100% - 3rem)); margin: 0 auto; padding: 4.5rem 0; }
 .rewards-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.5rem; }
 .rewards-section-heading h2 { margin: .35rem 0 0; font: 500 clamp(2rem, 4vw, 3rem)/1.05 'Cormorant Garamond', serif; }

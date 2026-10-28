@@ -136,7 +136,8 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
   await t.test('administra beneficios y canjea puntos de forma protegida', sqlOptions, async () => {
     assert.equal((await request('/api/canjeos')).status, 401);
     assert.equal((await request('/api/admin/recompensas', 'GET', undefined, 2)).status, 403);
-    assert.equal((await request('/api/admin/recompensas', 'POST', {}, 3)).status, 403);
+    assert.equal((await request('/api/admin/recompensas', 'GET', undefined, 3)).status, 200);
+    assert.equal((await request('/api/admin/recompensas', 'POST', {}, 3)).status, 400);
     assert.equal((await request('/api/admin/recompensas', 'POST', undefined, 1)).status, 400);
     const catalog = await request('/api/canjeos', 'GET', undefined, 2);
     assert.equal(catalog.status, 200);
@@ -192,16 +193,33 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
     assert.equal((await request(`/api/canjeos/${expensive.data.recompensa.id}/canjear`, 'POST', {}, 2)).status, 409);
     assert.equal((await request('/api/canjeos', 'GET', undefined, 2)).data.puntos, 100);
     assert.equal((await request(`/api/admin/recompensas/${rewardId}`, 'PATCH', { activo: false }, 1)).status, 200);
+    const editorReward = await request('/api/admin/recompensas', 'POST', {
+      nombre: 'Beneficio de editor', descripcion: 'Creado por un editor.', tipo: 'descuento', puntos: 80,
+    }, 3);
+    assert.equal(editorReward.status, 201);
+    const editorRewardId = editorReward.data.recompensa.id;
+    const updatedByEditor = await request(`/api/admin/recompensas/${editorRewardId}`, 'PATCH', {
+      nombre: 'Beneficio editado', descripcion: 'Actualizado por un editor.', tipo: 'promocion',
+      puntos: 90, stock: 5, imagen_url: '', activo: true,
+    }, 3);
+    assert.equal(updatedByEditor.status, 200);
+    assert.equal(updatedByEditor.data.recompensa.nombre, 'Beneficio editado');
+    assert.equal(updatedByEditor.data.recompensa.puntos, 90);
+    assert.equal((await request(`/api/admin/recompensas/${editorRewardId}`, 'DELETE', undefined, 3)).status, 200);
+    assert.equal((await request(`/api/admin/recompensas/${editorRewardId}`, 'DELETE', undefined, 3)).status, 404);
   });
   await t.test('las escrituras del CMS solo aceptan admin y editor', async () => {
     const endpoints = [
       ['/api/destinos', 'POST'], ['/api/destinos/1', 'PUT'], ['/api/destinos/1', 'DELETE'],
       ['/api/promociones', 'POST'], ['/api/promociones/1', 'PUT'], ['/api/promociones/1', 'DELETE'],
       ['/api/admin/promociones', 'POST'], ['/api/admin/promociones/1', 'PATCH'], ['/api/uploads', 'POST'],
+      ['/api/admin/recompensas', 'GET'], ['/api/admin/recompensas', 'POST'],
+      ['/api/admin/recompensas/1', 'PATCH'], ['/api/admin/recompensas/1', 'DELETE'],
     ];
     for (const [url, method] of endpoints) {
-      assert.equal((await request(url, method, {})).status, 401, `${method} ${url}`);
-      for (const user of [2, 5, 6]) assert.equal((await request(url, method, {}, user)).status, 403);
+      const body = method === 'GET' ? undefined : {};
+      assert.equal((await request(url, method, body)).status, 401, `${method} ${url}`);
+      for (const user of [2, 5, 6]) assert.equal((await request(url, method, body, user)).status, 403);
     }
     assert.equal((await request('/api/destinos', 'POST', {}, 4)).status, 401);
     assert.equal(uploadCount, 0);

@@ -24,8 +24,9 @@ router.get('/promociones', requireRole('admin', 'editor'), cmsPromotions.listAdm
 router.get('/medios', requireRole('admin', 'editor'), getMedia);
 router.post('/promociones', requireRole('admin', 'editor'), controller.createPromotion);
 router.patch('/promociones/:id', requireRole('admin', 'editor'), controller.updatePromotion);
-router.get('/recompensas', requireRole('admin'), rewards.listAdminRewards);
-router.post('/recompensas', requireRole('admin'), rewards.createReward);
-router.patch('/recompensas/:id', requireRole('admin'), rewards.updateReward);
+router.get('/recompensas', requireRole('admin', 'editor'), rewards.listAdminRewards);
+router.post('/recompensas', requireRole('admin', 'editor'), rewards.createReward);
+router.patch('/recompensas/:id', requireRole('admin', 'editor'), rewards.updateReward);
+router.delete('/recompensas/:id', requireRole('admin', 'editor'), rewards.deleteReward);
 
 module.exports = router;

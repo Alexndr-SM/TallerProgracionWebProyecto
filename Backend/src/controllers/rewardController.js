@@ -99,36 +99,15 @@ async function listAdminRewards(_req, res) {
 }
 
 async function createReward(req, res) {
-  const body = req.body || {};
-  const name = typeof body.nombre === 'string' ? body.nombre.trim() : '';
-  const description = typeof body.descripcion === 'string' ? body.descripcion.trim() : '';
-  const type = body.tipo;
-  const points = Number(body.puntos);
-  const rawStock = body.stock;
-  const stock = rawStock === '' || rawStock === null || rawStock === undefined ? null : Number(rawStock);
-  const imageUrl = typeof body.imagen_url === 'string' ? body.imagen_url.trim() : '';
-  if (!name || name.length > 180 || description.length > 1000) {
-    return res.status(400).json({ ok: false, message: 'Ingresa un nombre y una descripción válida para el beneficio.' });
-  }
-  if (!REWARD_TYPES.includes(type) || !Number.isSafeInteger(points) || points < 1 || points > 10000000) {
-    return res.status(400).json({ ok: false, message: 'Selecciona un tipo de beneficio y un costo válido en puntos.' });
-  }
-  if (stock !== null && (!Number.isSafeInteger(stock) || stock < 0 || stock > 10000000)) {
-    return res.status(400).json({ ok: false, message: 'El stock debe ser un entero positivo o dejarse vacío para ilimitado.' });
-  }
-  if (imageUrl) {
-    try {
-      if (new URL(imageUrl).protocol !== 'https:') throw new Error('URL inválida');
-    } catch {
-      return res.status(400).json({ ok: false, message: 'La imagen debe utilizar una URL HTTPS válida.' });
-    }
-  }
+  const parsed = parseReward(req.body);
+  if (parsed.error) return res.status(400).json({ ok: false, message: parsed.error });
 
   try {
     const result = await query(
       `INSERT INTO recompensas (nombre, descripcion, tipo, puntos, imagen_url, stock)
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [name, description, type, points, imageUrl, stock]
+      [parsed.reward.nombre, parsed.reward.descripcion, parsed.reward.tipo, parsed.reward.puntos,
+        parsed.reward.imagen_url, parsed.reward.stock]
     );
     return res.status(201).json({ ok: true, recompensa: result.rows[0] });
   } catch (error) {
@@ -139,15 +118,30 @@ async function createReward(req, res) {
 
 async function updateReward(req, res) {
   const rewardId = Number(req.params.id);
-  const active = req.body?.activo;
-  if (!Number.isInteger(rewardId) || rewardId < 1 || typeof active !== 'boolean') {
-    return res.status(400).json({ ok: false, message: 'Indica un beneficio válido y su estado activo o inactivo.' });
+  if (!Number.isInteger(rewardId) || rewardId < 1) {
+    return res.status(400).json({ ok: false, message: 'El identificador del beneficio no es válido.' });
   }
+  const body = req.body || {};
+  const activeOnly = Object.keys(body).length === 1 && typeof body.activo === 'boolean';
   try {
-    const result = await query(
-      'UPDATE recompensas SET activo = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
-      [active, rewardId]
-    );
+    let result;
+    if (activeOnly) {
+      result = await query(
+        'UPDATE recompensas SET activo = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+        [body.activo, rewardId]
+      );
+    } else {
+      const parsed = parseReward(body);
+      if (parsed.error) return res.status(400).json({ ok: false, message: parsed.error });
+      result = await query(
+        `UPDATE recompensas
+         SET nombre = $1, descripcion = $2, tipo = $3, puntos = $4, imagen_url = $5,
+             stock = $6, activo = $7, updated_at = NOW()
+         WHERE id = $8 RETURNING *`,
+        [parsed.reward.nombre, parsed.reward.descripcion, parsed.reward.tipo, parsed.reward.puntos,
+          parsed.reward.imagen_url, parsed.reward.stock, body.activo !== false, rewardId]
+      );
+    }
     if (!result.rowCount) return res.status(404).json({ ok: false, message: 'No se encontró el beneficio.' });
     return res.json({ ok: true, recompensa: result.rows[0] });
   } catch (error) {
@@ -156,4 +150,47 @@ async function updateReward(req, res) {
   }
 }
 
-module.exports = { listRewards, redeemReward, listAdminRewards, createReward, updateReward };
+async function deleteReward(req, res) {
+  const rewardId = Number(req.params.id);
+  if (!Number.isInteger(rewardId) || rewardId < 1) {
+    return res.status(400).json({ ok: false, message: 'El identificador del beneficio no es válido.' });
+  }
+  try {
+    const result = await query('DELETE FROM recompensas WHERE id = $1 RETURNING id', [rewardId]);
+    if (!result.rowCount) return res.status(404).json({ ok: false, message: 'No se encontró el beneficio.' });
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error('deleteReward:', error.message);
+    return res.status(500).json({ ok: false, message: 'No se pudo eliminar el beneficio.' });
+  }
+}
+
+function parseReward(body = {}) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) body = {};
+  const name = typeof body.nombre === 'string' ? body.nombre.trim() : '';
+  const description = typeof body.descripcion === 'string' ? body.descripcion.trim() : '';
+  const type = body.tipo;
+  const points = Number(body.puntos);
+  const rawStock = body.stock;
+  const stock = rawStock === '' || rawStock === null || rawStock === undefined ? null : Number(rawStock);
+  const imageUrl = typeof body.imagen_url === 'string' ? body.imagen_url.trim() : '';
+  if (!name || name.length > 180 || description.length > 1000) {
+    return { error: 'Ingresa un nombre y una descripción válida para el beneficio.' };
+  }
+  if (!REWARD_TYPES.includes(type) || !Number.isSafeInteger(points) || points < 1 || points > 10000000) {
+    return { error: 'Selecciona un tipo de beneficio y un costo válido en puntos.' };
+  }
+  if (stock !== null && (!Number.isSafeInteger(stock) || stock < 0 || stock > 10000000)) {
+    return { error: 'El stock debe ser un entero positivo o dejarse vacío para ilimitado.' };
+  }
+  if (imageUrl) {
+    try {
+      if (new URL(imageUrl).protocol !== 'https:') throw new Error('URL inválida');
+    } catch {
+      return { error: 'La imagen debe utilizar una URL HTTPS válida.' };
+    }
+  }
+  return { reward: { nombre: name, descripcion: description, tipo: type, puntos: points, imagen_url: imageUrl, stock } };
+}
+
+module.exports = { listRewards, redeemReward, listAdminRewards, createReward, updateReward, deleteReward };
