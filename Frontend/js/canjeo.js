@@ -73,8 +73,8 @@
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'rewards-button';
-      button.textContent = 'Canjear';
-      button.disabled = Number(points) < Number(reward.puntos) || Auth.getUser()?.rol !== 'cliente';
+      button.textContent = reward.tipo === 'producto' ? 'Canjear producto' : 'Canjear';
+      button.disabled = Number(points) < Number(reward.puntos);
       button.addEventListener('click', () => redeem(reward, button));
       footer.append(cost, button);
       body.append(type, title, description, footer);
@@ -122,7 +122,8 @@
   }
 
   async function redeem(reward, button) {
-    if (!window.confirm(`¿Canjear ${reward.nombre} por ${number(reward.puntos)} puntos?`)) return;
+    const itemType = reward.tipo === 'producto' ? 'el producto' : 'el beneficio';
+    if (!window.confirm(`¿Canjear ${itemType} ${reward.nombre} por ${number(reward.puntos)} puntos?`)) return;
     showNotice('Procesando tu canje…');
     grid.querySelectorAll('button').forEach((button) => { button.disabled = true; });
     try {

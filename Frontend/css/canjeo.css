@@ -1,4 +1,4 @@
-.rewards-page { min-height: 60vh; background: var(--bg, #f8f6f0); color: var(--text, #17343a); }
+.rewards-page { min-height: 60vh; background: transparent; color: var(--text); }
 .rewards-hero { position: relative; overflow: hidden; padding: clamp(4rem, 9vw, 8rem) max(1.5rem, calc((100% - 1120px) / 2)); background: linear-gradient(120deg, #123b38, #245b50 68%, #987a4e); color: #fff; }
 .rewards-hero::after { position: absolute; top: -80px; right: 7%; width: 360px; height: 360px; border: 1px solid rgb(255 255 255 / 18%); border-radius: 50%; box-shadow: 0 0 0 42px rgb(255 255 255 / 5%), 0 0 0 84px rgb(255 255 255 / 4%); content: ''; pointer-events: none; }
 .rewards-eyebrow { color: #bcdfcf; font: 600 .72rem/1.4 Inter, sans-serif; letter-spacing: .16em; }
@@ -37,7 +37,18 @@
 .redemption-row span { color: #71817e; }
 .redemption-row code { color: #1e5c4d; font-weight: 650; }
 .redemptions-empty { color: #71817e; font: .85rem/1.5 Inter, sans-serif; }
-[data-theme="dark"] .rewards-page { background: #12201f; color: #edf4ee; }
+[data-theme="light"] .rewards-login,
+[data-theme="light"] .reward-card,
+[data-theme="light"] .redemption-row { color: #17343a; }
+[data-theme="light"] .rewards-login { background: rgb(255 255 255 / 92%); }
+[data-theme="light"] .rewards-login h3,
+[data-theme="light"] .reward-card h3 { color: #17343a; }
+[data-theme="light"] .rewards-login p,
+[data-theme="light"] .reward-card p,
+[data-theme="light"] .redemption-row span { color: #516c6d; }
+[data-theme="light"] .rewards-section-heading > p,
+[data-theme="light"] .redemptions-empty { color: #d3e0da; }
+[data-theme="dark"] .rewards-page { color: #edf4ee; }
 [data-theme="dark"] .rewards-login, [data-theme="dark"] .reward-card, [data-theme="dark"] .redemption-row { border-color: rgb(188 223 207 / 16%); background: #1b2b29; }
 [data-theme="dark"] .rewards-section-heading > p, [data-theme="dark"] .reward-card p, [data-theme="dark"] .redemption-row span, [data-theme="dark"] .redemptions-empty { color: #a4b8af; }
 [data-theme="dark"] .reward-card h3, [data-theme="dark"] .rewards-login h3 { color: #edf4ee; }

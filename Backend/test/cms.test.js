@@ -164,12 +164,21 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
     assert.equal(history.rows[0].tipo, 'canjeado');
     assert.equal(history.rows[0].puntos, 300);
     assert.equal((await request(`/api/canjeos/${rewardId}/canjear`, 'POST', {}, 2)).status, 404);
+    const product = await request('/api/admin/recompensas', 'POST', {
+      nombre: 'Producto de prueba', tipo: 'producto', puntos: 100, stock: 1,
+    }, 1);
+    assert.equal(product.status, 201);
+    const productRedemption = await request(`/api/canjeos/${product.data.recompensa.id}/canjear`, 'POST', {}, 2);
+    assert.equal(productRedemption.status, 201);
+    assert.equal(productRedemption.data.puntos, 100);
+    assert.match(productRedemption.data.canje.codigo, /^ICA-[A-F0-9]{12}$/);
+    assert.equal((await request('/api/canjeos', 'GET', undefined, 2)).data.recompensas.some((item) => item.id === product.data.recompensa.id), false);
     const expensive = await request('/api/admin/recompensas', 'POST', {
       nombre: 'Beneficio costoso', tipo: 'producto', puntos: 250,
     }, 1);
     assert.equal(expensive.status, 201);
     assert.equal((await request(`/api/canjeos/${expensive.data.recompensa.id}/canjear`, 'POST', {}, 2)).status, 409);
-    assert.equal((await request('/api/canjeos', 'GET', undefined, 2)).data.puntos, 200);
+    assert.equal((await request('/api/canjeos', 'GET', undefined, 2)).data.puntos, 100);
     assert.equal((await request(`/api/admin/recompensas/${rewardId}`, 'PATCH', { activo: false }, 1)).status, 200);
   });
   await t.test('las escrituras del CMS solo aceptan admin y editor', async () => {
