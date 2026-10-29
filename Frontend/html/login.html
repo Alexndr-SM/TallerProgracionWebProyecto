@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="../css/page-loader.css">
     <script src="../js/page-loader.js"></script>
     <script src="../js/i18n-dict.js"></script>
+    <script src="../js/i18n-public-dict.js"></script>
     <script src="../js/i18n.js"></script>
 </head>
 <body class="auth-page">
@@ -116,7 +117,7 @@
                 await Auth.login(email, password);
                 window.location.href = Auth.dashboardUrl();
             } catch (err) {
-                alert(err.message || 'Error al iniciar sesión');
+                alert((window.ICAT_I18N?.t || ((value) => value))(err.message || 'Error al iniciar sesión'));
                 btn.disabled = false;
                 btn.textContent = prev;
             }

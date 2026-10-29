@@ -69,8 +69,9 @@
       type.className = 'reward-card__type';
       type.textContent = labels[reward.tipo] || 'Beneficio';
       const title = document.createElement('h3');
-      title.textContent = reward.nombre;
+      title.textContent = reward.nombre; title.setAttribute('data-no-i18n','');
       const description = document.createElement('p');
+      if (reward.descripcion) description.setAttribute('data-no-i18n','');
       description.textContent = reward.descripcion || 'Un beneficio especial para disfrutar tu próxima experiencia.';
       const footer = document.createElement('div');
       footer.className = 'reward-card__footer';
@@ -106,7 +107,7 @@
       const row = document.createElement('div');
       row.className = 'redemption-row';
       const detail = document.createElement('span');
-      detail.textContent = `${item.recompensa_nombre} · ${number(item.puntos)} puntos`;
+      const name=document.createElement('span'); name.setAttribute('data-no-i18n',''); name.textContent=item.recompensa_nombre; detail.append(name,document.createTextNode(` · ${number(item.puntos)} `),document.createTextNode('puntos'));
       const code = document.createElement('code');
       code.textContent = item.codigo;
       const copy = document.createElement('button'); copy.type = 'button'; copy.className = 'rewards-button rewards-button--quiet'; copy.textContent = 'Copiar código'; copy.setAttribute('aria-label', 'Copiar código ' + item.codigo);
@@ -118,7 +119,7 @@
           const date = document.createElement('time');
           date.className = 'redemption-row__date';
           date.dateTime = createdAt.toISOString();
-          date.textContent = createdAt.toLocaleString('es-PE', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Lima' });
+          date.textContent = createdAt.toLocaleString(window.ICAT_I18N?.locale || 'es-PE', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Lima' });
           detail.append(date);
         }
       }
@@ -201,6 +202,8 @@
       }
     } finally { redeeming = false; confirmButton.disabled = false; cancelButton.disabled = false; confirmButton.textContent = 'Confirmar canje'; dialog.close(); renderFiltered(); }
   }
+
+  document.addEventListener('icat:language-changed', () => { renderRedemptions(redemptionItems); });
 
   if (!Auth.isLoggedIn()) {
     document.getElementById('rewardsFilters').hidden = true;

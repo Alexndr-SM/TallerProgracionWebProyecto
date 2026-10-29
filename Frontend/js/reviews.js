@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { once: true });
 
     const name = document.createElement('h3');
-    name.textContent = comment.nombre;
+    name.textContent = comment.nombre; name.setAttribute('data-no-i18n','');
     user.append(avatar, name);
 
     const stars = document.createElement('span');
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     heading.append(user, stars);
 
     const content = document.createElement('p');
-    content.textContent = comment.contenido;
+    content.textContent = comment.contenido; content.setAttribute('data-no-i18n','');
     card.append(heading, content);
 
     if (comment.created_at) {
