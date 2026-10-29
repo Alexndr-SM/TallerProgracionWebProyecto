@@ -36,7 +36,7 @@
   function formatFecha(iso) {
     if (!iso) return '—';
     const d = new Date(iso);
-    return d.toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric' });
+    return d.toLocaleDateString(window.ICAT_I18N?.locale || 'es-PE', { year: 'numeric', month: 'long', day: 'numeric' });
   }
 
   function formatFechaTour(dateStr) {
@@ -49,11 +49,11 @@
       const d = parseInt(parts[2], 10);
       if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
         const date = new Date(y, m - 1, d);
-        return date.toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        return date.toLocaleDateString(window.ICAT_I18N?.locale || 'es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       }
     }
     const fallback = new Date(dateStr);
-    return isNaN(fallback.getTime()) ? '—' : fallback.toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    return isNaN(fallback.getTime()) ? '—' : fallback.toLocaleDateString(window.ICAT_I18N?.locale || 'es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   }
 
   function formatMoneda(val) {
@@ -188,7 +188,7 @@
           <div class="reserva-detalles">
             <div class="reserva-detalle">
               <span class="detalle-label">Fecha del tour</span>
-              <span class="detalle-valor">${formatFechaTour(r.fecha_tour)}</span>
+              <span class="detalle-valor" data-i18n-date="${String(r.fecha_tour).slice(0,10)}T12:00:00-05:00">${formatFechaTour(r.fecha_tour)}</span>
             </div>
             <div class="reserva-detalle">
               <span class="detalle-label">Asistentes</span>
@@ -208,7 +208,7 @@
             </div>
             <div class="reserva-detalle">
               <span class="detalle-label">Reservado el</span>
-              <span class="detalle-valor">${formatFecha(r.created_at)}</span>
+              <span class="detalle-valor" data-i18n-date="${r.created_at}">${formatFecha(r.created_at)}</span>
             </div>
           </div>
 
@@ -332,6 +332,8 @@
     setEl('puntosActualesTab', `${p.puntos.toLocaleString()} pts`);
     setEl('perfilDesde', formatFecha(p.miembro_desde));
     setEl('perfilUltimo', p.ultimo_acceso ? formatFecha(p.ultimo_acceso) : 'Primera sesión');
+    if(p.miembro_desde) document.getElementById('perfilDesde')?.setAttribute('data-i18n-date',p.miembro_desde);
+    if(p.ultimo_acceso) document.getElementById('perfilUltimo')?.setAttribute('data-i18n-date',p.ultimo_acceso);
 
     // Pre-llenar campos del formulario de edición de perfil si existen
     const editNombre = document.getElementById('editNombre');
@@ -447,7 +449,7 @@
         <span class="punto-tipo-icono">${iconoTipo[h.tipo] || '⭐'}</span>
         <div class="punto-info">
           <p class="punto-descripcion">${h.descripcion}</p>
-          <span class="punto-fecha">${formatFecha(h.created_at)}</span>
+          <span class="punto-fecha" data-i18n-date="${h.created_at}">${formatFecha(h.created_at)}</span>
         </div>
         <span class="punto-cantidad punto-${h.tipo}">${h.puntos} pts</span>
       </div>`).join('');
@@ -638,12 +640,12 @@
     const boton = document.getElementById('btnDescargarPdf');
 
     if (!boleta) {
-      alert('No se encontró el contenido de la boleta.');
+      alert((window.ICAT_I18N?.t || ((value) => value))('No se encontró el contenido de la boleta.'));
       return;
     }
 
     if (typeof html2pdf === 'undefined') {
-      alert('No se cargó la librería para generar el PDF.');
+      alert((window.ICAT_I18N?.t || ((value) => value))('No se cargó la librería para generar el PDF.'));
       return;
     }
 
@@ -680,7 +682,7 @@
 
     } catch (error) {
       console.error('Error al generar la boleta:', error);
-      alert('No se pudo generar el PDF. Revisa la consola con F12.');
+      alert((window.ICAT_I18N?.t || ((value) => value))('No se pudo generar el PDF. Revisa la consola con F12.'));
     } finally {
       if (boton) {
         boton.disabled = false;

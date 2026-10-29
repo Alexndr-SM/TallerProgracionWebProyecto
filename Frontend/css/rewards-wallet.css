@@ -1,0 +1,11 @@
+.rewards-wallet-slot { min-width: 0; scroll-margin-top: calc(var(--header-h,104px) + 50px); }
+.rewards-wallet-slot .rewards-wallet { transform: none; width: 100%; box-sizing: border-box; }
+.rewards-wallet-slot .rewards-wallet.is-docked { position: fixed; z-index: 90; right: max(18px,env(safe-area-inset-right)); bottom: var(--wallet-bottom,18px); width: 154px; height: 64px; padding: 12px 18px; border-radius: 18px; margin: 0; box-shadow: 0 12px 35px #001a3044; transition: opacity .18s; }
+.rewards-wallet.is-docked > :not(.rewards-balance) { display: none; }
+.rewards-wallet.is-docked .rewards-balance { height: 100%; justify-content: center; align-items: baseline; gap: 7px; text-decoration: none; }
+.rewards-wallet.is-docked .rewards-balance strong { font: 600 27px/1.4 var(--font-body,Inter,sans-serif); }
+.rewards-wallet.is-docked .rewards-balance span { font-size: 10px; }
+.rewards-wallet.is-docked::after { width: 100px; height: 100px; top: -65px; right: -40px; }
+.rewards-wallet.is-footer-hidden { visibility: hidden; opacity: 0; pointer-events: none; }
+@media(max-width:650px){.rewards-wallet-slot .rewards-wallet.is-docked{width:140px;height:58px;right:max(14px,env(safe-area-inset-right));padding:10px 14px}.rewards-wallet.is-docked .rewards-balance strong{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.rewards-wallet-slot .rewards-wallet.is-docked{transition:none}}

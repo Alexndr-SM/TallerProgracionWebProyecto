@@ -53,7 +53,7 @@
     const details = nav?.querySelector('.cms-destination-menu details');
     const list = details?.querySelector('.cms-dropdown');
     if (list) {
-      list.replaceChildren(...(destinations.length ? destinations.map((destination) => { const item=el('li'); const a=anchor(destination.nombre,link('destino',destination.slug)); if(destination.slug===slug)a.setAttribute('aria-current','page'); item.append(a); return item; }) : [(() => {const item=el('li');item.append(anchor('Explorar destinos',url('index.html#destinos')));return item;})()]));
+      list.replaceChildren(...(destinations.length ? destinations.map((destination) => { const item=el('li'); const a=anchor(destination.nombre,link('destino',destination.slug)); a.setAttribute('data-no-i18n',''); if(destination.slug===slug)a.setAttribute('aria-current','page'); item.append(a); return item; }) : [(() => {const item=el('li');item.append(anchor('Explorar destinos',url('index.html#destinos')));return item;})()]));
       if (!details.dataset.bound) {
         details.dataset.bound = 'true'; let closeTimer;
         details.addEventListener('pointerenter', (event) => { clearTimeout(closeTimer); if(event.pointerType!=='touch' && matchMedia('(hover:hover) and (pointer:fine)').matches) details.open=true; });
@@ -63,10 +63,9 @@
       }
     }
     nav?.querySelectorAll('a').forEach((a) => { if(new URL(a.href).pathname===location.pathname)a.setAttribute('aria-current','page'); });
-    document.querySelectorAll('[data-cms-footer-destinations], .footer-column').forEach((container) => {
-      if (!container.matches('[data-cms-footer-destinations]') && container.querySelector('h2')?.textContent.trim() !== 'Destinos') return;
+    document.querySelectorAll('[data-cms-footer-destinations]').forEach((container) => {
       const list = container.matches('ul') ? container : container.querySelector('ul'); if (!list) return;
-      list.replaceChildren(...destinations.map((destination) => { const item = el('li'); item.append(anchor(destination.nombre, link('destino', destination.slug))); return item; }));
+      list.replaceChildren(...destinations.map((destination) => { const item = el('li'); const a = anchor(destination.nombre, link('destino', destination.slug)); a.setAttribute('data-no-i18n',''); item.append(a); return item; }));
     });
   }
   document.addEventListener('click', (event) => document.querySelectorAll('.cms-destination-menu details[open]').forEach((details) => { if (!details.contains(event.target)) details.open = false; }));
@@ -256,6 +255,7 @@
       const nextDestinations = JSON.stringify(destinations); const next = JSON.stringify([destinations, promotions]);
       if (nextDestinations !== destinationSignature) { renderNavigation(); renderHome(); destinationSignature = nextDestinations; }
       if (next !== signature) { const main = document.querySelector('[data-cms-page]'); if (main) { carouselSizes?.disconnect(); carouselCleanups.forEach((cleanup) => cleanup()); carouselCleanups.clear(); if (main.dataset.cmsPage === 'destino') renderDestination(main); else renderPromotion(main); main.removeAttribute('aria-busy'); } signature = next; }
+      document.querySelectorAll('.cms-destination-body h3,.cms-destination-body p,.cms-destination-intro h1,.cms-destination-intro>.cms-lead,.cms-promotion-info>h1,.cms-promotion-info>.cms-lead,.cms-description,.cms-includes li,.cms-itinerary>p,.cms-offer-content h3,.cms-offer-content>p,.cms-dropdown a').forEach(node=>node.setAttribute('data-no-i18n',''));
       loaded = true;
     } catch (error) { showError(error); }
     finally { loading = false; }

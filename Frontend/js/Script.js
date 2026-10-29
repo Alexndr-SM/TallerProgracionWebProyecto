@@ -224,12 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const pointsElement = pointsBalance?.querySelector('#rewardsPoints');
 
   function updatePointsPosition() {
-    if (!pointsBalance) return;
+    if (!pointsBalance || pointsBalance.closest('.rewards-wallet')) return;
     pointsBalance.classList.toggle('is-floating', window.scrollY > 0);
   }
 
   if (pointsBalance) {
-    pointsBalance.href = pointsUrl;
+    if (!pointsBalance.closest('.rewards-wallet')) pointsBalance.href = pointsUrl;
     pointsBalance.hidden = true;
     window.addEventListener('scroll', updatePointsPosition, { passive: true });
     window.addEventListener('resize', updatePointsPosition);
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Number.isFinite(Number(points))) {
       const formattedPoints = Number(points).toLocaleString('es-PE');
       pointsElement.textContent = formattedPoints;
-      pointsBalance.setAttribute('aria-label', `Saldo disponible: ${formattedPoints} puntos. Abrir catálogo de canjes.`);
+      pointsBalance.setAttribute('aria-label', pointsBalance.closest('.rewards-wallet') ? `Saldo disponible: ${formattedPoints} puntos. Volver a mi tarjeta.` : `Saldo disponible: ${formattedPoints} puntos. Abrir catálogo de canjes.`);
       pointsBalance.removeAttribute('title');
       return;
     }
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!response.ok || !result.ok) throw new Error(result.message || 'No se pudo consultar el saldo.');
       const formattedPoints = Number(result.puntos_actuales).toLocaleString('es-PE');
       pointsElement.textContent = formattedPoints;
-      pointsBalance.setAttribute('aria-label', `Saldo disponible: ${formattedPoints} puntos. Abrir catálogo de canjes.`);
+      pointsBalance.setAttribute('aria-label', pointsBalance.closest('.rewards-wallet') ? `Saldo disponible: ${formattedPoints} puntos. Volver a mi tarjeta.` : `Saldo disponible: ${formattedPoints} puntos. Abrir catálogo de canjes.`);
       pointsBalance.removeAttribute('title');
     } catch (error) {
       pointsElement.textContent = '—';
