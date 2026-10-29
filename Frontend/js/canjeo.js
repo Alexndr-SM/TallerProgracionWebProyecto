@@ -6,7 +6,12 @@
   const login = document.getElementById('rewardsLogin');
   const grid = document.getElementById('rewardsGrid');
   const redemptions = document.getElementById('redemptionsList');
-  let redemptionItems = [];
+  let redemptionItems = [], catalogItems = [], currentPoints = 0, selectedReward = null, redeeming = false, catalogReady = false;
+  const dialog = document.getElementById('redeemDialog');
+  const confirmButton = document.getElementById('redeemConfirm');
+  const cancelButton = document.getElementById('redeemCancel');
+  const customer = window.Auth?.getUser()?.rol === 'cliente';
+  const search = document.getElementById('rewardSearch'), typeFilter = document.getElementById('rewardType'), sort = document.getElementById('rewardSort'), affordable = document.getElementById('rewardAffordable');
   const labels = { producto: 'Producto', promocion: 'Promoción', descuento: 'Descuento' };
   const icons = { producto: '🎁', promocion: '✦', descuento: '%' };
   const number = (value) => Number(value).toLocaleString('es-PE');
@@ -76,10 +81,13 @@
       button.type = 'button';
       button.className = 'rewards-button';
       button.textContent = reward.tipo === 'producto' ? 'Canjear producto' : 'Canjear';
-      button.disabled = Number(points) < Number(reward.puntos);
+      button.disabled = !customer || !catalogReady || redeeming || Number(points) < Number(reward.puntos) || reward.stock === 0;
       button.addEventListener('click', () => redeem(reward, button));
       footer.append(cost, button);
-      body.append(type, title, description, footer);
+      const stock = document.createElement('span'); stock.className = 'reward-card__availability'; stock.textContent = reward.stock === null ? 'Disponible en el catálogo' : reward.stock === 0 ? 'Temporalmente agotado' : number(reward.stock) + ' disponibles';
+      const progress = document.createElement('p'); progress.className = 'reward-card__progress'; progress.textContent = Number(points) >= Number(reward.puntos) ? 'Tienes los puntos para disfrutarlo.' : 'Te faltan ' + number(Number(reward.puntos) - Number(points)) + ' puntos. Cada viaje suma.';
+      if (!customer) progress.textContent = 'El canje de puntos está disponible para cuentas de clientes.';
+      body.append(type, title, description, stock, footer, progress);
       card.append(media, body);
       return card;
     }));
@@ -101,15 +109,17 @@
       detail.textContent = `${item.recompensa_nombre} · ${number(item.puntos)} puntos`;
       const code = document.createElement('code');
       code.textContent = item.codigo;
-      row.append(detail, code);
+      const copy = document.createElement('button'); copy.type = 'button'; copy.className = 'rewards-button rewards-button--quiet'; copy.textContent = 'Copiar código'; copy.setAttribute('aria-label', 'Copiar código ' + item.codigo);
+      copy.addEventListener('click', async () => { try { await navigator.clipboard.writeText(item.codigo); showNotice('Código copiado: ' + item.codigo); } catch { const range = document.createRange(); range.selectNodeContents(code); const selection = getSelection(); selection.removeAllRanges(); selection.addRange(range); showNotice('Selecciona el código y cópialo manualmente.'); } });
+      row.append(detail, code, copy);
       if (item.created_at) {
         const createdAt = new Date(item.created_at);
         if (!Number.isNaN(createdAt.getTime())) {
           const date = document.createElement('time');
           date.className = 'redemption-row__date';
           date.dateTime = createdAt.toISOString();
-          date.textContent = createdAt.toLocaleString('es-PE', { dateStyle: 'medium', timeStyle: 'short' });
-          row.append(date);
+          date.textContent = createdAt.toLocaleString('es-PE', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Lima' });
+          detail.append(date);
         }
       }
       return row;
@@ -130,20 +140,46 @@
     if (catalogResult.status === 'rejected') throw catalogResult.reason;
     const catalog = catalogResult.value;
     const points = accountResult.status === 'fulfilled' ? accountResult.value.puntos_actuales : catalog.puntos;
-    renderRewards(catalog.recompensas, points);
+    catalogItems = catalog.recompensas; currentPoints = Number(points); catalogReady = true; renderFiltered();
+    const available = catalogItems.filter((item) => item.stock !== 0 && Number(item.puntos) <= currentPoints);
+    document.getElementById('rewardsAvailable').textContent = number(available.length);
+    const next = catalogItems.filter((item) => item.stock !== 0 && Number(item.puntos) > currentPoints).sort((a,b) => Number(a.puntos)-Number(b.puntos))[0];
+    document.getElementById('rewardsNext').textContent = next ? 'Tu siguiente beneficio está a ' + number(Number(next.puntos)-currentPoints) + ' puntos.' : available.length ? 'Ya puedes elegir tu próxima recompensa.' : 'Nuevos beneficios están por llegar.';
+    grid.removeAttribute('aria-busy');
     renderRedemptions(catalog.canjes);
     if (accountResult.status === 'rejected') {
       showNotice(`Mostramos el saldo del catálogo. No se pudo actualizar desde el perfil: ${accountResult.reason.message}`, true);
     }
   }
 
-  async function redeem(reward, button) {
-    const itemType = reward.tipo === 'producto' ? 'el producto' : 'el beneficio';
-    if (!window.confirm(`¿Canjear ${itemType} ${reward.nombre} por ${number(reward.puntos)} puntos?`)) return;
+  function renderFiltered() {
+    const query = search.value.trim().toLocaleLowerCase();
+    const items = catalogItems.filter((item) => (typeFilter.value === 'all' || item.tipo === typeFilter.value) && (!affordable.checked || (Number(item.puntos) <= currentPoints && item.stock !== 0)) && (item.nombre + ' ' + item.descripcion).toLocaleLowerCase().includes(query)).sort((a,b) => sort.value === 'asc' ? Number(a.puntos)-Number(b.puntos) : Number(b.puntos)-Number(a.puntos));
+    renderRewards(items,currentPoints);
+    document.getElementById('rewardsCount').textContent = items.length + ' de ' + catalogItems.length + ' beneficios';
+    if (!items.length && catalogItems.length) grid.querySelector('p').textContent = 'No hay beneficios con estos filtros. Prueba otro tipo o una búsqueda distinta.';
+  }
+  for (const field of [search,typeFilter,sort,affordable]) field.addEventListener('input',renderFiltered);
+  function redeem(reward, button) {
+    if (redeeming) return;
+    selectedReward = { reward, button };
+    document.getElementById('redeemName').textContent = reward.nombre;
+    document.getElementById('redeemBefore').textContent = number(currentPoints) + ' pts';
+    document.getElementById('redeemCost').textContent = number(reward.puntos) + ' pts';
+    document.getElementById('redeemAfter').textContent = number(currentPoints - Number(reward.puntos)) + ' pts';
+    document.getElementById('redeemError').textContent = '';
+    dialog.showModal();
+  }
+  cancelButton.addEventListener('click', () => dialog.close());
+  dialog.addEventListener('cancel', (event) => { if(redeeming) event.preventDefault(); });
+  document.getElementById('redeemForm').addEventListener('submit', async (event) => { event.preventDefault(); if (!selectedReward || redeeming) return; await commitRedeem(selectedReward.reward,selectedReward.button); });
+  async function commitRedeem(reward, button) {
+    redeeming = true; confirmButton.disabled = true; cancelButton.disabled = true; confirmButton.textContent = 'Confirmando…';
     showNotice('Procesando tu canje…');
     grid.querySelectorAll('button').forEach((button) => { button.disabled = true; });
     try {
       const result = await request(`/api/canjeos/${reward.id}/canjear`, { method: 'POST' });
+      dialog.close();
       const successMessage = `¡Canje realizado! Guarda tu código ${result.canje.codigo}.`;
       renderRedemptions([result.canje, ...redemptionItems.filter((item) => item.codigo !== result.canje.codigo)].slice(0, 20));
       showNotice(successMessage);
@@ -154,22 +190,33 @@
         showNotice(`${successMessage} Recarga la página para actualizar tu saldo. ${error.message}`, true);
       }
     } catch (error) {
+      document.getElementById('redeemError').textContent = error.message;
       showNotice(error.message, true);
       try {
         await loadCatalog();
       } catch (refreshError) {
+        catalogReady = false;
         showNotice(`${error.message} No se pudo actualizar el catálogo: ${refreshError.message}`, true);
         button.disabled = false;
       }
-    }
+    } finally { redeeming = false; confirmButton.disabled = false; cancelButton.disabled = false; confirmButton.textContent = 'Confirmar canje'; dialog.close(); renderFiltered(); }
   }
 
   if (!Auth.isLoggedIn()) {
+    document.getElementById('rewardsFilters').hidden = true;
+    document.getElementById('rewardsRefresh').hidden = true;
+    document.getElementById('rewardsNext').textContent = 'Inicia sesión para descubrir tu saldo y tus beneficios.';
     balance.hidden = true;
     login.hidden = false;
     grid.hidden = true;
     redemptions.hidden = true;
     return;
   }
-  loadCatalog().catch((error) => showNotice(error.message, true));
+  grid.setAttribute('aria-busy','true'); grid.textContent = 'Preparando tus beneficios…';
+  async function refreshCatalog() {
+    const button = document.getElementById('rewardsRefresh'); button.disabled = true; grid.setAttribute('aria-busy','true');
+    try { await loadCatalog(); } catch (error) { catalogReady=false; showNotice(error.message,true); grid.textContent='No se pudo cargar el catálogo. Usa Actualizar catálogo para reintentar.'; } finally { button.disabled=false; grid.removeAttribute('aria-busy'); }
+  }
+  document.getElementById('rewardsRefresh').addEventListener('click', refreshCatalog);
+  refreshCatalog();
 })();

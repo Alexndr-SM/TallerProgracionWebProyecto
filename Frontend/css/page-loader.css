@@ -53,3 +53,5 @@ html.ica-loading-active { overflow: hidden; }
 @media (max-height: 650px) { .ica-loading { grid-template-rows: 1fr auto; padding-bottom: 20px; } .ica-loading__scene { max-height: 160px; } .ica-loading__places { margin-top: 12px; } .ica-loading__skip { margin-top: 14px; } .ica-loading__signature { position: static; margin-top: 24px; } }
 @media (max-width: 480px) { .ica-loading__eyebrow { font-size: 8px; letter-spacing: .16em; } .ica-loading__places { gap: 16px; } }
 @media (prefers-reduced-motion: reduce) { .ica-loading, .ica-loading * { animation: none !important; transition: none !important; } }
+.ica-loading .ica-loading__brand,.ica-loading .ica-loading__title { color: var(--il-ink); }
+.ica-loading .ica-loading__eyebrow { color: var(--il-accent); }

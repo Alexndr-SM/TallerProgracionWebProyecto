@@ -29,6 +29,7 @@ import CmsPanel from './CmsPanel.jsx'
 import MediaLibrary from './MediaLibrary.jsx'
 import AdminDashboard from './AdminDashboard.jsx'
 import AdminHeader from './AdminHeader.jsx'
+import WidgetsPanel, { EditorialOverview } from './EditorialWorkspace.jsx'
 import { cmsRequest } from './cmsApi.js'
 import { downloadCSV, limaDate } from './dashboardUtils.js'
 import './AdminTheme.css'
@@ -44,6 +45,7 @@ const navGroups = [
       { id: 'productos', label: 'Promociones', icon: Package },
       { id: 'recompensas', label: 'Catálogo de canje', icon: Gift },
       { id: 'medios', label: 'Biblioteca multimedia', icon: Images },
+      { id: 'widgets', label: 'Novedades del inicio', icon: LayoutDashboard },
     ],
   },
   {
@@ -123,7 +125,6 @@ function SectionHeading({ eyebrow, title, description, action }) {
 }
 
 function EmployeesPage({ employees, onAdd, onUpdate, currentUserId, loading }) {
-  const roleLabels = { admin: 'Administrador', registrador: 'Registrador', soporte: 'Soporte', editor: 'Editor' }
   return <>
     <SectionHeading eyebrow="Administración" title="Equipo y permisos" description="Invita a tu equipo y define qué puede hacer cada persona." action={<button className="button button--primary" onClick={onAdd}><Plus size={16} /> Nuevo empleado</button>} />
     <div className="permission-notice"><ShieldCheck size={18} /><p><strong>Administración segura.</strong> Los roles y estados se guardan en la base de datos y se validan en el servidor.</p></div>
@@ -332,7 +333,7 @@ function EmployeeModal({ onClose, onSave }) {
 }
 
 export default function App({ user }) {
-  const [activePage, setActivePage] = useState(user?.rol === 'editor' ? 'destinos' : 'dashboard')
+  const [activePage, setActivePage] = useState('dashboard')
   const [products, setProducts] = useState([])
   const [rewards, setRewards] = useState([])
   const [destinations, setDestinations] = useState([])
@@ -356,10 +357,10 @@ export default function App({ user }) {
   const canManageCatalog = isAdmin || user?.rol === 'editor'
   const isEditor = user?.rol === 'editor'
   const visibleNav = navGroups.map((group) => ({ ...group, items: group.items.filter((item) => {
-    if (['destinos', 'productos', 'medios'].includes(item.id)) return canManageCatalog
+    if (['destinos', 'productos', 'medios', 'widgets'].includes(item.id)) return canManageCatalog
     if (item.id === 'equipo') return isAdmin
     if (item.id === 'recompensas') return canManageCatalog
-    return !isEditor
+    return item.id === 'dashboard' || !isEditor
   }) })).filter((group) => group.items.length)
   const currentNav = navGroups.flatMap((group) => group.items).find((item) => item.id === activePage)
   const PageIcon = currentNav?.icon || LayoutDashboard
@@ -491,15 +492,17 @@ export default function App({ user }) {
 
   const pageContent = useMemo(() => {
     const changePage = navigate
+    if (activePage === 'dashboard' && isEditor) return <EditorialOverview user={user} products={products} destinations={destinations} loading={dashboardLoading} error={dashboardError} onNavigate={navigate} onRefresh={refresh} />
+    if (activePage === 'widgets' && canManageCatalog) return <WidgetsPanel />
     if (activePage === 'medios' && canManageCatalog) return <MediaLibrary />
     if (activePage === 'recompensas' && canManageCatalog) return <RewardsPage rewards={rewards} onCreate={createReward} onUpdate={updateReward} onDelete={deleteReward} onToggle={toggleReward} onUpload={uploadRewardImage} loading={dashboardLoading} />
-    if (['destinos', 'productos'].includes(activePage) && canManageCatalog) return <CmsPanel key={`${activePage}-${navigationVersion}`} initialQuery={navigationTarget.query || ''} initialDestination={navigationTarget.destino_id || ''} kind={activePage === 'destinos' ? 'destinos' : 'promociones'} onCatalogChange={(rows) => setProducts(rows.map((record) => ({ id: record.id, name: record.nombre, description: record.descripcion, category: record.categoria, price: Number(record.precio), active: record.activo })))} />
+    if (['destinos', 'productos'].includes(activePage) && canManageCatalog) return <CmsPanel key={`${activePage}-${navigationVersion}`} initialQuery={navigationTarget.query || ''} initialDestination={navigationTarget.destino_id || ''} initialCreate={Boolean(navigationTarget.create)} initialStatus={navigationTarget.status || 'all'} onDestinationsChange={setDestinations} kind={activePage === 'destinos' ? 'destinos' : 'promociones'} onCatalogChange={(rows) => setProducts(rows.map((record) => ({ id: record.id, name: record.nombre, description: record.descripcion, category: record.categoria, price: Number(record.precio), active: record.activo })))} />
     if (activePage === 'pedidos') return <OrdersPage key={`orders-${navigationVersion}`} reservations={reservations} initialTarget={navigationTarget} onRefresh={refresh} onClear={() => navigate('pedidos')} />
     if (activePage === 'clientes') return <CustomersPage key={`customers-${navigationVersion}`} initialQuery={navigationTarget.query || ''} customers={customers} onNavigate={changePage} onStatusChange={changeCustomerStatus} onPointsChange={changeCustomerPoints} canManage={isAdmin} loading={dashboardLoading} />
     if (activePage === 'equipo') return <EmployeesPage employees={employees} onAdd={() => setEmployeeModal(true)} onUpdate={changeEmployee} currentUserId={user?.id} loading={dashboardLoading} />
     if (activePage === 'puntos') return <PointsPage customers={customers} />
     return <AdminDashboard user={user} products={products} onNavigate={changePage} period={period} setPeriod={setPeriod} summary={summary} reservations={reservations} loading={dashboardLoading} error={dashboardError} refreshVersion={refreshVersion} onRefresh={refresh} />
-  }, [activePage, canManageCatalog, createReward, customers, dashboardError, dashboardLoading, deleteReward, employees, isAdmin, period, products, rewards, reservations, summary, toggleReward, updateReward, uploadRewardImage, user, navigationTarget, navigationVersion, navigate, refresh, refreshVersion])
+  }, [activePage, canManageCatalog, createReward, customers, dashboardError, dashboardLoading, deleteReward, employees, isAdmin, isEditor, destinations, period, products, rewards, reservations, summary, toggleReward, updateReward, uploadRewardImage, user, navigationTarget, navigationVersion, navigate, refresh, refreshVersion])
 
   async function saveEmployee(data) {
     try {
@@ -514,8 +517,8 @@ export default function App({ user }) {
 
   return <div className={`admin-island ${dark ? 'admin-island--dark' : 'admin-island--light'}`} style={{ '--dash-oasis-image': `url("${new URL('../assets/admin/oasis-sunset.jpg', window.location.href).href}")`, '--dash-coast-image': `url("${new URL('../assets/admin/coastal-sunset.jpg', window.location.href).href}")` }}>
     <aside className={`sidebar ${mobileNav ? 'sidebar--open' : ''}`}>
-      <a className="sidebar-brand" href="../index.html"><img src="../assets/logoIcaTurismo.svg" alt="" /><span>IcaTurismo<small>ADMINISTRACIÓN</small></span></a>
-      <button type="button" className="workspace-switch" onClick={() => navigate(isEditor ? 'destinos' : 'dashboard')}><span className="workspace-avatar"><Compass size={19} /></span><span><strong>IcaTurismo</strong><small>Panel de control</small></span><ChevronRight size={15} /></button>
+      <a className="sidebar-brand" href="../index.html"><img src="../assets/logoIcaTurismo.svg" alt="" /><span>IcaTurismo<small>{isEditor ? 'ESTUDIO DE CONTENIDO' : 'ADMINISTRACIÓN'}</small></span></a>
+      <button type="button" className="workspace-switch" onClick={() => navigate('dashboard')}><span className="workspace-avatar"><Compass size={19} /></span><span><strong>IcaTurismo</strong><small>Panel de control</small></span><ChevronRight size={15} /></button>
       <nav className="side-nav" aria-label="Navegación del panel">
         {visibleNav.map((group) => <div className="nav-group" key={group.label}><span className="nav-group__label">{group.label}</span>{group.items.map(({ id, label, icon: Icon, count }) => <button className={`nav-link ${activePage === id ? 'nav-link--active' : ''}`} key={id} onClick={() => navigate(id)}><Icon size={17} strokeWidth={1.8} /><span>{label}</span>{count && <span className="nav-count">{count}</span>}</button>)}</div>)}
       </nav>
@@ -531,7 +534,7 @@ export default function App({ user }) {
         <AdminHeader user={user} navigation={visibleNav} products={products} reservations={reservations} customers={customers} destinations={destinations} onNavigate={navigate} onRefresh={refresh} busy={refreshing} dark={dark} updatedAt={updatedAt} onTheme={() => { const next = !dark; setDark(next); setNotice(saveSaved('icat_admin_theme', next) ? '' : 'No se pudo guardar el tema en este navegador.') }} />
       </header>
       <div className="page-content" key={`${activePage}-${navigationVersion}`}>{pageContent}</div>
-      <footer className="dashboard-footer"><span>© 2026 IcaTurismo · Panel de administración</span><span><span className={`online-dot ${dashboardError ? 'is-error' : ''}`} />{refreshing ? 'Actualizando datos…' : dashboardError ? 'Sincronización parcial' : updatedAt ? `Actualizado ${new Date(updatedAt).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Lima' })} · cada 60 s` : 'Conectando…'}</span></footer>
+      <footer className="dashboard-footer"><span>© 2026 IcaTurismo · {isEditor ? 'Estudio de contenido' : 'Panel de administración'}</span><span><span className={`online-dot ${dashboardError ? 'is-error' : ''}`} />{refreshing ? 'Actualizando datos…' : dashboardError ? 'Sincronización parcial' : updatedAt ? `Actualizado ${new Date(updatedAt).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Lima' })} · cada 60 s` : 'Conectando…'}</span></footer>
     </main>
     {employeeModal && <EmployeeModal onClose={() => setEmployeeModal(false)} onSave={saveEmployee} />}
     {notice && <div className="toast" role="status"><Check size={16} />{notice}<button onClick={() => setNotice('')} aria-label="Cerrar notificación"><X size={15} /></button></div>}

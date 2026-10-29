@@ -1,0 +1,9 @@
+.editor-welcome { padding: clamp(25px,4vw,46px); margin-bottom: 22px; background: linear-gradient(90deg,var(--admin-panel) 30%,transparent),var(--dash-coast-image) center / cover; }
+.editor-welcome h1 { font-size: clamp(30px,4vw,46px); margin: 12px 0; }.editor-welcome h1 span { color: var(--admin-accent); }.editor-welcome p { color: var(--admin-muted); }
+.editor-quick-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }.editor-tools { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; margin: 22px 0; }
+.editor-tool { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; text-align: left; padding: 26px; color: var(--admin-text); cursor: pointer; transition: transform .2s,border-color .2s; }
+.editor-tool:hover { transform: translateY(-3px); border-color: var(--admin-accent); }.editor-tool>svg,.editor-tool small { color: var(--admin-accent); }.editor-tool strong { font-size: 18px; }.editor-tool span { color: var(--admin-muted); }.editor-tool small { display: flex; gap: 10px; align-items: center; }
+.editor-checklist { padding: 28px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }.editor-checklist h2 { font-size: 20px; }.editor-checklist p,.editor-widget p { color: var(--admin-muted); }.editor-widget { padding: 25px; }.editor-widget h2 { margin-top: 14px; }
+.editor-widget-dialog { max-width: 700px; }.editor-widget-dialog .cms-form-body { grid-template-columns: 1fr; gap: 18px; }
+@media(max-width:700px){.editor-tools{grid-template-columns:1fr}.editor-checklist{align-items:flex-start;flex-direction:column}.editor-quick-actions .button{flex:1}}
+@media(prefers-reduced-motion:reduce){.editor-tool{transition:none}.editor-tool:hover{transform:none}}
