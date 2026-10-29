@@ -3,7 +3,7 @@
   'use strict';
   if (window.IcaLoader) return;
   const root = document.documentElement;
-  const adminPage = location.pathname.endsWith('/html/admin.html');
+  const adminPage = /\/html\/(?:admin|editor)\.html$/.test(location.pathname);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const seenKey = 'icat_welcome_seen';
   let overlay, observer, deadline, exitTimer, slowTimer, started, previousFocus;
@@ -135,7 +135,7 @@
     const link = event.target.closest?.('a[href]');
     if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
     const target = new URL(link.href, location.href);
-    if (target.origin !== location.origin || !target.pathname.endsWith('/html/admin.html')) return;
+    if (target.origin !== location.origin || !/\/html\/(?:admin|editor)\.html$/.test(target.pathname)) return;
     navigating = true; show('admin'); // Keep native navigation, history and authentication intact.
   });
 })();

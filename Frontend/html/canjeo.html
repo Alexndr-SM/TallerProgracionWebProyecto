@@ -17,20 +17,15 @@
   <link rel="stylesheet" href="../css/theme.css">
   <link rel="stylesheet" href="../css/cms-public.css">
   <link rel="stylesheet" href="../css/canjeo.css">
+<link rel="stylesheet" href="../css/public-shell.css">
+<script src="../js/public-shell.js"></script>
 </head>
 <body class="cms-page">
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
-  <div data-cms-header></div>
+  <div data-cms-header><header><div class="wrap header-inner"><div class="logo"><a href="../index.html"><img src="../assets/logoIcaTurismo.svg" alt="IcaTurismo" class="logo-img" width="72" height="65"></a><p class="logo-name">IcaTurismo</p></div><nav class="site-nav" aria-label="Principal"><ul class="nav-links" id="navLinks"><li><a href="../index.html">Inicio</a></li><li class="cms-destination-menu"><details><summary>Destinos</summary><ul class="cms-dropdown"><li><a href="../index.html#destinos">Explorar destinos</a></li></ul></details></li><li><a href="../html/contacto.html">Contacto</a></li></ul></nav><div class="header-actions"><button type="button" class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button><div class="nav-user" id="navUser"><div id="guestArea"><button type="button" class="user-btn" id="userBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true"><img src="https://res.cloudinary.com/plhejhea/image/upload/v1792620223/Person.svg" alt="" width="28" height="28"><span>Cuenta</span><span class="chevron" aria-hidden="true">▾</span></button><div class="user-dropdown" id="userDropdown"><a href="../html/login.html">Iniciar sesión</a><a href="../html/registro.html">Registrarse</a></div></div><div id="userArea" class="is-hidden" hidden><button type="button" class="user-btn" id="userProfileBtn" aria-label="Menú de usuario" aria-expanded="false" aria-haspopup="true"><img src="https://res.cloudinary.com/plhejhea/image/upload/v1792620223/Person.svg" alt="" width="28" height="28"><span id="userNameDisplay">Mi cuenta</span><span class="chevron" aria-hidden="true">▾</span></button><div class="user-dropdown" id="userProfileDropdown"><a href="../html/perfil.html" id="miPerfilLink">Mi perfil</a><a href="../html/canjeo.html" id="canjeoLink">Canjear puntos</a><a href="#" id="logoutAction">Cerrar sesión</a></div></div></div><div data-language-slot aria-hidden="true"></div><button type="button" class="theme-toggle" data-theme-toggle aria-label="Cambiar a modo oscuro" aria-pressed="false"><svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg><svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button><a class="cart-link" href="../html/compras.html" aria-label="Reservas y compras"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2 10h11l3-7H6"/><circle cx="10" cy="19" r="1.5"/><circle cx="18" cy="19" r="1.5"/></svg></a></div></div></header></div>
   <main id="contenido" class="rewards-page">
-    <section class="rewards-hero">
-      <span class="rewards-eyebrow">ICA CLUB · BENEFICIOS PARA TI</span>
-      <h1>Tu próximo recuerdo<br>se canjea con puntos.</h1>
-      <p>Usa tus puntos acumulados para disfrutar promociones, productos y descuentos especiales.</p>
-      <a class="rewards-balance" href="canjeo.html" aria-live="polite" aria-label="Saldo disponible: cargando puntos" hidden>
-        <strong id="rewardsPoints">—</strong>
-        <span>pts</span>
-      </a>
-    </section>
+    <section class="rewards-hero"><div class="rewards-hero-copy"><span class="rewards-eyebrow">ICA CLUB · CADA VIAJE SUMA</span><h1>Más experiencias.<br><em>Más razones para volver.</em></h1><p>Transforma tus puntos en pequeños regalos y grandes recuerdos. Elige lo que más te inspire.</p><a class="rewards-hero-link" href="#rewardsTitle">Explorar mis beneficios ↓</a></div><aside class="rewards-wallet"><div class="rewards-wallet-heading"><span>ICA CLUB</span><span aria-hidden="true">✦</span></div><p>Tu saldo disponible</p><a class="rewards-balance" href="#rewardsTitle" aria-live="polite" aria-label="Saldo disponible: cargando puntos" hidden><strong id="rewardsPoints">—</strong><span>puntos</span></a><div class="rewards-wallet-line"></div><p id="rewardsNext">Tus próximos recuerdos te esperan.</p><div class="rewards-wallet-stats"><span><b id="rewardsAvailable">—</b> beneficios a tu alcance</span><a href="perfil.html">Ver movimientos ↗</a></div></aside></section>
+    <div class="rewards-steps"><span><b>01</b> Elige tu beneficio</span><span><b>02</b> Confirma con tus puntos</span><span><b>03</b> Guarda tu código de canje</span></div>
     <section class="rewards-content" aria-labelledby="rewardsTitle">
       <div class="rewards-section-heading">
         <div><span class="rewards-eyebrow">ELIGE TU BENEFICIO</span><h2 id="rewardsTitle">Catálogo de canje</h2></div>
@@ -42,6 +37,7 @@
         <p>El catálogo y tu saldo están disponibles para clientes con una cuenta activa.</p>
         <a class="rewards-button" href="login.html">Iniciar sesión</a>
       </div>
+      <div class="rewards-filters" id="rewardsFilters"><label class="rewards-search">Buscar beneficio<input id="rewardSearch" type="search" placeholder="¿Qué te gustaría disfrutar?"></label><label>Tipo<select id="rewardType"><option value="all">Todos los beneficios</option><option value="producto">Productos</option><option value="promocion">Promociones</option><option value="descuento">Descuentos</option></select></label><label>Ordenar<select id="rewardSort"><option value="asc">Menos puntos primero</option><option value="desc">Más puntos primero</option></select></label><label class="rewards-affordable"><input id="rewardAffordable" type="checkbox">Solo los que puedo canjear</label></div><button type="button" id="rewardsRefresh" class="rewards-button rewards-button--quiet">Actualizar catálogo</button><p id="rewardsCount" class="rewards-count" role="status"></p>
       <div id="rewardsGrid" class="rewards-grid" aria-live="polite"></div>
     </section>
     <section class="redemptions-content" aria-labelledby="redemptionsTitle">
@@ -49,6 +45,7 @@
       <div id="redemptionsList" class="redemptions-list"></div>
     </section>
   </main>
+  <dialog id="redeemDialog" class="redeem-dialog" aria-labelledby="redeemTitle"><form id="redeemForm"><span class="rewards-eyebrow">UN NUEVO RECUERDO</span><h2 id="redeemTitle">Confirmar canje</h2><p id="redeemName"></p><dl><div><dt>Saldo disponible</dt><dd id="redeemBefore"></dd></div><div><dt>Puntos a utilizar</dt><dd id="redeemCost"></dd></div><div><dt>Tu nuevo saldo</dt><dd id="redeemAfter"></dd></div></dl><p class="rewards-dialog-note">Al confirmar se descontarán tus puntos y recibirás un código de canje.</p><div class="rewards-dialog-actions"><button type="button" id="redeemCancel" class="rewards-button rewards-button--quiet">Volver al catálogo</button><button id="redeemConfirm" class="rewards-button" type="submit">Confirmar canje</button></div><p id="redeemError" role="alert"></p></form></dialog>
   <div data-cms-footer></div>
   <script src="../js/config.js"></script>
   <script src="../js/auth.js"></script>

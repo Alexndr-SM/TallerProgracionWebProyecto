@@ -13,7 +13,7 @@ function publicUrl(kind, slug) {
   return new URL(`${kind === 'destinos' ? 'destino' : 'promocion'}.html?slug=${encodeURIComponent(slug)}`, window.location.href).href
 }
 
-function ImagePicker({ label, urls, multiple = false, required = true, onChange, onBusy }) {
+export function ImagePicker({ label, urls, multiple = false, required = true, onChange, onBusy }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [previews, setPreviews] = useState([])
@@ -136,7 +136,7 @@ function ContentForm({ kind, record, destinations, onClose, onSaved }) {
   </dialog>
 }
 
-export default function CmsPanel({ kind, onCatalogChange, initialQuery = '', initialDestination = '' }) {
+export default function CmsPanel({ kind, onCatalogChange, initialQuery = '', initialDestination = '', initialCreate = false, initialStatus = 'all', onDestinationsChange }) {
   const isDestination = kind === 'destinos'
   const [destinations, setDestinations] = useState([])
   const [promotions, setPromotions] = useState([])
@@ -145,7 +145,8 @@ export default function CmsPanel({ kind, onCatalogChange, initialQuery = '', ini
   const [notice, setNotice] = useState('')
   const [query, setQuery] = useState(initialQuery)
   const [destinationFilter, setDestinationFilter] = useState(initialDestination)
-  const [modal, setModal] = useState(null)
+  const [modal, setModal] = useState(() => initialCreate ? { record: null } : null)
+  const [statusFilter, setStatusFilter] = useState(initialStatus)
   const [deleting, setDeleting] = useState(null)
   const [revision, setRevision] = useState(0)
   useEffect(() => {
@@ -159,9 +160,10 @@ export default function CmsPanel({ kind, onCatalogChange, initialQuery = '', ini
   }, [revision])
   const records = (isDestination ? destinations : promotions).filter((record) =>
     `${record.nombre || record.titulo} ${record.slug}`.toLowerCase().includes(query.toLowerCase())
+    && (isDestination || statusFilter === 'all' || (statusFilter === 'active' ? record.activo : !record.activo))
     && (isDestination || !destinationFilter || String(record.destino_id) === destinationFilter))
   function saved(record) {
-    if (isDestination) setDestinations((current) => modal.record ? current.map((item) => item.id === record.id ? record : item) : [record, ...current])
+    if (isDestination) { const next = modal.record ? destinations.map((item) => item.id === record.id ? record : item) : [record, ...destinations]; setDestinations(next); onDestinationsChange?.(next) }
     else {
       const next = modal.record ? promotions.map((item) => item.id === record.id ? record : item) : [record, ...promotions]
       setPromotions(next)
@@ -183,7 +185,7 @@ export default function CmsPanel({ kind, onCatalogChange, initialQuery = '', ini
   return <section className="cms-panel">
     <div className="section-heading"><div><p className="eyebrow">Editor del sitio</p><h1>{isDestination ? 'Destinos para descubrir' : 'Experiencias que inspiran'}</h1><p className="section-description">{isDestination ? 'Crea lugares que aparecerán en Inicio, menú y pie de página.' : 'Diseña promociones con su propia página, imágenes y reserva.'}</p></div><button className="button button--primary" disabled={loading || Boolean(error)} onClick={() => setModal({ record: null })}><Plus size={17} />{isDestination ? 'Nuevo destino' : 'Nueva promoción'}</button></div>
     <div className="cms-stats"><div><MapPin size={20} /><span>Destinos publicados<strong>{destinations.length}</strong></span></div><div><ImagePlus size={20} /><span>Promociones activas<strong>{promotions.filter((item) => item.activo).length}</strong></span></div><a href="../index.html" target="_blank" rel="noopener noreferrer">Explorar mi sitio <ExternalLink size={16} /></a></div>
-    <div className="cms-toolbar"><label className="search-box"><Search size={17} /><input aria-label="Buscar contenido" placeholder="Buscar por nombre…" value={query} onChange={(event) => setQuery(event.target.value)} /></label>{!isDestination && <select className="select" aria-label="Filtrar por destino" value={destinationFilter} onChange={(event) => setDestinationFilter(event.target.value)}><option value="">Todos los destinos</option>{destinations.map((item) => <option key={item.id} value={item.id}>{item.nombre}</option>)}</select>}<button className="button button--quiet" onClick={() => setRevision((value) => value + 1)} disabled={loading}><RefreshCw size={15} />Actualizar</button></div>
+    <div className="cms-toolbar"><label className="search-box"><Search size={17} /><input aria-label="Buscar contenido" placeholder="Buscar por nombre…" value={query} onChange={(event) => setQuery(event.target.value)} /></label>{!isDestination && <select className="select" aria-label="Filtrar por visibilidad" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}><option value="all">Todas las promociones</option><option value="active">Publicadas</option><option value="hidden">Ocultas</option></select>}{!isDestination && <select className="select" aria-label="Filtrar por destino" value={destinationFilter} onChange={(event) => setDestinationFilter(event.target.value)}><option value="">Todos los destinos</option>{destinations.map((item) => <option key={item.id} value={item.id}>{item.nombre}</option>)}</select>}<button className="button button--quiet" onClick={() => setRevision((value) => value + 1)} disabled={loading}><RefreshCw size={15} />Actualizar</button></div>
     {error && <p className="form-error" role="alert">{error}</p>}{notice && <p className="cms-notice" role="status">{notice}</p>}
     {loading ? <p className="empty-state" role="status">Cargando el contenido de tu sitio…</p> : <div className="cms-record-grid">{records.map((record) => {
       const destination = destinations.find((item) => item.id === record.destino_id)
@@ -191,7 +193,7 @@ export default function CmsPanel({ kind, onCatalogChange, initialQuery = '', ini
       return <article className="cms-record" key={record.id}><div className="cms-record-image">{image ? <img src={image} alt="" loading="lazy" /> : <ImagePlus size={35} />}<span>{isDestination ? 'Destino' : record.activo ? 'Publicada' : 'Oculta'}</span></div><div className="cms-record-body"><small>{isDestination ? `${promotions.filter((item) => item.destino_id === record.id).length} promociones` : destination?.nombre || 'Experiencia'}</small><h2>{isDestination ? record.nombre : record.titulo}</h2><p>{isDestination ? record.descripcion || 'Añade una descripción para invitar a descubrir este destino.' : record.descripcion_corta || record.descripcion}</p>{!isDestination && <strong className="cms-price">S/ {Number(record.precio).toFixed(2)} <small>por persona</small></strong>}<div className="cms-record-actions"><button className="button button--quiet" onClick={() => setModal({ record })}><Pencil size={14} />Editar</button>{(isDestination || record.activo) && <a href={publicUrl(kind, record.slug)} target="_blank" rel="noopener noreferrer" aria-label={`Ver página de ${record.nombre || record.titulo}`}><ExternalLink size={16} /></a>}<button className="icon-button icon-button--danger" onClick={() => remove(record)} disabled={deleting !== null} aria-label={`Eliminar ${record.nombre || record.titulo}`}><Trash2 size={16} /></button></div></div></article>
     })}</div>}
     {!loading && !error && !records.length && <div className="cms-empty"><MapPin size={32} /><h2>{query || destinationFilter ? 'Sin resultados' : 'Tu próxima historia empieza aquí'}</h2><p>{query || destinationFilter ? 'Prueba otra búsqueda o destino.' : `Crea tu primer ${isDestination ? 'destino' : 'promoción'} usando la plantilla.`}</p>{!isDestination && !destinations.length && <p>Primero crea un destino desde la sección Destinos.</p>}</div>}
-    {modal && <ContentForm key={`${kind}-${modal.record?.id || 'new'}`} kind={kind} record={modal.record} destinations={destinations} onClose={() => setModal(null)} onSaved={saved} />}
+    {modal && !loading && !error && <ContentForm key={`${kind}-${modal.record?.id || 'new'}`} kind={kind} record={modal.record} destinations={destinations} onClose={() => setModal(null)} onSaved={saved} />}
   </section>
 }
 

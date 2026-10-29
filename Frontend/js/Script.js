@@ -106,7 +106,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     languagePicker.append(languageToggle, languageOptions);
-    if (navUser) navUser.after(languagePicker);
+    const languageSlot = headerActions.querySelector('[data-language-slot]');
+    if (languageSlot) languageSlot.replaceWith(languagePicker);
+    else if (navUser) navUser.after(languagePicker);
     else languageAnchor.before(languagePicker);
 
     function closeLanguageOptions(returnFocus = false) {
