@@ -1,6 +1,6 @@
 ---
 // "/" no tiene contenido: manda a la persona a /es/, /en/ o /fr/
-// según su elección guardada o el idioma de su navegador.
+// según su elección manual; español por defecto.
 // Es estático (sin servidor), por eso la redirección se hace en el navegador.
 ---
 
@@ -17,15 +17,8 @@
       (function () {
         var supported = ['es', 'en', 'fr'];
         var lang = null;
-        try { lang = localStorage.getItem('icat_lang'); } catch (e) {}
-        if (supported.indexOf(lang) === -1) {
-          var prefs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'es'];
-          lang = 'es';
-          for (var i = 0; i < prefs.length; i++) {
-            var code = String(prefs[i]).slice(0, 2).toLowerCase();
-            if (supported.indexOf(code) !== -1) { lang = code; break; }
-          }
-        }
+        try { lang = localStorage.getItem('icat_lang_manual'); } catch (e) {}
+        if (supported.indexOf(lang) === -1) lang = 'es';
         location.replace('/' + lang + '/' + location.hash);
       })();
     </script>

@@ -3,13 +3,18 @@
 // Interacciones de la página principal (index.html)
 // =========================================================
 
+// Guardar la ruta mientras este script se está ejecutando.
+const icatScriptUrl = document.currentScript?.src ||
+  Array.from(document.scripts).find(script => /(?:^|\/)js\/Script\.js(?:[?#]|$)/.test(script.getAttribute('src') || ''))?.src ||
+  new URL('js/Script.js', document.baseURI).href;
+
 // Espera a que el HTML esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
   const headerActions = document.querySelector('.header-actions');
   let navUser = document.getElementById('navUser');
 
   if (headerActions && !navUser) {
-    const scriptUrl = document.querySelector('script[src$="/js/Script.js"]')?.src;
+    const scriptUrl = icatScriptUrl;
     if (!scriptUrl) throw new Error('No se pudo determinar la ruta del menú de cuenta.');
 
     const accountUrl = (file) => new URL(`../html/${file}`, scriptUrl).href;
@@ -52,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (headerActions && languageAnchor && !headerActions.querySelector('.language-picker')) {
     const languages = [
-      { code: 'es', label: 'Español (Perú)', flag: '/assets/flags/es.svg' },
       { code: 'en', label: 'English (United States)', flag: '/assets/flags/en.svg' },
+      { code: 'es', label: 'Español (Perú)', flag: '/assets/flags/es.svg' },
       { code: 'fr', label: 'Français (France)', flag: '/assets/flags/fr.svg' }
     ];
     const languagePicker = document.createElement('div');
