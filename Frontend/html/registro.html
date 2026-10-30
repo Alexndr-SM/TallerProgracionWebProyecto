@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="../css/page-loader.css">
     <script src="../js/page-loader.js"></script>
     <script src="../js/i18n-dict.js"></script>
+    <script src="../js/i18n-public-dict.js"></script>
     <script src="../js/i18n.js"></script>
 </head>
 <body class="auth-page">
@@ -125,7 +126,7 @@
             const password = document.getElementById('password').value;
             const password2 = document.getElementById('password2').value;
             if (password !== password2) {
-                alert('Las contraseñas no coinciden');
+                alert((window.ICAT_I18N?.t || ((value) => value))('Las contraseñas no coinciden'));
                 return;
             }
             const btn = form.querySelector('.btn-auth');
@@ -136,7 +137,7 @@
                 await Auth.register(nombre, email, password);
                 window.location.href = '../index.html';
             } catch (err) {
-                alert(err.message || 'Error al registrarse');
+                alert((window.ICAT_I18N?.t || ((value) => value))(err.message || 'Error al registrarse'));
                 btn.disabled = false;
                 btn.textContent = prev;
             }

@@ -30,11 +30,11 @@ El panel consulta PostgreSQL mediante la API: muestra reservas y clientes reales
 
 | Rol | Acceso |
 | --- | --- |
-| `admin` | Resumen, reservas, clientes, promociones y equipo |
+| `admin` | Resumen, reservas, clientes, promociones, catálogo de canje y equipo |
 | `registrador` | Resumen, reservas (incluidas reservas presenciales) y consulta de clientes |
 | `soporte` | Resumen, consulta de reservas y clientes |
-| `editor` | Alta, edición y desactivación de promociones |
+| `editor` | Alta, edición y desactivación de promociones; creación, actualización y eliminación de beneficios del catálogo de canje |
 
-El estado activo/inactivo se valida en el servidor en cada solicitud autenticada. Para las reservas se guarda una copia del nombre y del precio unitario de la promoción, de modo que cambios futuros no alteren el historial. Los formularios de pago todavía no se conectan a una pasarela: las reservas muestran el pago como pendiente y la página no solicita ni almacena datos de tarjetas.
+El estado activo/inactivo y las operaciones del catálogo se validan en el servidor en cada solicitud autenticada. Al eliminar un beneficio, los canjes ya efectuados conservan su nombre, puntos y código históricos. Para las reservas se guarda una copia del nombre y del precio unitario de la promoción, de modo que cambios futuros no alteren el historial. Los formularios de pago todavía no se conectan a una pasarela: las reservas muestran el pago como pendiente y la página no solicita ni almacena datos de tarjetas.
 
 El tema se conserva en `localStorage`; los datos operativos ya no se guardan allí.

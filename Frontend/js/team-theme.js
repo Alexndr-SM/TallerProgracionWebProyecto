@@ -1,0 +1,1 @@
+(() => { let dark=true; try { dark=JSON.parse(localStorage.getItem('icat_admin_theme') ?? 'true') !== false; } catch { /* Default. */ } document.documentElement.dataset.teamTheme=dark?'dark':'light'; document.documentElement.style.colorScheme=dark?'dark':'light'; })();

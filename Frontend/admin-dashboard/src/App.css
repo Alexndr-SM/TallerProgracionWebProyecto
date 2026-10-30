@@ -247,6 +247,8 @@
 .table-product small, .table-person small { color: var(--admin-muted); font-size: 8px; }
 .table-strong { color: var(--admin-text) !important; font-weight: 600; }
 .customer-points-control { display: inline-flex; align-items: center; gap: 4px; }
+.customer-points-display { display: inline-flex; align-items: center; gap: 8px; }
+.customer-points-toggle { min-height: 27px; padding-inline: 8px; font-size: 9px !important; }
 .customer-points-control input { width: 78px; min-height: 29px; padding: 4px 7px; border: 1px solid var(--admin-border); border-radius: 6px; background: var(--admin-panel-soft); color: var(--admin-text); font-size: 10px; }
 .customer-points-control .icon-button { width: 28px; height: 28px; color: var(--admin-accent) !important; }
 .stock-cell { display: grid; gap: 5px; }.stock-track { display: block; width: 66px; height: 3px; overflow: hidden; border-radius: 5px; background: var(--admin-border); }.stock-track i { display: block; height: 100%; border-radius: inherit; background: var(--admin-accent-bright); }
@@ -289,6 +291,22 @@
 .field-label input::placeholder { color: var(--admin-muted); }
 .field-label textarea { resize: vertical; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.reward-admin-panel { margin-bottom: 15px; }
+.reward-admin-panel > .table-toolbar > svg { color: var(--admin-accent); }
+.reward-admin-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; padding: 18px; }
+.reward-create-dialog { width: min(100% - 32px, 620px); max-height: 90vh; overflow-y: auto; padding: 0; }
+.reward-create-dialog::backdrop { background: rgb(5 12 10 / 60%); backdrop-filter: blur(5px); }
+.reward-create-dialog .reward-admin-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.reward-create-dialog .modal-heading, .reward-create-dialog .modal-description { grid-column: span 2; }
+.reward-create-dialog .modal-heading { margin-bottom: 10px; }
+.reward-image-picker { display: inline-flex; min-height: 38px; align-items: center; justify-content: center; gap: 8px; padding: 0 12px; border: 1px dashed var(--admin-border); border-radius: 7px; color: var(--admin-accent) !important; cursor: pointer; }
+.reward-image-picker input { display: none; }
+.reward-image-preview { width: 130px; height: 90px; border: 1px solid var(--admin-border); border-radius: 7px; object-fit: cover; }
+.reward-admin-form .field-label { margin-bottom: 15px; }
+.reward-admin-form .field-label small { color: var(--admin-muted); font-size: 9px; font-weight: 400; }
+.reward-admin-description { grid-column: span 2; }
+.reward-admin-submit { grid-column: span 2; display: flex; justify-content: flex-end; padding-top: 3px; }
+.reward-admin-list .table-person small { max-width: 290px; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--admin-border); }
 .admin-warning { display: flex; gap: 8px; padding: 10px; border: 1px solid #e8c47b; border-radius: 7px; background: #fbf3e2; color: #8b6419; font-size: 9px; line-height: 1.5; }
 .admin-island--dark .admin-warning { border-color: #594921; background: #322b19; color: #e8cd7f; }
@@ -343,5 +361,7 @@
   .points-hero { min-height: unset; flex-direction: column; gap: 26px; padding: 24px 19px; }.points-card { width: min(100%, 260px); align-self: center; transform: rotate(2deg); }.points-steps { gap: 9px 13px; }.points-steps span { font-size: 8px; }
   .coming-note { align-items: flex-start; flex-wrap: wrap; }.coming-note > div { min-width: calc(100% - 42px); }.coming-note .text-link { margin-left: 29px; }
   .form-grid { grid-template-columns: 1fr; gap: 0; }.modal { padding: 18px; }.modal-actions .button { flex: 1; }
+  .reward-admin-form, .reward-create-dialog .reward-admin-form { grid-template-columns: 1fr; padding: 14px; }.reward-admin-description, .reward-admin-submit, .reward-create-dialog .modal-heading, .reward-create-dialog .modal-description { grid-column: auto; }.reward-admin-submit .button { width: 100%; }
+  .reward-create-dialog .modal-actions { flex-wrap: wrap; }.reward-create-dialog .modal-actions .button { flex: 1; }
   .permission-notice { padding: 10px; }.secure-label { font-size: 8px; }
 }

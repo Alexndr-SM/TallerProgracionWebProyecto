@@ -50,8 +50,9 @@ test('migraciones PostgreSQL en una base nueva', sqlOptions, async () => {
     await db.exec('CREATE TABLE usuarios (id SERIAL PRIMARY KEY)');
     await migrate(pool);
     await migrate(pool);
-    assert.equal((await db.query('SELECT count(*)::int AS total FROM cms_migrations')).rows[0].total, 4);
+    assert.equal((await db.query('SELECT count(*)::int AS total FROM cms_migrations')).rows[0].total, 6);
     assert.equal((await db.query('SELECT * FROM promociones')).rows.length, 0);
+    assert.deepEqual((await db.query('SELECT nombre FROM recompensas ORDER BY nombre')).rows.map((row) => row.nombre), ['Sombrero ICATURISMO', 'Sombrilla ICATURISMO']);
     await db.query("INSERT INTO destinos (nombre,slug) VALUES ('Temporal','temporal')");
     await db.query("DELETE FROM destinos WHERE slug='temporal'");
     await migrate(pool);
@@ -66,6 +67,9 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
   if (db) {
     await db.exec(fs.readFileSync(path.join(__dirname, '../src/database/schema.sql'), 'utf8'));
     await migrate(pool);
+    await db.query(
+      "INSERT INTO usuarios (id, nombre, email, password_hash, puntos) VALUES (2, 'Cliente de prueba', 'cliente@test.invalid', 'test-hash', 500)"
+    );
   }
   const users = {
     1: { id: 1, rol: 'admin', estado_cuenta: 'activo' },
@@ -78,7 +82,7 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
   const databasePath = require.resolve('../src/config/database');
   require.cache[databasePath] = { id: databasePath, filename: databasePath, loaded: true, exports: {
     pool,
-    query: async (sql, params) => sql.includes('FROM usuarios WHERE id = $1')
+    query: async (sql, params) => sql.includes('SELECT id, email, nombre, rol, estado_cuenta FROM usuarios WHERE id = $1')
       ? { rows: users[params[0]] ? [users[params[0]]] : [], rowCount: users[params[0]] ? 1 : 0 }
       : pool.query(sql, params),
   } };
@@ -106,6 +110,8 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
   app.use('/api/destinos', require('../src/routes/destination.routes'));
   app.use('/api/promociones', require('../src/routes/promotion.routes'));
   app.use('/api/admin', require('../src/routes/admin.routes'));
+  app.use('/api/canjeos', require('../src/routes/reward.routes'));
+  app.use('/api/perfil', require('../src/routes/perfil.routes'));
   app.use('/api/uploads', require('../src/routes/upload.routes'));
   const server = app.listen(0, '127.0.0.1');
   await once(server, 'listening');
@@ -127,15 +133,93 @@ test('HTTP, permisos y compatibilidad del CMS', async (t) => {
     for (let i = 0; i < count; i++) data.append(field, new Blob([bytes], { type: mime }), `image-${i}.png`);
     return data;
   }
+  await t.test('administra beneficios y canjea puntos de forma protegida', sqlOptions, async () => {
+    assert.equal((await request('/api/canjeos')).status, 401);
+    assert.equal((await request('/api/admin/recompensas', 'GET', undefined, 2)).status, 403);
+    assert.equal((await request('/api/admin/recompensas', 'GET', undefined, 3)).status, 200);
+    assert.equal((await request('/api/admin/recompensas', 'POST', {}, 3)).status, 400);
+    assert.equal((await request('/api/admin/recompensas', 'POST', undefined, 1)).status, 400);
+    const catalog = await request('/api/canjeos', 'GET', undefined, 2);
+    assert.equal(catalog.status, 200);
+    assert.equal(catalog.data.puntos, 500);
+    const profilePoints = await request('/api/perfil/puntos', 'GET', undefined, 2);
+    assert.equal(profilePoints.status, 200);
+    assert.equal(profilePoints.data.puntos_actuales, 500);
+    assert.equal((await request('/api/admin/recompensas', 'POST', { nombre: 'Premio', tipo: 'invalido', puntos: 20 }, 1)).status, 400);
+
+    const created = await request('/api/admin/recompensas', 'POST', {
+      nombre: 'Descuento de prueba', descripcion: 'Beneficio para clientes.', tipo: 'descuento', puntos: 300, stock: 1,
+    }, 1);
+    assert.equal(created.status, 201);
+    const rewardId = created.data.recompensa.id;
+    assert.equal((await request('/api/admin/recompensas', 'GET', undefined, 1)).data.recompensas.length, 3);
+    const redeemed = await request(`/api/canjeos/${rewardId}/canjear`, 'POST', {}, 2);
+    assert.equal(redeemed.status, 201);
+    assert.equal(redeemed.data.puntos, 200);
+    assert.match(redeemed.data.canje.codigo, /^ICA-[A-F0-9]{12}$/);
+    const updatedCatalog = await request('/api/canjeos', 'GET', undefined, 2);
+    assert.equal(updatedCatalog.data.puntos, 200);
+    assert.deepEqual(updatedCatalog.data.recompensas.map((item) => item.nombre).sort(), ['Sombrero ICATURISMO', 'Sombrilla ICATURISMO']);
+    assert.equal(updatedCatalog.data.canjes.length, 1);
+    const history = await db.query("SELECT tipo, puntos FROM puntos_historial WHERE usuario_id = 2 AND tipo = 'canjeado'");
+    assert.equal(history.rows[0].tipo, 'canjeado');
+    assert.equal(history.rows[0].puntos, 300);
+    assert.equal((await request(`/api/canjeos/${rewardId}/canjear`, 'POST', {}, 2)).status, 404);
+    const product = await request('/api/admin/recompensas', 'POST', {
+      nombre: 'Producto de prueba', tipo: 'producto', puntos: 100, stock: 1,
+    }, 1);
+    assert.equal(product.status, 201);
+    const productRedemption = await request(`/api/canjeos/${product.data.recompensa.id}/canjear`, 'POST', {}, 2);
+    assert.equal(productRedemption.status, 201);
+    assert.equal(productRedemption.data.puntos, 100);
+    assert.match(productRedemption.data.canje.codigo, /^ICA-[A-F0-9]{12}$/);
+    const savedProductRedemption = await db.query(
+      'SELECT codigo, recompensa_nombre, puntos FROM canjes WHERE usuario_id = $1 AND codigo = $2',
+      [2, productRedemption.data.canje.codigo]
+    );
+    assert.deepEqual(savedProductRedemption.rows[0], {
+      codigo: productRedemption.data.canje.codigo,
+      recompensa_nombre: 'Producto de prueba',
+      puntos: 100,
+    });
+    const catalogAfterProductRedemption = await request('/api/canjeos', 'GET', undefined, 2);
+    assert.equal(catalogAfterProductRedemption.data.recompensas.some((item) => item.id === product.data.recompensa.id), false);
+    assert.equal(catalogAfterProductRedemption.data.canjes.length, 2);
+    assert.equal(catalogAfterProductRedemption.data.canjes[0].codigo, productRedemption.data.canje.codigo);
+    const expensive = await request('/api/admin/recompensas', 'POST', {
+      nombre: 'Beneficio costoso', tipo: 'producto', puntos: 250,
+    }, 1);
+    assert.equal(expensive.status, 201);
+    assert.equal((await request(`/api/canjeos/${expensive.data.recompensa.id}/canjear`, 'POST', {}, 2)).status, 409);
+    assert.equal((await request('/api/canjeos', 'GET', undefined, 2)).data.puntos, 100);
+    assert.equal((await request(`/api/admin/recompensas/${rewardId}`, 'PATCH', { activo: false }, 1)).status, 200);
+    const editorReward = await request('/api/admin/recompensas', 'POST', {
+      nombre: 'Beneficio de editor', descripcion: 'Creado por un editor.', tipo: 'descuento', puntos: 80,
+    }, 3);
+    assert.equal(editorReward.status, 201);
+    const editorRewardId = editorReward.data.recompensa.id;
+    const updatedByEditor = await request(`/api/admin/recompensas/${editorRewardId}`, 'PATCH', {
+      nombre: 'Beneficio editado', descripcion: 'Actualizado por un editor.', tipo: 'promocion',
+      puntos: 90, stock: 5, imagen_url: '', activo: true,
+    }, 3);
+    assert.equal(updatedByEditor.status, 200);
+    assert.equal(updatedByEditor.data.recompensa.nombre, 'Beneficio editado');
+    assert.equal(updatedByEditor.data.recompensa.puntos, 90);
+    assert.equal((await request(`/api/admin/recompensas/${editorRewardId}`, 'DELETE', undefined, 3)).status, 200);
+    assert.equal((await request(`/api/admin/recompensas/${editorRewardId}`, 'DELETE', undefined, 3)).status, 404);
+  });
   await t.test('las escrituras del CMS solo aceptan admin y editor', async () => {
     const endpoints = [
       ['/api/destinos', 'POST'], ['/api/destinos/1', 'PUT'], ['/api/destinos/1', 'DELETE'],
       ['/api/promociones', 'POST'], ['/api/promociones/1', 'PUT'], ['/api/promociones/1', 'DELETE'],
       ['/api/admin/promociones', 'POST'], ['/api/admin/promociones/1', 'PATCH'], ['/api/uploads', 'POST'],
+      ['/api/admin/recompensas', 'GET'], ['/api/admin/recompensas', 'POST'],
+      ['/api/admin/recompensas/1', 'PATCH'], ['/api/admin/recompensas/1', 'DELETE'],
     ];
     for (const [url, method] of endpoints) {
-      assert.equal((await request(url, method, {})).status, 401, `${method} ${url}`);
-      for (const user of [2, 5, 6]) assert.equal((await request(url, method, {}, user)).status, 403);
+      const body = method === 'GET' ? undefined : {};
+      assert.equal((await request(url, method, body)).status, 401, `${method} ${url}`);
+      for (const user of [2, 5, 6]) assert.equal((await request(url, method, body, user)).status, 403);
     }
     assert.equal((await request('/api/destinos', 'POST', {}, 4)).status, 401);
     assert.equal(uploadCount, 0);
